@@ -13,12 +13,12 @@ Updated: 2026-09-29 | Session: P0 — Socle
 - **P0.1 — Monorepo** : pnpm 10 + turborepo 2.11, tsconfig.base strict (TS 5.9), Biome 2.5, lefthook 2.1, commits conventionnels, changesets, catalog de versions (Nuxt 4.5, Hono 4.13, zod 4, vitest 5, drizzle-orm 0.45), 7 apps + 7 paquets squelettes. 42/42 turbo tasks (build + typecheck + test) vertes.
 - **P0.2 — Infra dev** : `infra/docker-compose.dev.yml` (PostgreSQL 18 + pgvector, Redis 8.0 noeviction, SeaweedFS S3 (D51), Mailpit, LiteLLM, Temporal dev-server), `init-dev.sh` (4 rôles + 5 extensions), `.env.example`, scripts `infra:up/down/reset`, ports loopback-only. Mode natif (`dev-native.sh`) : PG + Redis sans Docker pour sessions cloud. Catalog mis à jour (pino 10.3, ioredis 6, bullmq 6.3). 42/42 turbo tasks vertes.
 - Stockage basculable (D51 révisée, D52) : `storage.backends` + `storage.files.backend_id` + `storage.backend_migrations` ; SeaweedFS local par défaut, OVH en option ; tests T21-T22 ; D50 validée.
+- **P0.3 — Baseline dbmate** : migration 0001 (schema-v1.2 → `db/migrations/`), `db/dbmate.sh` wrapper, `db/tests/` (23 contrôles T1-T22), scripts `db:*`, lefthook squawk exclude baseline. dbmate up 1.5s, 23/23 OK sur base neuve.
 
 ## 🔄 Active
-- P0.3 — Baseline dbmate (après fusion des PR #2 et #3).
+- P0.4 — `packages/db` (drizzle-kit pull, client, withOrgContext).
 
 ## 📋 Queue
-2. **P0.3** — Baseline dbmate (schema-v1.2 → migration 0001).
 3. **P0.4** — `packages/db` (drizzle-kit pull, client, withOrgContext).
 4. **P0.5** — `packages/shared` (codes d'erreur, schémas zod de base).
 5. **P0.6** — `apps/api` minimal (env, pino, request-id, OTel, /health, /openapi.json).
@@ -35,3 +35,4 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 - D27 : Nuxt UI à confirmer contre shadcn-vue lors de `packages/ui`.
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
+- Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).

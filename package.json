@@ -18,7 +18,13 @@
     "prepare": "lefthook install",
     "infra:up": "bash infra/scripts/dev-up.sh",
     "infra:down": "bash infra/scripts/dev-down.sh",
-    "infra:reset": "bash infra/scripts/dev-down.sh --volumes 2>/dev/null; rm -rf .local/pg-data .local/redis-data; bash infra/scripts/dev-up.sh"
+    "infra:reset": "bash infra/scripts/dev-down.sh --volumes 2>/dev/null; rm -rf .local/pg-data .local/redis-data; bash infra/scripts/dev-up.sh",
+    "db:up": "bash db/dbmate.sh up",
+    "db:rollback": "bash db/dbmate.sh rollback",
+    "db:status": "bash db/dbmate.sh status",
+    "db:create": "bash db/dbmate.sh create",
+    "db:new": "bash db/dbmate.sh new",
+    "db:test": "bash db/tests/run.sh"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
