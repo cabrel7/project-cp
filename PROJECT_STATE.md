@@ -10,7 +10,7 @@ Updated: 2026-09-30 | Session: P0 — Socle
 - Plan de construction `docs/reference/08-plan-construction.md` (D50, 🟡 à valider).
 - Maquettes dans le dépôt : `docs/maquettes/` (43 captures + sources HTML) ; profil mobile corrigé (3 profils).
 - Profils d'onboarding alignés sur D41 : prompt `system.onboarding.copilot` + contrainte `ux.onboarding_progress.profile` (`activity`, `builder`, `enterprise`) ; 21 tests OK.
-- **P0.1 — Monorepo** : pnpm + turborepo, tsconfig.base strict, Biome, lefthook, commits conventionnels, catalog de versions, 7 apps + 7 paquets squelettes. 42/42 turbo tasks (build + typecheck + test) vertes.
+- **P0.1 — Monorepo** : pnpm 10 + turborepo 2.11, tsconfig.base strict (TS 5.9), Biome 2.5, lefthook 2.1, commits conventionnels, changesets, catalog de versions (Nuxt 4.5, Hono 4.13, zod 4, vitest 5, drizzle-orm 0.45), 7 apps + 7 paquets squelettes. 42/42 turbo tasks (build + typecheck + test) vertes.
 
 ## 🔄 Active
 - Validation du plan 08 (D50) par Dylan.
