@@ -467,3 +467,9 @@ ALTER TABLE billing.coupons ADD CONSTRAINT coupons_staff_fk
   FOREIGN KEY (created_by_staff_id) REFERENCES platform.staff_users(id) ON DELETE SET NULL;
 ALTER TABLE market.listing_versions ADD CONSTRAINT listing_versions_staff_fk
   FOREIGN KEY (reviewed_by_staff_id) REFERENCES platform.staff_users(id) ON DELETE SET NULL;
+
+-- Stockage (D52) : auteur d'une migration entre backends
+ALTER TABLE storage.backend_migrations
+  ADD CONSTRAINT backend_migrations_staff_fk FOREIGN KEY (started_by_staff_user_id)
+  REFERENCES platform.staff_users(id) ON DELETE SET NULL;
+CREATE INDEX backend_migrations_staff_idx ON storage.backend_migrations (started_by_staff_user_id);

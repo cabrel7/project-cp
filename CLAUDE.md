@@ -8,7 +8,7 @@ Plateforme qui rend n'importe quel système compatible avec l'IA (connecteurs + 
 - `docs/reference/00-index.md` → index. Priorité en cas de contradiction : 06 (décisions) > 02 (règles) > 01 (produit) > 03/04/05 ; pour les données, **le SQL fait foi**.
 - `docs/reference/08-plan-construction.md` → phases, lots et critères de fin : l'architect y lit le périmètre de chaque lot.
 - `docs/design-system/` → tokens, patterns (8 gabarits), 27 composants, glossaire Simple/Technique.
-- `db/schema-v1.2/` → schéma validé (21 tests), à convertir en migration de base dbmate.
+- `db/schema-v1.2/` → schéma validé (23 contrôles), à convertir en migration de base dbmate.
 
 ## Stack
 TypeScript strict partout · pnpm + turborepo · Biome · Hono (api, mcp-runtime) · Nuxt 4 + Nuxt UI + Tailwind v4 (web, admin) · PostgreSQL 18 + pgvector · dbmate + Squawk · Drizzle (lecture seule du schéma) · Redis/BullMQ · Temporal · LiteLLM + Vercel AI SDK · Vitest, Testcontainers, MSW, Playwright.

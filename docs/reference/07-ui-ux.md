@@ -53,7 +53,7 @@ Une seule barre latérale pour tous les profils ; seuls les **libellés** change
 - **IA** : Fournisseurs · Gateway et routage · IA de la plateforme (onglets : Capacités internes · Garde-fous · Arrêts d'urgence · Modèles autorisés · Coûts)
 - **Produit** : API et clés · MCP et connecteurs · Agents · Marketplace
 - **Confiance** : Sécurité et abus · Conformité · Support
-- **Exploitation** : Système et incidents · Déploiement progressif · Contenu et traductions · Équipe interne et audit · Paramètres
+- **Exploitation** : Système et incidents · Déploiement progressif · Contenu et traductions · Équipe interne et audit · Paramètres (dont **Stockage** : backend actif, espace utilisé, migration des fichiers — D52)
 - Barre du haut : badge d'environnement, recherche globale, durée de session restante, bouton **Arrêt d'urgence** toujours visible, profil (rôle + 2FA).
 
 ## Studios

@@ -155,6 +155,10 @@ REVOKE INSERT, UPDATE, DELETE ON
 FROM app_rw;
 REVOKE ALL ON ai.provider_accounts, ai.provider_account_snapshots, compliance.data_breaches,
   compliance.transfer_authorizations, billing.invoice_sequences FROM app_rw;
+-- Stockage (D52) : app_rw lit le backend d'un fichier (sans secret), ne le modifie jamais ;
+-- les migrations entre backends sont réservées au back-office et aux jobs (app_admin)
+REVOKE INSERT, UPDATE, DELETE ON storage.backends FROM app_rw;
+REVOKE ALL ON storage.backend_migrations FROM app_rw;
 -- back-office : app_rw ne voit que ce qui sert au produit client
 GRANT SELECT ON platform.settings, platform.feature_flags, platform.feature_flag_overrides,
   platform.error_codes, platform.translations, platform.message_templates, platform.announcements,

@@ -1,7 +1,7 @@
 # Schéma de données — v1.2
 
 > **Cible :** PostgreSQL 18 + pgvector · **Nom de code :** `project-cp`
-> **Statut :** appliqué et testé sur PostgreSQL 18.6 (21 tests d'intégrité et d'isolation passés).
+> **Statut :** appliqué et testé sur PostgreSQL 18.6 (23 contrôles d'intégrité et d'isolation passés).
 > **Fichiers :** `schema/000_…960_*.sql` (à appliquer dans l'ordre avec `run_all.sh`), tests dans `schema/tests/` (sur base neuve). Migrations et ORM : voir `03-architecture-technique.md` §3.
 > Date : 29 septembre 2026.
 
@@ -12,8 +12,8 @@
 | Élément | Valeur |
 |---|---|
 | Domaines (schémas PostgreSQL) | 15 |
-| Tables | 181 (dont 9 partitionnées par mois) |
-| Clés étrangères | 379 — **toutes indexées** (vérifié automatiquement) |
+| Tables | 183 (dont 9 partitionnées par mois) |
+| Clés étrangères | 389 — **toutes indexées** (vérifié automatiquement) |
 | Tables sous Row-Level Security | 110 |
 | Politiques RLS | 141 |
 | Index redondants | 0 (vérifié automatiquement) |
@@ -67,7 +67,7 @@
 |---|---|---|
 | `ref` | Référentiels | currencies, languages, data_regions, countries, fx_rates, tax_rates |
 | `iam` | Identité, organisations, accès, OAuth | users, user_identities, user_mfa_factors, user_sessions, verification_tokens, organizations, permissions, roles, role_permissions, memberships, invitations, teams, team_members, workspaces, workspace_members, environments, projects, secrets, oauth_clients, oauth_consents, oauth_authorization_codes, oauth_tokens |
-| `storage` | Métadonnées des fichiers (binaire en stockage objet) | files |
+| `storage` | Métadonnées des fichiers (binaire en stockage objet) et backends de stockage (D52) | backends, files, backend_migrations |
 | `billing` | Plans, droits, abonnements, crédits, paiements, factures, budgets, promotions | plans, plan_prices, features, plan_features, organization_feature_overrides, subscriptions, subscription_events, credit_wallets, credit_grants, **credit_ledger\***, credit_reservations, credit_packs, credit_pack_prices, infra_meters, infra_meter_rates, payment_providers, payment_methods, payments, payment_events, refunds, invoice_sequences, invoices, invoice_lines, budgets, budget_periods, coupons, coupon_redemptions, referrals |
 | `ai` | Fournisseurs, modèles, prix, routage, BYOK, capacités, évaluations, **garde-fous** | guardrail_detectors, guardrail_profiles, guardrail_rules, guardrail_bindings, providers, provider_accounts, provider_account_snapshots, models, model_deployments, model_prices, routing_profiles, routing_rules, routing_rule_targets, byok_keys, capabilities, capability_versions, capability_releases, capability_release_variants, eval_datasets, eval_cases, eval_runs, eval_results |
 | `mcp` | Connecteurs, actions, serveurs, versions, outils, jetons | connector_definitions, oauth_connections, bridges, connectors, connector_credentials, connector_sources, connector_actions, file_datasets, servers, server_versions, tools, tool_embeddings, resources, prompts, access_tokens, access_token_tools, health_checks |
@@ -220,6 +220,12 @@ Chaque requête garde le déploiement utilisé, le coût fournisseur en USD, le 
 - Droit de plan `ai.model_override` (Pro et plus).
 
 ---
+
+### 7.6 Stockage des fichiers (v1.2, D52)
+- `storage.backends` : catalogue plateforme (sans `organization_id`, sans secret : `credentials_secret_ref` pointe vers Infisical). `app_rw` lit, ne modifie jamais. Index unique partiel : un seul `is_write_target` par région ; `CHECK` : un backend d'écriture est `active`.
+- `storage.files.backend_id` (obligatoire) : où se trouve le binaire ; unicité `(backend_id, bucket, storage_key)`.
+- `storage.backend_migrations` : progression d'une migration entre backends (compteurs, point de reprise `last_file_id`, motif obligatoire, auteur staff) ; une seule migration active par backend source ; invisible pour `app_rw`.
+- Données initiales (`950`) : `local` (SeaweedFS, actif, écriture) et `ovh_gra` (OVH, désactivé).
 
 ## 8. Données de référence (`950_seed_reference.sql`)
 

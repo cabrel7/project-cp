@@ -2,7 +2,7 @@
 name: devops
 description: >
   Infrastructure project-cp : Docker Compose sur VPS-4 OVH, Nginx/TLS, services tiers
-  auto-hébergés (LiteLLM, Temporal, Infisical, Langfuse, ClickHouse, MinIO, Grafana),
+  auto-hébergés (LiteLLM, Temporal, Infisical, Langfuse, ClickHouse, SeaweedFS, Grafana),
   CI (GitHub Actions), déploiement, sauvegardes, préparation des sessions cloud.
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
