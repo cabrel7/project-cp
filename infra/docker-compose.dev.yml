@@ -57,43 +57,48 @@ services:
     networks:
       - cp-dev
 
-  minio:
-    image: quay.io/minio/minio:RELEASE.2024-10-02T17-50-41Z
-    container_name: cp-minio
+  seaweedfs:
+    # SeaweedFS (decision D51) — remplace MinIO (images communautaires arretees fin 2025).
+    image: chrislusf/seaweedfs:3.80
+    container_name: cp-seaweedfs
     restart: unless-stopped
     ports:
-      - "127.0.0.1:${MINIO_API_PORT:-9000}:9000"
-      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-cp_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-cp_minio_dev}
-    command: server /data --console-address ":9001"
+      - "127.0.0.1:${S3_PORT:-9000}:9000"
+      - "127.0.0.1:${SEAWEEDFS_MASTER_PORT:-9333}:9333"
+    command: >
+      server
+      -s3
+      -s3.port=9000
+      -s3.config=/etc/seaweedfs/s3.json
+      -s3.allowEmptyFolder=true
+      -master.port=9333
+      -volume.max=5
+      -dir=/data
     volumes:
-      - cp-minio-data:/data
+      - cp-seaweedfs-data:/data
+      - ./seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
     mem_limit: 512m
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9333/cluster/status"]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 10s
     networks:
       - cp-dev
 
-  minio-init:
-    image: quay.io/minio/mc:RELEASE.2024-10-02T08-27-28Z
-    container_name: cp-minio-init
+  seaweedfs-init:
+    image: chrislusf/seaweedfs:3.80
+    container_name: cp-seaweedfs-init
     depends_on:
-      minio:
+      seaweedfs:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} &&
-      mc mb --ignore-existing local/$${S3_BUCKET} &&
+      echo 's3.bucket.create -name $${S3_BUCKET}' | weed shell -master seaweedfs:9333 &&
       echo 'Bucket ready.'
       "
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-cp_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-cp_minio_dev}
       S3_BUCKET: ${S3_BUCKET:-cp-dev}
     restart: "no"
     mem_limit: 128m
@@ -101,7 +106,7 @@ services:
       - cp-dev
 
   mailpit:
-    image: axllent/mailpit:v1.21
+    image: axllent/mailpit:v1.22
     container_name: cp-mailpit
     restart: unless-stopped
     ports:
@@ -175,7 +180,7 @@ services:
 volumes:
   cp-pg-data:
   cp-redis-data:
-  cp-minio-data:
+  cp-seaweedfs-data:
   cp-temporal-data:
 
 networks:

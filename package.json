@@ -18,7 +18,7 @@
     "prepare": "lefthook install",
     "infra:up": "bash infra/scripts/dev-up.sh",
     "infra:down": "bash infra/scripts/dev-down.sh",
-    "infra:reset": "bash infra/scripts/dev-down.sh --volumes && bash infra/scripts/dev-up.sh"
+    "infra:reset": "bash infra/scripts/dev-down.sh --volumes 2>/dev/null; rm -rf .local/pg-data .local/redis-data; bash infra/scripts/dev-up.sh"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

@@ -12,20 +12,25 @@ else
   echo "Note: .env absent, valeurs par defaut du compose (cp .env.example .env pour personnaliser)."
 fi
 
-echo "Starting project-cp dev infrastructure..."
-docker compose -f "$ROOT_DIR/infra/docker-compose.dev.yml" \
-  ${ENV_ARGS[@]+"${ENV_ARGS[@]}"} \
-  --project-name cp-dev \
-  up -d --wait
+# Auto-detection : Docker daemon disponible → compose, sinon → mode natif.
+if docker info >/dev/null 2>&1; then
+  echo "Starting project-cp dev infrastructure (Docker)..."
+  docker compose -f "$ROOT_DIR/infra/docker-compose.dev.yml" \
+    ${ENV_ARGS[@]+"${ENV_ARGS[@]}"} \
+    --project-name cp-dev \
+    up -d --wait
 
-echo ""
-echo "Services ready:"
-echo "  PostgreSQL : localhost:${POSTGRES_PORT:-5432}"
-echo "  Redis      : localhost:${REDIS_PORT:-6379}"
-echo "  MinIO API  : localhost:${MINIO_API_PORT:-9000}"
-echo "  MinIO UI   : localhost:${MINIO_CONSOLE_PORT:-9001}"
-echo "  Mailpit UI : localhost:${MAILPIT_UI_PORT:-8025}"
-echo "  Mailpit SMTP: localhost:${MAILPIT_SMTP_PORT:-1025}"
-echo "  LiteLLM    : localhost:${LITELLM_PORT:-4010}"
-echo "  Temporal   : localhost:${TEMPORAL_GRPC_PORT:-7233}"
-echo "  Temporal UI: localhost:${TEMPORAL_UI_PORT:-8233}"
+  echo ""
+  echo "Services ready (Docker):"
+  echo "  PostgreSQL : localhost:${POSTGRES_PORT:-5432}"
+  echo "  Redis      : localhost:${REDIS_PORT:-6379}"
+  echo "  SeaweedFS  : localhost:${S3_PORT:-9000} (S3) / localhost:${SEAWEEDFS_MASTER_PORT:-9333} (admin)"
+  echo "  Mailpit UI : localhost:${MAILPIT_UI_PORT:-8025}"
+  echo "  Mailpit SMTP: localhost:${MAILPIT_SMTP_PORT:-1025}"
+  echo "  LiteLLM    : localhost:${LITELLM_PORT:-4010}"
+  echo "  Temporal   : localhost:${TEMPORAL_GRPC_PORT:-7233}"
+  echo "  Temporal UI: localhost:${TEMPORAL_UI_PORT:-8233}"
+else
+  echo "Docker non disponible, basculement en mode natif..."
+  bash "$SCRIPT_DIR/dev-native.sh"
+fi

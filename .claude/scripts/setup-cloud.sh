@@ -56,6 +56,28 @@ if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then
   else ok "node_modules présent"; fi
 else ok "pas encore de pnpm-lock.yaml (monorepo non initialisé)"; fi
 
-# Postgres de test : pas de Docker en cloud en général → signaler
+# Docker
 command -v docker >/dev/null 2>&1 && ok "docker" || warn "docker absent : Testcontainers indisponible → tests d'intégration DB via DATABASE_URL_TEST si fourni"
+
+# Infrastructure native (PostgreSQL + Redis) en mode complet
+if [ $QUICK -eq 0 ]; then
+  # Installer pgvector si PG est présent mais pgvector non installé
+  PG_VER=""
+  for v in 18 17 16 15; do
+    [ -x "/usr/lib/postgresql/$v/bin/initdb" ] && PG_VER="$v" && break
+  done
+  if [ -n "$PG_VER" ]; then
+    PGVEC_PKG="postgresql-${PG_VER}-pgvector"
+    if ! dpkg -l "$PGVEC_PKG" 2>/dev/null | grep -q "^ii"; then
+      apt_i "$PGVEC_PKG" && ok "$PGVEC_PKG installé" || warn "$PGVEC_PKG non installé"
+    else ok "$PGVEC_PKG"; fi
+  fi
+
+  # Démarrer l'infra native si Docker daemon absent
+  if ! docker info >/dev/null 2>&1 && [ -f "$DIR/infra/scripts/dev-native.sh" ]; then
+    echo ""
+    echo "Docker daemon absent — démarrage de l'infra native (PostgreSQL + Redis)..."
+    bash "$DIR/infra/scripts/dev-native.sh"
+  fi
+fi
 exit 0

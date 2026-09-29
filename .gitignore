@@ -38,3 +38,6 @@ pnpm-debug.log*
 
 # Turborepo
 AGENTS.md
+
+# Infrastructure native (dev-native.sh)
+.local/
