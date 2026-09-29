@@ -35,3 +35,6 @@ blob-report/
 
 # pnpm
 pnpm-debug.log*
+
+# Turborepo
+AGENTS.md
