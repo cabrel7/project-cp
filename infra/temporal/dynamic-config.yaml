@@ -1,0 +1,7 @@
+# Reference de la config dynamique Temporal (dev). Appliquee via --dynamic-config-value dans le compose.
+system.forceSearchAttributesCacheRefreshOnRead:
+  - value: true
+    constraints: {}
+limit.maxIDLength:
+  - value: 255
+    constraints: {}

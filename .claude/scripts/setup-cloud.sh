@@ -56,6 +56,43 @@ if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then
   else ok "node_modules présent"; fi
 else ok "pas encore de pnpm-lock.yaml (monorepo non initialisé)"; fi
 
-# Postgres de test : pas de Docker en cloud en général → signaler
+# Docker
 command -v docker >/dev/null 2>&1 && ok "docker" || warn "docker absent : Testcontainers indisponible → tests d'intégration DB via DATABASE_URL_TEST si fourni"
+
+# Infrastructure native (PostgreSQL + Redis) en mode complet
+if [ $QUICK -eq 0 ]; then
+  # PostgreSQL 18 obligatoire (D22 — uuidv7). Installer via PGDG si absent.
+  if [ -x "/usr/lib/postgresql/18/bin/initdb" ]; then
+    ok "postgresql-18"
+  else
+    echo "PostgreSQL 18 absent — installation via PGDG (apt.postgresql.org)..."
+    CODENAME="$(. /etc/os-release 2>/dev/null && echo "$VERSION_CODENAME")"
+    if [ -n "$CODENAME" ]; then
+      mkdir -p /etc/apt/keyrings
+      curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+        | gpg --dearmor -o /etc/apt/keyrings/pgdg.gpg 2>/dev/null
+      echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt ${CODENAME}-pgdg main" \
+        > /etc/apt/sources.list.d/pgdg.list
+      APT_UPDATED=0
+      apt_i postgresql-18 postgresql-18-pgvector \
+        && ok "postgresql-18 + pgvector installés" \
+        || warn "postgresql-18 non installé (apt.postgresql.org inaccessible ?)"
+    else
+      warn "impossible de déterminer le codename Ubuntu/Debian — PG 18 non installé"
+    fi
+  fi
+  # pgvector pour PG 18
+  if [ -x "/usr/lib/postgresql/18/bin/initdb" ]; then
+    if ! dpkg -l postgresql-18-pgvector 2>/dev/null | grep -q "^ii"; then
+      apt_i postgresql-18-pgvector && ok "postgresql-18-pgvector installé" || warn "postgresql-18-pgvector non installé"
+    else ok "postgresql-18-pgvector"; fi
+  fi
+
+  # Démarrer l'infra native si Docker daemon absent
+  if ! docker info >/dev/null 2>&1 && [ -f "$DIR/infra/scripts/dev-native.sh" ]; then
+    echo ""
+    echo "Docker daemon absent — démarrage de l'infra native (PostgreSQL 18 + Redis)..."
+    bash "$DIR/infra/scripts/dev-native.sh"
+  fi
+fi
 exit 0

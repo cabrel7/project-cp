@@ -20,7 +20,7 @@
                  worker (jobs)   temporal-worker (agents)  guard (garde-fous)
                         │                │                │
    ─────────────────────┴────────────────┴────────────────┴──────────────────────
-   PostgreSQL 18 + pgvector · Redis · ClickHouse · MinIO (S3) · Infisical · LiteLLM · Temporal · Langfuse
+   PostgreSQL 18 + pgvector · Redis · ClickHouse · SeaweedFS (S3) · Infisical · LiteLLM · Temporal · Langfuse
    Observabilité : OpenTelemetry → Grafana (Prometheus, Loki, Tempo) · GlitchTip (erreurs)
 ```
 
@@ -46,7 +46,7 @@
 | **OPA (WebAssembly)** | Politiques déclaratives évaluées **dans le processus**, en quelques millisecondes | Avant chaque appel d'outil | Politiques compilées depuis la base |
 | **ClickHouse** | Analytique à grand volume | Historique long des usages, tableaux de bord, marges | Alimenté par l'outbox |
 | **Langfuse** | Traces des appels aux modèles, qualité, comparaison de prompts | Équipe interne | Reçoit les traces via OpenTelemetry |
-| **MinIO / OVH Object Storage** | Stockage objet compatible S3 | Fichiers, exports, factures PDF | Métadonnées dans `storage.files` |
+| **SeaweedFS / OVH Object Storage** | Stockage objet compatible S3 (D51). SeaweedFS en développement uniquement ; production = OVH Object Storage | Fichiers, exports, factures PDF | Métadonnées dans `storage.files` |
 | **GlitchTip** | Suivi d'erreurs gratuit, compatible SDK Sentry | API, workers, front | — |
 | **Grafana + Prometheus + Loki + Tempo** | Métriques, journaux, traces | Supervision et alertes | OpenTelemetry |
 | **Nginx** | Reverse proxy, TLS | Entrée unique | — |
@@ -129,7 +129,7 @@ Point de départ : le schéma actuel devient la **migration de base** (`0001_bas
 | Garde-fous | `@huggingface/transformers` (ONNX, CPU) | Classifieurs locaux (injection, hors sujet) |
 | Observabilité | `@opentelemetry/sdk-node`, `@hono/otel`, `pino`, `@sentry/node` (vers GlitchTip), `langfuse` | Traces, journaux, erreurs |
 | Analytique | `@clickhouse/client` | Écriture et lecture ClickHouse |
-| Fichiers | `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner` | MinIO / OVH, liens signés |
+| Fichiers | `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner` | SeaweedFS / OVH, liens signés |
 | Emails | `nodemailer` (+ gabarits HTML) | Notifications |
 | Téléphone | `libphonenumber-js` | Numéros africains, OTP |
 | Argent | `dinero.js` | Calculs monétaires sans erreurs d'arrondi |

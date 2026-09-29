@@ -1,0 +1,14 @@
+{
+  "identities": [
+    {
+      "name": "cp_admin",
+      "credentials": [
+        {
+          "accessKey": "cp_minio",
+          "secretKey": "cp_minio_dev"
+        }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}
