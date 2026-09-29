@@ -5,6 +5,7 @@ pre-commit:
       run: pnpm exec biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     squawk:
       glob: "db/migrations/*.sql"
+      exclude: "db/migrations/*_0001_baseline.sql"
       run: squawk {staged_files}
 
 commit-msg:
