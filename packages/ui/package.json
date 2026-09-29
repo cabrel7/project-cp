@@ -1,0 +1,19 @@
+{
+  "name": "@cp/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "scripts": {
+    "build": "nuxt prepare",
+    "typecheck": "nuxt typecheck",
+    "test": "vitest run --passWithNoTests",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "nuxt": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsc": "catalog:"
+  }
+}

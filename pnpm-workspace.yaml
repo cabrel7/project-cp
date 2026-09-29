@@ -1,0 +1,48 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - esbuild
+  - lefthook
+
+catalog:
+  # Core
+  typescript: "^5.8.0"
+  "@types/node": "^22.10.0"
+  # Build
+  turbo: "^2.4.0"
+  tsup: "^8.4.0"
+  tsx: "^4.19.0"
+  # Quality
+  "@biomejs/biome": "^1.9.0"
+  lefthook: "^1.9.0"
+  "@changesets/cli": "^2.27.0"
+  # Backend - Hono
+  hono: "^4.7.0"
+  "@hono/node-server": "^1.14.0"
+  "@hono/zod-openapi": "^0.18.0"
+  # Validation
+  zod: "^3.24.0"
+  # Database
+  drizzle-orm: "^0.38.0"
+  drizzle-kit: "^0.30.0"
+  postgres: "^3.4.0"
+  # Redis & Queues
+  ioredis: "^5.4.0"
+  bullmq: "^5.34.0"
+  # Logging
+  pino: "^9.6.0"
+  pino-pretty: "^13.0.0"
+  # Frontend - Nuxt
+  nuxt: "^4.0.0"
+  "@nuxt/ui": "^3.0.0"
+  "@nuxtjs/i18n": "^9.0.0"
+  pinia: "^2.3.0"
+  "@pinia/colada": "^0.14.0"
+  "@vueuse/nuxt": "^12.0.0"
+  "@tanstack/vue-table": "^8.21.0"
+  # Testing
+  vitest: "^3.0.0"
+  vue-tsc: "^3.0.0"

@@ -1,0 +1,18 @@
+pre-commit:
+  commands:
+    biome:
+      glob: "*.{ts,tsx,js,jsx,json,css}"
+      run: pnpm exec biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+    squawk:
+      glob: "db/migrations/*.sql"
+      run: squawk {staged_files}
+
+commit-msg:
+  commands:
+    conventional:
+      run: 'grep -qE "^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert)(\(.+\))?(!)?: .+|^(Merge|Revert) " {1}'
+
+pre-push:
+  commands:
+    check:
+      run: pnpm turbo run typecheck test --filter=...[origin/main]
