@@ -1,0 +1,183 @@
+# project-cp — infrastructure de DEVELOPPEMENT (jamais utilisee en production).
+# Les apps Node tournent sur l'hote (turbo dev) ; seuls les services d'appui sont ici.
+# Les valeurs par defaut ci-dessous sont des secrets de dev sans valeur : la prod passe par Infisical.
+# Usage : pnpm infra:up / infra:down / infra:reset
+name: cp-dev
+
+services:
+  postgres:
+    # PostgreSQL 18 (decision D22). Attention : depuis PG 18 l'image stocke les donnees
+    # dans /var/lib/postgresql/<version> ; on monte donc /var/lib/postgresql.
+    image: pgvector/pgvector:pg18
+    container_name: cp-postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cp_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-cp_owner}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cp_owner_dev}
+      CP_DB_PASSWORD_RW: ${CP_DB_PASSWORD_RW:-cp_rw_dev}
+      CP_DB_PASSWORD_AUTH: ${CP_DB_PASSWORD_AUTH:-cp_auth_dev}
+      CP_DB_PASSWORD_ADMIN: ${CP_DB_PASSWORD_ADMIN:-cp_admin_dev}
+      CP_DB_PASSWORD_RO: ${CP_DB_PASSWORD_RO:-cp_readonly_dev}
+    volumes:
+      - cp-pg-data:/var/lib/postgresql
+      - ./postgres/init-dev.sh:/docker-entrypoint-initdb.d/01-init-dev.sh:ro
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - cp-dev
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: cp-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    # noeviction : BullMQ exige de ne jamais perdre de cles (allkeys-lru peut supprimer des jobs).
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy noeviction
+    volumes:
+      - cp-redis-data:/data
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - cp-dev
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-10-02T17-50-41Z
+    container_name: cp-minio
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MINIO_API_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-cp_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-cp_minio_dev}
+    command: server /data --console-address ":9001"
+    volumes:
+      - cp-minio-data:/data
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - cp-dev
+
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2024-10-02T08-27-28Z
+    container_name: cp-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} &&
+      mc mb --ignore-existing local/$${S3_BUCKET} &&
+      echo 'Bucket ready.'
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-cp_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-cp_minio_dev}
+      S3_BUCKET: ${S3_BUCKET:-cp-dev}
+    restart: "no"
+    mem_limit: 128m
+    networks:
+      - cp-dev
+
+  mailpit:
+    image: axllent/mailpit:v1.21
+    container_name: cp-mailpit
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+      - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025/api/v1/info"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - cp-dev
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-v1.83.14-stable
+    container_name: cp-litellm
+    restart: unless-stopped
+    ports:
+      # 4010 cote hote : 4000 est reserve a apps/api.
+      - "127.0.0.1:${LITELLM_PORT:-4010}:4000"
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-litellm-dev-key}
+      LITELLM_LOG_LEVEL: DEBUG
+    command: ["--config", "/app/config.yaml", "--port", "4000", "--num_workers", "1"]
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health/liveliness"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - cp-dev
+
+  temporal:
+    # Serveur de dev Temporal (SQLite persistant) : l'image auto-setup ne gere pas SQLite.
+    image: temporalio/temporal:1.5.1
+    container_name: cp-temporal
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${TEMPORAL_GRPC_PORT:-7233}:7233"
+      - "127.0.0.1:${TEMPORAL_UI_PORT:-8233}:8233"
+    command:
+      - server
+      - start-dev
+      - --ip
+      - 0.0.0.0
+      - --port
+      - "7233"
+      - --ui-port
+      - "8233"
+      - --db-filename
+      - /home/temporal/temporal.db
+      - --dynamic-config-value
+      - limit.maxIDLength=255
+    volumes:
+      - cp-temporal-data:/home/temporal
+    mem_limit: 1g
+    healthcheck:
+      test: ["CMD", "temporal", "operator", "cluster", "health", "--address", "127.0.0.1:7233"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - cp-dev
+
+volumes:
+  cp-pg-data:
+  cp-redis-data:
+  cp-minio-data:
+  cp-temporal-data:
+
+networks:
+  cp-dev:
+    driver: bridge

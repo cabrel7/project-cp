@@ -1,0 +1,6 @@
+# Config LiteLLM (dev) : aucun modele pour l'instant. Les deploiements seront alignes sur ai.model_deployments.
+# Aucune cle en clair : tout passe par l'environnement (Infisical en prod).
+general_settings:
+  master_key: "os.environ/LITELLM_MASTER_KEY"
+
+model_list: []

@@ -15,7 +15,10 @@
     "dev": "turbo run dev",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "infra:up": "bash infra/scripts/dev-up.sh",
+    "infra:down": "bash infra/scripts/dev-down.sh",
+    "infra:reset": "bash infra/scripts/dev-down.sh --volumes && bash infra/scripts/dev-up.sh"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
