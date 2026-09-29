@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil mobile — profil activité</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="m-root" data-theme="{{theme}}" style="width: 390px; height: 844px;">
+<header style="display: flex; align-items: center; gap: 12px; padding: 16px 20px 8px;">
+<span class="cp-avatar" aria-label="Awa Nkeng">AN</span>
+<div style="flex: 1;"><div style="font-family: var(--font-display); font-size: 20px; line-height: 26px; font-weight: 700;">Bonjour Awa</div><div class="d-muted" style="font-size: 13px; line-height: 18px;">Boutique Awa</div></div>
+<button class="d-iconbtn" type="button" aria-label="Notifications, 2 nouvelles" style="width: 44px; height: 44px;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg><span class="d-dotbadge"></span></button>
+</header>
+<div style="flex: 1; padding: 8px 20px 16px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+<form class="d-ask" style="height: 52px;"><input type="text" placeholder="Posez une question…" aria-label="Votre question"><button class="cp-btn cp-btn-primary" type="submit" aria-label="Envoyer" style="width: 40px; padding: 0; justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg></button></form>
+<section class="cp-approval" aria-labelledby="m-app" style="max-width: none; padding: 16px; gap: 12px;">
+<div class="cp-approval-head"><span class="cp-approval-icon"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div><h2 id="m-app" style="margin: 0; font-size: 16px; line-height: 22px; font-weight: 600;">À valider</h2><span class="d-muted" style="font-size: 13px;">Expire dans 21 h</span></div></div>
+<p style="margin: 0; font-size: 15px; line-height: 22px;">L'agent <b>Relances</b> veut envoyer <b>4 e-mails</b> de rappel de paiement.</p>
+<a class="d-link" href="#">Voir les 4 e-mails</a>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;"><button class="cp-btn cp-btn-lg" type="button" style="justify-content: center;">Refuser</button><button class="cp-btn cp-btn-primary cp-btn-lg" type="button" style="justify-content: center;">Approuver</button></div>
+</section>
+<section class="cp-wallet" aria-labelledby="m-wal" style="padding: 16px; gap: 8px;">
+<div style="display: flex; justify-content: space-between; align-items: center;"><h2 id="m-wal" style="margin: 0; font-size: 14px; font-weight: 500;">Crédits disponibles</h2><a class="d-link" href="#">Recharger</a></div>
+<div class="cp-wallet-amount" style="font-size: 28px; line-height: 34px;">18 450 cr</div>
+<div class="cp-meter-track"><div class="cp-meter-fill" style="width: 62%;"></div></div>
+<span style="font-size: 13px; color: var(--ink);">Environ 1 200 questions à votre rythme actuel</span>
+</section>
+<section aria-labelledby="m-rec" style="display: flex; flex-direction: column; gap: 10px;">
+<h2 id="m-rec" style="margin: 0; font-size: 16px; font-weight: 600;">Dernières actions</h2>
+<ul class="cp-timeline">
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Rapport du lundi envoyé par <b>Point stock</b></span><span class="d-muted">8:02</span></li>
+<li><span class="cp-tl-icon cp-tl-wait"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span><span><b>Relances</b> attend votre accord</span><span class="d-muted">7:45</span></li>
+</ul>
+</section>
+</div>
+<nav class="m-tabs" aria-label="Navigation">
+<a class="m-tab" href="#" aria-current="page"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Accueil</a>
+<a class="m-tab" href="#"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>Discuter</a>
+<a class="m-tab" href="#"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>À valider<span class="d-dotbadge"></span></a>
+<a class="m-tab" href="#"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>Agents</a>
+<a class="m-tab" href="#"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>Plus</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

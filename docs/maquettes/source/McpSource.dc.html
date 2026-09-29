@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MCP Builder — choisir le système</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+<link rel="stylesheet" href="styles/builder.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="b-root" data-theme="{{theme}}" style="width: 1440px; height: 900px;">
+<header class="b-top">
+<div class="b-top-left"><a class="cp-btn cp-btn-ghost" href="#" aria-label="Quitter l'assistant (le brouillon est conservé)" style="width: 40px; padding: 0; justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a><span class="b-title">Nouvel accès IA</span></div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">1</span>Système</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">2</span>Connexion</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">3</span>Actions</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">4</span>Vérification</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">5</span>Publication</li>
+</ol>
+<div class="b-top-right"><div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div></div>
+</header>
+<div class="b-body">
+<div class="b-wrap" style="width: 900px;">
+<div class="o-head">
+<h1 class="a-h1" style="font-family: var(--font-display); font-size: 28px; line-height: 36px; font-weight: 700; margin: 0;">Quel système voulez-vous rendre accessible à l'IA ?</h1>
+<p style="margin: 0; color: var(--ink-muted);">L'IA pourra ensuite l'utiliser depuis la discussion, vos assistants automatiques, Claude ou ChatGPT.</p>
+</div>
+<div class="o-grid3">
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-accent"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span><span><b>Logiciel connu</b><br><small>Kòmerce, Google Sheets et d'autres, prêts à brancher</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg></span><span><b>Application avec documentation</b><br><small>Vous avez le lien de sa documentation d'API</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg></span><span><b>Application sans documentation</b><br><small>On vous guide pas à pas, en français</small></span></button>
+<button class="o-tile is-on" type="button" aria-pressed="true"><span class="o-ico"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg></span><span><b>Base de données</b><br><small>MySQL, PostgreSQL… en lecture seule par défaut</small></span><svg class="cp-icon o-ok" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span><span><b>Google Workspace</b><br><small>Gmail, Agenda, Drive, Sheets</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg></span><span><b>Fichiers</b><br><small>Excel, CSV, PDF</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg></span><span><b>Événements de votre logiciel</b><br><small>Il prévient la plateforme quand quelque chose arrive</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></span><span><b>Logiciel installé chez vous</b><br><small>Via un petit relais, sans ouvrir votre réseau</small></span><span class="cp-badge cp-badge-primary" style="position: absolute; top: 12px; right: 12px;">Pro</span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect><rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect><line x1="6" x2="6.01" y1="6" y2="6"></line><line x1="6" x2="6.01" y1="18" y2="18"></line></svg></span><span><b>Accès IA déjà prêt</b><br><small>Branchez un serveur MCP existant derrière nos règles</small></span><span class="cp-badge cp-badge-primary" style="position: absolute; top: 12px; right: 12px;">Pro</span></button>
+</div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="nom">Nom de cet accès</label>
+<input class="cp-input" id="nom" type="text" value="Base de la boutique">
+<span class="cp-help">Il s'affichera dans vos listes et quand Claude ou ChatGPT demanderont l'autorisation.</span>
+</div>
+</div>
+</div>
+<div class="b-bar"><div class="b-bar-in" style="width: 900px;"><a class="d-link" href="#" style="color: var(--primary); font-size: 14px; font-weight: 500; text-decoration: none;">Parcourir les accès prêts à installer</a><button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Continuer<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

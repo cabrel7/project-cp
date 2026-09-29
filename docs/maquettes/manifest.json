@@ -1,0 +1,389 @@
+[
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "01-Main.png",
+    "board": "Main.dc.html",
+    "title": "Connexion — desktop, clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "02-Inscription.png",
+    "board": "Inscription.dc.html",
+    "title": "Inscription — desktop, clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "03-DeuxEtapes.png",
+    "board": "DeuxEtapes.dc.html",
+    "title": "Vérification en deux étapes — desktop, sombre",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "04-Consentement.png",
+    "board": "Consentement.dc.html",
+    "title": "Consentement OAuth (G8) — desktop, clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "05-ConnexionMobile.png",
+    "board": "ConnexionMobile.dc.html",
+    "title": "Connexion par téléphone, erreur — mobile, sombre",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "06-CodeSms.png",
+    "board": "CodeSms.dc.html",
+    "title": "Code SMS — mobile, clair",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "07-MotDePasseOublie.png",
+    "board": "MotDePasseOublie.dc.html",
+    "title": "Mot de passe oublié — mobile, clair",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "08-NouveauMotDePasse.png",
+    "board": "NouveauMotDePasse.dc.html",
+    "title": "Nouveau mot de passe — mobile, clair",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "09-ConsentementMobile.png",
+    "board": "ConsentementMobile.dc.html",
+    "title": "Consentement OAuth (G8) — mobile, sombre",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "auth",
+    "dir": "1-authentification",
+    "file": "10-HeroSysteme.png",
+    "board": "HeroSysteme.dc.html",
+    "title": "Illustration animée de marque (composant réutilisé)",
+    "w": 424,
+    "h": 440
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "11-OnbProfil.png",
+    "board": "OnbProfil.dc.html",
+    "title": "1. Choix du profil — desktop, clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "12-OnbObjectif.png",
+    "board": "OnbObjectif.dc.html",
+    "title": "2. Objectif — profil « activité », clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "13-OnbPremierOutil.png",
+    "board": "OnbPremierOutil.dc.html",
+    "title": "3. Premier outil — profil « activité », clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "14-OnbPretMobile.png",
+    "board": "OnbPretMobile.dc.html",
+    "title": "Fin — espace prêt, mobile, clair",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "15-OnbCapacite.png",
+    "board": "OnbCapacite.dc.html",
+    "title": "2. Choisir une capacité — profil « applications », clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "16-OnbCreateur.png",
+    "board": "OnbCreateur.dc.html",
+    "title": "3. Brancher — onglet assistant de code, clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "17-OnbDev.png",
+    "board": "OnbDev.dc.html",
+    "title": "3. Brancher — onglet SDK, mode Technique, sombre",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "18-OnbEntreprise.png",
+    "board": "OnbEntreprise.dc.html",
+    "title": "2. Déployer dans l'entreprise — profil « entreprise », clair",
+    "w": 1280,
+    "h": 860
+  },
+  {
+    "page": "onb",
+    "dir": "2-onboarding",
+    "file": "19-OnbProfilMobile.png",
+    "board": "OnbProfilMobile.dc.html",
+    "title": "1. Choix du profil — mobile, sombre",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "dash",
+    "dir": "3-tableau-de-bord",
+    "file": "20-DashActivite.png",
+    "board": "DashActivite.dc.html",
+    "title": "Accueil — profil activité, mode Simple, clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "dash",
+    "dir": "3-tableau-de-bord",
+    "file": "21-DashApps.png",
+    "board": "DashApps.dc.html",
+    "title": "Accueil — profil applications, mode Technique, clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "dash",
+    "dir": "3-tableau-de-bord",
+    "file": "22-DashEntreprise.png",
+    "board": "DashEntreprise.dc.html",
+    "title": "Accueil — profil entreprise, clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "dash",
+    "dir": "3-tableau-de-bord",
+    "file": "23-DashMobile.png",
+    "board": "DashMobile.dc.html",
+    "title": "Accueil mobile — profil activité, clair",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "page": "mcp",
+    "dir": "4-mcp-builder",
+    "file": "24-McpSource.png",
+    "board": "McpSource.dc.html",
+    "title": "1. Choisir le système — clair",
+    "w": 1440,
+    "h": 900
+  },
+  {
+    "page": "mcp",
+    "dir": "4-mcp-builder",
+    "file": "25-McpConnexion.png",
+    "board": "McpConnexion.dc.html",
+    "title": "2. Connexion à une base de données — clair",
+    "w": 1440,
+    "h": 900
+  },
+  {
+    "page": "mcp",
+    "dir": "4-mcp-builder",
+    "file": "26-McpActions.png",
+    "board": "McpActions.dc.html",
+    "title": "3. Actions — mode Simple, clair",
+    "w": 1440,
+    "h": 960
+  },
+  {
+    "page": "mcp",
+    "dir": "4-mcp-builder",
+    "file": "27-McpActionsTech.png",
+    "board": "McpActionsTech.dc.html",
+    "title": "3. Outils — mode Technique, clair",
+    "w": 1440,
+    "h": 960
+  },
+  {
+    "page": "mcp",
+    "dir": "4-mcp-builder",
+    "file": "28-McpVerification.png",
+    "board": "McpVerification.dc.html",
+    "title": "4. Vérification — clair",
+    "w": 1440,
+    "h": 900
+  },
+  {
+    "page": "mcp",
+    "dir": "4-mcp-builder",
+    "file": "29-McpPublie.png",
+    "board": "McpPublie.dc.html",
+    "title": "5. Publié — clair",
+    "w": 1440,
+    "h": 900
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "30-AgentObjectif.png",
+    "board": "AgentObjectif.dc.html",
+    "title": "Agent Studio · 1. Objectif (proposition de l'IA) — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "31-AgentAcces.png",
+    "board": "AgentAcces.dc.html",
+    "title": "Agent Studio · 2. Accès — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "32-AgentRegles.png",
+    "board": "AgentRegles.dc.html",
+    "title": "Agent Studio · 3. Démarrage et règles — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "33-AgentEssai.png",
+    "board": "AgentEssai.dc.html",
+    "title": "Agent Studio · 4. Essai sans effet — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "34-AgentStudio.png",
+    "board": "AgentStudio.dc.html",
+    "title": "Agent Studio · configuration, mode Technique — sombre",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "35-AgentRun.png",
+    "board": "AgentRun.dc.html",
+    "title": "Agent Studio · exécution en attente d'accord — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "36-PromptStudio.png",
+    "board": "PromptStudio.dc.html",
+    "title": "Prompt Studio · éditeur de capacité — sombre",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "studio",
+    "dir": "5-studios",
+    "file": "37-PromptEval.png",
+    "board": "PromptEval.dc.html",
+    "title": "Prompt Studio · évaluations et production — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "admin",
+    "dir": "6-admin-ia",
+    "file": "38-AdminIA.png",
+    "board": "AdminIA.dc.html",
+    "title": "IA de la plateforme · capacités internes — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "admin",
+    "dir": "6-admin-ia",
+    "file": "39-AdminIAEdit.png",
+    "board": "AdminIAEdit.dc.html",
+    "title": "IA de la plateforme · mise en production bloquée par l'évaluation — sombre",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "admin",
+    "dir": "6-admin-ia",
+    "file": "40-AdminGardeFous.png",
+    "board": "AdminGardeFous.dc.html",
+    "title": "IA de la plateforme · garde-fous — clair",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "admin",
+    "dir": "6-admin-ia",
+    "file": "41-AdminRoutage.png",
+    "board": "AdminRoutage.dc.html",
+    "title": "Gateway et routage — sombre",
+    "w": 1440,
+    "h": 1000
+  },
+  {
+    "page": "nav",
+    "dir": "7-navigation",
+    "file": "42-NavApp.png",
+    "board": "NavApp.dc.html",
+    "title": "Barre latérale de l'application (composant)",
+    "w": 256,
+    "h": 1000
+  },
+  {
+    "page": "nav",
+    "dir": "7-navigation",
+    "file": "43-NavAdmin.png",
+    "board": "NavAdmin.dc.html",
+    "title": "Barre latérale de l'administration (composant)",
+    "w": 256,
+    "h": 1000
+  }
+]

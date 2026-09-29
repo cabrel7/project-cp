@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 1280px; height: 860px; display: grid; grid-template-columns: 520px minmax(0, 1fr);">
+<aside style="background: var(--canvas); padding: 48px; display: flex; flex-direction: column; gap: 24px;">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<div style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+<dc-import name="HeroSysteme" hint-size="424px,440px"></dc-import>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 30px; line-height: 38px; font-weight: 700; letter-spacing: -.01em;">Toute l'IA dont votre activité a besoin, au même endroit.</h2>
+<p class="a-lead">Intégrez l'IA dans vos applications, reliez vos outils et lancez des agents qui travaillent pour vous.</p>
+</div>
+</aside>
+<main style="position: relative; display: flex; align-items: center; justify-content: center; padding: 48px;">
+<div style="position: absolute; top: 32px; right: 48px;">
+<div class="cp-segmented" role="group" aria-label="Langue"><button type="button" aria-pressed="true">Français</button><button type="button" aria-pressed="false">English</button></div>
+</div>
+<form style="width: 400px; display: flex; flex-direction: column; gap: 20px;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 class="a-h1">Se connecter</h1>
+<p class="a-lead">Pas encore de compte ? <a class="a-link" href="#">Créer un compte</a></p>
+</div>
+<div class="cp-segmented a-full" role="group" aria-label="Moyen de connexion" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));"><button type="button" aria-pressed="true" style="justify-content: center;">E-mail</button><button type="button" aria-pressed="false" style="justify-content: center;">Téléphone</button></div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="email">Adresse e-mail</label>
+<input class="cp-input" id="email" type="email" autocomplete="email" value="awa@boutique-exemple.cm">
+</div>
+<div class="cp-field" style="max-width: none;">
+<div style="display: flex; justify-content: space-between; align-items: baseline;">
+<label class="cp-label" for="pw">Mot de passe</label>
+<a class="a-link" href="#" style="font-size: 14px;">Mot de passe oublié ?</a>
+</div>
+<div class="a-pw">
+<input class="cp-input" id="pw" type="password" autocomplete="current-password" value="motdepasse">
+<button class="a-eye" type="button" aria-label="Afficher le mot de passe"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+</div>
+</div>
+<label class="a-check"><input type="checkbox" checked>Rester connecté sur cet appareil</label>
+<button class="cp-btn cp-btn-primary cp-btn-lg a-full" type="submit" style="justify-content: center;">Se connecter</button>
+<div class="a-divider">ou</div>
+<button class="cp-btn cp-btn-lg a-full" type="button" style="justify-content: center; font-size: 15px;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg>Utiliser une clé d'accès</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<button class="cp-btn cp-btn-lg" type="button" style="justify-content: center; font-size: 15px;">Google</button>
+<button class="cp-btn cp-btn-lg" type="button" style="justify-content: center; font-size: 15px;">Apple</button>
+</div>
+<p class="a-caption" style="text-align: center;">En continuant, vous acceptez les <a class="a-link" href="#">conditions d'utilisation</a> et la <a class="a-link" href="#">politique de confidentialité</a>.</p>
+</form>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

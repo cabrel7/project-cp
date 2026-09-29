@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Agent Studio — 3. Démarrage et règles</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+<link rel="stylesheet" href="styles/builder.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+.ag-tile{min-height:0;padding:14px}
+.ag-rule{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.ag-rule:first-child{border-top:0;padding-top:0}
+.ag-rule b{display:block;font-size:15px;line-height:22px;font-weight:600}
+</style>
+</helmet>
+<div class="b-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<header class="b-top">
+<div class="b-top-left"><a class="cp-btn cp-btn-ghost" href="#" aria-label="Quitter (le brouillon est conservé)" style="width: 40px; padding: 0; justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a><span class="b-title">Relances impayés</span></div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Objectif</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Accès</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">3</span>Démarrage et règles</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">4</span>Essai</li>
+</ol>
+<div class="b-top-right"><span class="b-saved"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Brouillon enregistré</span><div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div></div>
+</header>
+<div class="b-body" style="padding-top: 28px;">
+<div style="width: 1100px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; align-items: start;">
+<section style="display: flex; flex-direction: column; gap: 16px;" aria-labelledby="t1">
+<div class="o-head"><h1 id="t1" style="font-family: var(--font-display); font-size: 26px; line-height: 34px; font-weight: 700; margin: 0;">Quand démarre-t-il ?</h1></div>
+<div class="o-grid2" style="gap: 10px;">
+<button class="o-tile ag-tile" type="button" aria-pressed="false"><span><b>Quand on lui parle</b><br><small>Dans la discussion</small></span></button>
+<button class="o-tile ag-tile" type="button" aria-pressed="false"><span><b>À la demande</b><br><small>Un bouton « Lancer »</small></span></button>
+<button class="o-tile ag-tile is-on" type="button" aria-pressed="true"><span><b>À heure fixe</b><br><small>Chaque jour, semaine, mois…</small></span><svg class="cp-icon o-ok" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg></button>
+<button class="o-tile ag-tile" type="button" aria-pressed="false"><span><b>Quand un logiciel le prévient</b><br><small>Nouvelle commande, paiement…</small></span><span class="cp-badge cp-badge-primary" style="position: absolute; top: 12px; right: 12px;">Pro</span></button>
+<button class="o-tile ag-tile" type="button" aria-pressed="false"><span><b>Quand un seuil est franchi</b><br><small>Stock sous 10 unités…</small></span><span class="cp-badge cp-badge-primary" style="position: absolute; top: 12px; right: 12px;">Pro</span></button>
+<button class="o-tile ag-tile" type="button" aria-pressed="false"><span><b>Après un autre événement</b><br><small>Fin d'un autre assistant…</small></span><span class="cp-badge cp-badge-primary" style="position: absolute; top: 12px; right: 12px;">Pro</span></button>
+</div>
+<div class="cp-card" style="padding: 20px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="freq">Fréquence</label><div class="cp-select-wrap"><select class="cp-input cp-select" id="freq" style="width: 100%;"><option>Chaque semaine</option><option>Chaque jour</option><option>Chaque mois</option></select></div></div>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="jour">Jour</label><div class="cp-select-wrap"><select class="cp-input cp-select" id="jour" style="width: 100%;"><option>Lundi</option><option>Mardi</option></select></div></div>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="heure">Heure</label><input class="cp-input" id="heure" type="time" value="08:00"></div>
+<p class="cp-help" style="grid-column: 1 / -1; margin: 0;">Heure de Douala · prochaine exécution : lundi 5 octobre à 8 h.</p>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 16px;" aria-labelledby="t2">
+<div class="o-head"><h2 id="t2" style="font-family: var(--font-display); font-size: 26px; line-height: 34px; font-weight: 700; margin: 0;">Ses règles</h2></div>
+<div class="cp-card" style="padding: 20px;">
+<div class="ag-rule"><span><b>Budget par exécution</b><span class="cp-help">Ce qu'il peut dépenser au maximum à chaque fois.</span></span><span style="display: flex; gap: 8px; align-items: center;"><input class="cp-input" type="text" value="500" aria-label="Budget en crédits" style="width: 90px; text-align: right;"><span class="cp-help">cr</span></span></div>
+<div class="ag-rule"><span><b>Si le budget est atteint</b></span><div class="cp-segmented" role="group" aria-label="Si le budget est atteint"><button type="button" aria-pressed="true">Arrêter</button><button type="button" aria-pressed="false">Me demander</button></div></div>
+<div class="ag-rule"><span><b>Heures autorisées</b><span class="cp-help">En dehors, il attend le créneau suivant.</span></span><span style="display: flex; gap: 8px; align-items: center;"><input class="cp-input" type="time" value="08:00" aria-label="Début" style="width: 110px;"><span class="cp-help">à</span><input class="cp-input" type="time" value="20:00" aria-label="Fin" style="width: 110px;"></span></div>
+<div class="ag-rule"><span><b>Délai pour valider</b><span class="cp-help">Sans réponse, l'action est annulée.</span></span><div class="cp-select-wrap"><select class="cp-input cp-select" aria-label="Délai" style="width: 130px;"><option>24 heures</option><option>4 heures</option><option>3 jours</option></select></div></div>
+<div class="ag-rule"><span><b>Où vous prévenir</b></span><span style="display: flex; gap: 16px; font-size: 14px;"><label style="display: flex; gap: 6px; align-items: center;"><input type="checkbox" checked style="accent-color: var(--primary);">Application</label><label style="display: flex; gap: 6px; align-items: center;"><input type="checkbox" checked style="accent-color: var(--primary);">E-mail</label><label style="display: flex; gap: 6px; align-items: center;"><input type="checkbox" style="accent-color: var(--primary);">SMS</label></span></div>
+<div class="ag-rule"><span><b>Se souvenir d'une fois sur l'autre</b><span class="cp-help">Par exemple : les clients déjà relancés. Conservé 30 jours.</span></span><label class="b-switch"><input type="checkbox" checked aria-label="Mémoire"><span></span></label></div>
+</div>
+</section>
+</div>
+</div>
+<div class="b-bar"><div class="b-bar-in"><button class="cp-btn cp-btn-lg" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour</button><button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Faire un essai<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

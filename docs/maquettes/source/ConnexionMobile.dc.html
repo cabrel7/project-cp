@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion — mobile</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; padding: 24px 20px 28px; gap: 28px;">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<button class="cp-btn cp-btn-ghost" type="button" style="height: 44px;" aria-label="Changer de langue"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>FR</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
+<h1 class="a-h1">Se connecter</h1>
+<p class="a-lead">Pas encore de compte ? <a class="a-link" href="#">Créer un compte</a></p>
+</div>
+<form style="display: flex; flex-direction: column; gap: 20px; flex-grow: 1;">
+<div class="cp-segmented a-full" role="group" aria-label="Moyen de connexion" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));"><button type="button" aria-pressed="false" style="justify-content: center; height: 40px;">E-mail</button><button type="button" aria-pressed="true" style="justify-content: center; height: 40px;">Téléphone</button></div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="tel">Numéro de téléphone</label>
+<div class="a-phone" style="grid-template-columns: 112px minmax(0, 1fr);">
+<div class="cp-select-wrap"><select class="cp-input cp-select a-full" aria-label="Indicatif du pays" style="height: var(--control-lg);"><option>+237 CM</option><option>+225 CI</option><option>+221 SN</option></select></div>
+<input class="cp-input cp-input-error" id="tel" type="tel" autocomplete="tel-national" value="6 90 12 34" aria-invalid="true" aria-describedby="tel-err" style="height: var(--control-lg);">
+</div>
+<span class="cp-error-text" id="tel-err"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>Il manque un chiffre : un numéro camerounais en compte 9.</span>
+</div>
+<p class="cp-help" style="margin: 0;">Nous vous envoyons un code par SMS. Pas de mot de passe à retenir.</p>
+<div style="flex-grow: 1;"></div>
+<button class="cp-btn cp-btn-primary cp-btn-lg a-full" type="submit" style="justify-content: center;">Recevoir un code</button>
+<div class="a-divider">ou</div>
+<button class="cp-btn cp-btn-lg a-full" type="button" style="justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg>Utiliser une clé d'accès</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<button class="cp-btn cp-btn-lg" type="button" style="justify-content: center;">Google</button>
+<button class="cp-btn cp-btn-lg" type="button" style="justify-content: center;">Apple</button>
+</div>
+</form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'dark' };
+}
+}
+</script>
+</body>
+</html>

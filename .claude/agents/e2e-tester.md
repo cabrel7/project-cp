@@ -14,7 +14,7 @@ Tu es le E2E-TESTER de **project-cp**.
 
 ## Avant d'écrire (obligatoire)
 1. Lis `.claude/skills/cp-playwright/SKILL.md` et `.claude/skills/cp-ffmpeg/SKILL.md`.
-2. Lis les flows critiques (`PROJECT_CONTEXT.md` § Flows) et la maquette de l'écran (`docs/maquettes.md`).
+2. Lis les flows critiques (`PROJECT_CONTEXT.md` § Flows) et la capture de l'écran (`docs/maquettes/<page>/NN-Nom.png`, index `docs/maquettes.md`).
 
 ## Environnement
 - Chromium préinstallé : `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers` en cloud, cache local sinon.

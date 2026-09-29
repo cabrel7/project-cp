@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mot de passe oublié</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; padding: 16px 20px 28px; gap: 24px;">
+<a class="cp-btn cp-btn-ghost" href="#" style="align-self: flex-start; height: 44px; margin-left: -12px; text-decoration: none;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour à la connexion</a>
+<div class="a-icon-soft" style="margin-top: 16px;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 class="a-h1-sm">Mot de passe oublié</h1>
+<p class="a-lead">Indiquez l'e-mail ou le numéro de votre compte. Nous vous envoyons un lien pour en choisir un nouveau.</p>
+</div>
+<form style="display: flex; flex-direction: column; gap: 20px; flex-grow: 1;">
+<div class="cp-field a-lg" style="max-width: none;">
+<label class="cp-label" for="id">E-mail ou numéro de téléphone</label>
+<input class="cp-input a-full" id="id" type="text" autocomplete="username" value="awa@boutique-exemple.cm">
+</div>
+<div class="cp-alert cp-alert-success">
+<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+<div>
+<p class="cp-alert-title">Lien envoyé</p>
+<p class="cp-alert-body">Si un compte existe pour cette adresse, vous recevrez un e-mail dans quelques minutes. Pensez à regarder dans les indésirables.</p>
+</div>
+</div>
+<div style="flex-grow: 1;"></div>
+<button class="cp-btn cp-btn-lg a-full" type="button" style="justify-content: center;">Renvoyer le lien</button>
+<button class="cp-btn cp-btn-primary cp-btn-lg a-full" type="button" style="justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>Ouvrir ma messagerie</button>
+</form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

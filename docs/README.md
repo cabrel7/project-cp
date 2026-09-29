@@ -11,7 +11,7 @@ toute modification de fond se fait d'abord ici, puis est reportée dans le proje
 | `archive/v1-*.md` | non copiés (historique, ne pas utiliser) |
 | `claude-system/v4/*` | non copiés (système global de Dylan, ne pas modifier) |
 | Design system (artefact Claude Design) | `docs/design-system/` |
-| Maquettes (canevas Claude Design) | liens dans `docs/maquettes.md` |
+| Maquettes (canevas Claude Design) | `docs/maquettes/` : 43 captures PNG + sources HTML ; index `docs/maquettes.md` |
 
 ## Ordre de lecture
 1. `reference/00-index.md` — index et règles de documentation.
@@ -29,5 +29,5 @@ toute modification de fond se fait d'abord ici, puis est reportée dans le proje
 - `reference/07-ui-ux.md` — décisions UI, navigation définitive, studios
 - `design-system/` — README (principes, couleur, typo, mouvement…), `patterns.md` (G1-G8), `contenu.md` (voix, glossaire),
   `dataviz.md`, `tokens.json` / `tokens.css`, `components/<27 composants>/README.md` + `bundle.css` (référence visuelle)
-- `maquettes.md` — liens et pages des maquettes validées
+- `maquettes.md` + `maquettes/` — les 43 écrans validés (captures PNG, sources HTML, index)
 - `reference/08-plan-construction.md` — plan de construction : phases P0 à P10, lots, critères de fin

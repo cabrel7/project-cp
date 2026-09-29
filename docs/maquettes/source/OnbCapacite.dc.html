@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — choisir une capacité (profil créateur d'apps)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root o-main" data-theme="{{theme}}" style="width: 1280px; height: 860px;">
+<header class="o-top">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Profil</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">2</span>Capacité</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">3</span>Brancher</li>
+</ol>
+<a class="cp-btn cp-btn-ghost" href="#" style="text-decoration: none;">Passer pour l'instant</a>
+</header>
+<div class="o-body" style="padding-top: 8px;">
+<div class="o-wrap" style="width: 840px; gap: 20px;">
+<div class="o-head">
+<h1 class="a-h1">Quelle capacité IA voulez-vous donner à votre app ?</h1>
+<p class="a-lead">Elle est prête à l'emploi : modèle, consignes et garde-fous sont réglés pour vous. Vous l'appelez, c'est tout.</p>
+</div>
+<div class="o-grid3">
+<button class="o-tile is-on" type="button" aria-pressed="true"><span class="o-ico"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg></span><span><b>Assistant de discussion</b><br><small>Un chat qui répond à vos utilisateurs</small></span><svg class="cp-icon o-ok" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M8 13h8"></path><path d="M8 17h5"></path></svg></span><span><b>Résumer</b><br><small>Avis, articles, conversations</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M7 8h8"></path><path d="M7 12h10"></path><path d="M7 16h6"></path></svg></span><span><b>Extraire des informations</b><br><small>Factures, CV, formulaires</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5"></circle></svg></span><span><b>Classer et trier</b><br><small>Tickets, avis, messages</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span><span><b>Chercher dans vos documents</b><br><small>Réponses tirées de vos fichiers</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"></path><path d="m4 14 6-6 2-3"></path><path d="M2 5h12"></path><path d="M7 2h1"></path><path d="m22 22-5-10-5 10"></path><path d="M14 18h6"></path></svg></span><span><b>Traduire</b><br><small>Français, anglais et plus</small></span></button>
+</div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="besoin">Ou décrivez ce que votre app doit faire</label>
+<input class="cp-input a-full" id="besoin" type="text" placeholder="Ex. : proposer trois titres accrocheurs pour chaque produit ajouté">
+<span class="cp-help">On vous proposera une capacité sur mesure, que vous pourrez essayer avant de l'utiliser.</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface);">
+<div><p class="cp-label" style="margin: 0;">Niveau de qualité</p><p class="cp-help" style="margin: 0;">Le modèle est choisi pour vous. Vous pourrez changer plus tard.</p></div>
+<div class="cp-segmented" role="group" aria-label="Niveau de qualité"><button type="button" aria-pressed="false">Rapide</button><button type="button" aria-pressed="true">Équilibré</button><button type="button" aria-pressed="false">Expert</button></div>
+</div>
+<p class="cp-help" style="margin: 0; display: flex; gap: 8px; align-items: center;"><span class="cp-badge">Bientôt</span>Images, voix et vidéo arrivent progressivement.</p>
+</div>
+</div>
+<div class="o-bar">
+<div class="o-bar-in" style="width: 840px;">
+<button class="cp-btn cp-btn-lg" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour</button>
+<button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Créer l'assistant de discussion<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

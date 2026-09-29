@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Agent Studio — 1. Objectif</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+<link rel="stylesheet" href="styles/builder.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="b-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<header class="b-top">
+<div class="b-top-left"><a class="cp-btn cp-btn-ghost" href="#" aria-label="Quitter (le brouillon est conservé)" style="width: 40px; padding: 0; justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a><span class="b-title">Nouvel assistant</span></div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">1</span>Objectif</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">2</span>Accès</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">3</span>Démarrage et règles</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">4</span>Essai</li>
+</ol>
+<div class="b-top-right"><span class="b-saved"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Brouillon enregistré</span><div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div></div>
+</header>
+<div class="b-body" style="padding-top: 28px;">
+<div class="b-wrap" style="width: 800px; gap: 20px;">
+<div class="o-head">
+<h1 style="font-family: var(--font-display); font-size: 28px; line-height: 36px; font-weight: 700; margin: 0;">Que doit faire votre assistant ?</h1>
+<p style="margin: 0; color: var(--ink-muted);">Décrivez-le en français, comme à un collègue. Nous préparons la configuration, vous ajustez.</p>
+</div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="obj">Sa mission</label>
+<textarea class="b-textarea" id="obj" style="min-height: 104px; font-size: 16px; line-height: 24px;">Chaque lundi à 8 h, repère les factures impayées depuis plus de 30 jours et prépare un e-mail de relance poli pour chaque client. Je veux valider avant l'envoi.</textarea>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;"><span class="cp-help">Exemples :</span><button class="cp-btn cp-btn-sm" type="button">Rapport des ventes chaque lundi</button><button class="cp-btn cp-btn-sm" type="button">Prévenir quand le stock est bas</button><button class="cp-btn cp-btn-sm" type="button">Trier les demandes des clients</button></div>
+<section class="cp-card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow-md);" aria-labelledby="prop-t">
+<div style="display: flex; align-items: center; gap: 12px;"><span class="cp-ai-mark"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path></svg></span><div><h2 id="prop-t" style="margin: 0; font-size: 17px; font-weight: 600; font-family: var(--font-display);">Voici ce que nous proposons</h2><p class="cp-ai-note" style="margin: 0;">Proposé par l'IA · vérifiez avant de continuer</p></div></div>
+<dl class="b-kv" style="grid-template-columns: 150px minmax(0, 1fr) auto; row-gap: 14px; align-items: start;">
+<dt>Nom</dt><dd>Relances impayés</dd><dd><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Modifier</a></dd>
+<dt>Il utilisera</dt><dd><b style="font-weight: 600;">Base de la boutique</b> : voir les commandes, voir les clients<br><b style="font-weight: 600;">Gmail</b> : envoyer un e-mail <span class="b-rule" style="margin-left: 4px;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>à valider</span></dd><dd><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Modifier</a></dd>
+<dt>Il démarre</dt><dd>Chaque lundi à 8 h (heure de Douala)</dd><dd><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Modifier</a></dd>
+<dt>Ses règles</dt><dd>Votre accord avant chaque envoi · 500 crédits maximum par exécution · uniquement entre 8 h et 20 h</dd><dd><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Modifier</a></dd>
+</dl>
+<div class="cp-alert cp-alert-info" style="padding: 12px;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg><p class="cp-alert-body" style="margin: 0;">Gmail n'est pas encore branché : nous vous le proposerons à l'étape suivante.</p></div>
+</section>
+</div>
+</div>
+<div class="b-bar"><div class="b-bar-in" style="width: 800px;"><button class="cp-btn cp-btn-lg cp-btn-ghost" type="button">Tout configurer moi-même</button><button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Utiliser cette proposition<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

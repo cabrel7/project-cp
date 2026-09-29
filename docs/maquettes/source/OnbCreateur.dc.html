@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — brancher la capacité (profil créateur d'apps)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root o-main" data-theme="{{theme}}" style="width: 1280px; height: 860px;">
+<header class="o-top">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Profil</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Capacité</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">3</span>Brancher</li>
+</ol>
+<a class="cp-btn cp-btn-ghost" href="#" style="text-decoration: none;">Passer pour l'instant</a>
+</header>
+<div class="o-body" style="padding-top: 8px;">
+<div style="width: 1040px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start;">
+<div style="display: flex; flex-direction: column; gap: 20px;">
+<div class="o-head">
+<p class="o-kicker" style="display: flex; gap: 8px; align-items: center;"><span class="cp-badge cp-badge-success"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>Prête</span></p>
+<h1 class="a-h1">Branchez l'assistant de discussion à votre app</h1>
+</div>
+<div class="cp-tabs" role="tablist" aria-label="Méthode">
+<button class="cp-tab" role="tab" aria-selected="true" type="button">Avec votre assistant de code</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Avec le SDK</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Avec l'API</button>
+</div>
+<ol class="o-steps" style="gap: 20px;">
+<li><span class="cp-step-n">1</span><div>
+<h3>Copiez votre clé</h3>
+<div class="cp-secret"><code>cp_live_Rk9x••••••••••••••••a21c</code><button class="cp-btn cp-btn-sm" type="button"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c2 0 2 .9 2 2"></path></svg>Copier</button></div>
+<p class="cp-help" style="margin: 8px 0 0;">Rangez-la dans les secrets de votre projet sous le nom <span style="font-family: var(--font-mono); color: var(--ink);">PROJECT_CP_KEY</span>, jamais dans le code de la page.</p>
+</div></li>
+<li><span class="cp-step-n">2</span><div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><h3 style="margin: 0;">Donnez ce prompt à votre assistant de code</h3><button class="cp-btn cp-btn-sm" type="button"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c2 0 2 .9 2 2"></path></svg>Copier</button></div>
+<div style="padding: 16px; border-radius: var(--radius-md); background: var(--surface-sunken); border: 1px solid var(--line); font-size: 14px; line-height: 22px;">Ajoute un <span style="background: var(--primary-soft); color: var(--primary); border-radius: 4px; padding: 0 4px;">chat d'aide en bas à droite de mon site</span>. Côté serveur, appelle la capacité « assistant-discussion » de project-cp avec la clé du secret PROJECT_CP_KEY, en suivant docs.[domaine]/capacites/assistant-discussion. Garde l'historique de chaque conversation.</div>
+<p class="cp-help" style="margin: 8px 0 0;">Modifiez la partie surlignée à votre guise.</p>
+</div></li>
+</ol>
+</div>
+<aside style="display: flex; flex-direction: column; gap: 16px; margin-top: 44px;">
+<div class="cp-card" style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+<p class="cp-label" style="margin: 0;">Assistant de discussion</p>
+<dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; line-height: 20px;">
+<dt style="color: var(--ink-muted);">Qualité</dt><dd style="margin: 0;">Équilibré</dd>
+<dt style="color: var(--ink-muted);">Garde-fous</dt><dd style="margin: 0;">Standard</dd>
+<dt style="color: var(--ink-muted);">Coût</dt><dd style="margin: 0;">Affiché à chaque appel</dd>
+</dl>
+<button class="cp-btn a-full" type="button" style="justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>L'essayer ici</button>
+</div>
+<div class="cp-alert cp-alert-tip">
+<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg>
+<div><p class="cp-alert-title">Une clé par app ou par outil</p><p class="cp-alert-body">Créez d'autres clés quand vous voulez, chacune avec ses limites. <a class="a-link" href="#">Gérer mes clés</a></p></div>
+</div>
+</aside>
+</div>
+</div>
+<div class="o-bar">
+<div class="o-bar-in" style="width: 1040px;">
+<button class="cp-btn cp-btn-lg" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour</button>
+<button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Aller au tableau de bord</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

@@ -13,7 +13,7 @@ Tu es le UX-REVIEWER de **project-cp**. Tu audites l'interface, pas la logique. 
 
 ## Avant d'auditer (obligatoire)
 1. `.claude/skills/cp-ui-ux/SKILL.md` — ta grille de référence.
-2. `docs/design-system/README.md`, `patterns.md`, `contenu.md` ; `docs/reference/07-ui-ux.md` ; `docs/maquettes.md`.
+2. `docs/design-system/README.md`, `patterns.md`, `contenu.md` ; `docs/reference/07-ui-ux.md` ; captures `docs/maquettes/` (index `docs/maquettes.md`).
 
 ## Grille d'audit
 1. **Gabarit** : l'écran suit-il un gabarit G1…G8 ? Composition conforme à la maquette ?

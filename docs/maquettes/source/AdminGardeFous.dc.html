@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin — IA de la plateforme, garde-fous</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+<link rel="stylesheet" href="styles/studio.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+.g-stage{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--surface);font-size:13px;line-height:18px;position:relative}
+.g-stage b{font-size:15px;line-height:22px}
+.g-n{font-family:var(--font-mono);font-size:12px;color:var(--ink-muted)}
+.a-tbl td,.a-tbl th{padding:10px 14px}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavAdmin" active="ia" theme="{{theme}}" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<span class="cp-badge cp-badge-danger"><span class="cp-dot"></span>Production</span>
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher un client, une organisation, un run…" aria-label="Rechercher" style="width: 380px;"></div>
+<span class="d-spacer"></span>
+<span class="d-muted" style="font-size: 13px;">Session : 6 h 02 restantes</span>
+<button class="cp-btn cp-btn-danger" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z"></path><path d="M8 12h8"></path></svg>Arrêt d'urgence</button>
+<span class="cp-avatar" aria-label="Dylan M.">DM</span>
+</header>
+<main class="d-main" style="gap: 18px; padding-top: 24px;">
+<div class="d-head">
+<div><h1 class="d-h1">IA de la plateforme</h1><p class="d-sub">Chaque requête client traverse ces 5 étapes, du contrôle le moins cher au plus cher.</p></div>
+<button class="cp-btn cp-btn-primary" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Nouveau détecteur</button>
+</div>
+<div class="cp-tabs" role="tablist" aria-label="Sections">
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Capacités internes (14)</button>
+<button class="cp-tab" role="tab" aria-selected="true" type="button">Garde-fous</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Arrêts d'urgence</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Modèles autorisés</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Coûts</button>
+</div>
+<div class="d-grid" style="grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px;">
+<div class="g-stage"><span class="g-n">1 · Entrée</span><b>6 détecteurs</b><span class="d-muted">412 blocages · p95 4 ms</span></div>
+<div class="g-stage"><span class="g-n">2 · Contexte</span><b>3 détecteurs</b><span class="d-muted">88 signalements · p95 31 ms</span></div>
+<div class="g-stage"><span class="g-n">3 · Action</span><b>6 détecteurs</b><span class="d-muted">64 approbations exigées · p95 1,1 s</span></div>
+<div class="g-stage"><span class="g-n">4 · Sortie</span><b>5 détecteurs</b><span class="d-muted">540 masquages · p95 6 ms</span></div>
+<div class="g-stage"><span class="g-n">5 · Coûts</span><b>3 détecteurs</b><span class="d-muted">180 arrêts · p95 1 ms</span></div>
+</div>
+<div class="s-layout" style="grid-template-columns: minmax(0, 1fr) 360px;">
+<section class="d-card" style="padding: 0; overflow: hidden;" aria-label="Détecteurs">
+<table class="cp-table a-tbl" style="border: 0; border-radius: 0;">
+<thead><tr><th scope="col">Détecteur</th><th scope="col">Méthode</th><th scope="col">Action</th><th scope="col" style="text-align: right;">p95</th><th scope="col" style="text-align: right;">Déclenchements 7 j</th><th scope="col" style="text-align: right;">Faux positifs</th></tr></thead>
+<tbody>
+<tr><td>Secrets dans l'entrée</td><td>Règles</td><td><span class="cp-badge cp-badge-danger">Bloquer</span></td><td class="d-num" style="text-align: right;">2 ms</td><td class="d-num" style="text-align: right;">312</td><td class="d-num" style="text-align: right;">0</td></tr>
+<tr><td>Injection et jailbreak</td><td>Modèle local</td><td><span class="cp-badge cp-badge-danger">Bloquer</span></td><td class="d-num" style="text-align: right;">28 ms</td><td class="d-num" style="text-align: right;">100</td><td class="d-num" style="text-align: right; color: var(--warning); font-weight: 600;">9</td></tr>
+<tr><td>Injection indirecte (résultats d'outils)</td><td>Modèle local</td><td><span class="cp-badge cp-badge-warning">Signaler</span></td><td class="d-num" style="text-align: right;">31 ms</td><td class="d-num" style="text-align: right;">88</td><td class="d-num" style="text-align: right;">4</td></tr>
+<tr><td>Données personnelles en sortie</td><td>Règles + modèle local</td><td><span class="cp-badge cp-badge-info">Masquer</span></td><td class="d-num" style="text-align: right;">6 ms</td><td class="d-num" style="text-align: right;">540</td><td class="d-num" style="text-align: right;">3</td></tr>
+<tr><td>Actions à risque</td><td>Juge IA (profil Strict)</td><td><span class="cp-badge cp-badge-warning">Exiger un accord</span></td><td class="d-num" style="text-align: right;">1,1 s</td><td class="d-num" style="text-align: right;">64</td><td class="d-num" style="text-align: right;">1</td></tr>
+<tr><td>Volume anormal <span class="cp-badge cp-badge-new" style="margin-left: 4px;">Nouveau</span></td><td>Statistique</td><td><span class="cp-badge">Observer</span></td><td class="d-num" style="text-align: right;">3 ms</td><td class="d-num" style="text-align: right;">71</td><td class="d-num d-muted" style="text-align: right;">—</td></tr>
+</tbody>
+</table>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line); font-size: 14px;"><span class="d-muted">6 sur 23 détecteurs</span><a class="d-link" href="#">Tous les détecteurs</a></div>
+</section>
+<aside style="display: flex; flex-direction: column; gap: 16px;">
+<section class="d-card" aria-labelledby="fp-t">
+<div class="d-card-head"><h2 class="d-card-title" id="fp-t">Faux positifs à revoir</h2><span class="cp-badge cp-badge-warning">17</span></div>
+<ul class="d-list">
+<li><span style="min-width: 0;"><span style="display: block;">« Ignore les lignes vides du fichier »</span><span class="d-muted" style="font-size: 12px;">Injection · Kofi Labs · il y a 3 h</span></span></li>
+<li><span style="min-width: 0;"><span style="display: block;">Numéro de facture pris pour un numéro de carte</span><span class="d-muted" style="font-size: 12px;">Données personnelles · Sodico · hier</span></span></li>
+</ul>
+<div style="display: flex; gap: 8px;"><button class="cp-btn cp-btn-sm" type="button">Confirmer le blocage</button><button class="cp-btn cp-btn-sm cp-btn-primary" type="button">C'est un faux positif</button></div>
+</section>
+<section class="d-card" aria-labelledby="pr-t">
+<h2 class="d-card-title" id="pr-t">Profils</h2>
+<ul class="d-list">
+<li><b style="font-weight: 600;">Standard</b><span class="d-muted d-right">défaut global</span></li>
+<li><b style="font-weight: 600;">Strict</b><span class="d-muted d-right">auto. pour les écritures</span></li>
+<li><b style="font-weight: 600;">Interne</b><span class="d-muted d-right">organisation système</span></li>
+<li><b style="font-weight: 600;">Observation</b><span class="d-muted d-right">nouveaux détecteurs</span></li>
+</ul>
+</section>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

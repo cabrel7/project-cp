@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MCP Builder — connexion à la base</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+<link rel="stylesheet" href="styles/builder.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="b-root" data-theme="{{theme}}" style="width: 1440px; height: 900px;">
+<header class="b-top">
+<div class="b-top-left"><a class="cp-btn cp-btn-ghost" href="#" aria-label="Quitter l'assistant (le brouillon est conservé)" style="width: 40px; padding: 0; justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a><span class="b-title">Base de la boutique</span></div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Système</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">2</span>Connexion</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">3</span>Actions</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">4</span>Vérification</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">5</span>Publication</li>
+</ol>
+<div class="b-top-right"><span class="b-saved"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Brouillon enregistré</span><div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div></div>
+</header>
+<div class="b-body">
+<form class="b-wrap" style="gap: 20px;">
+<div class="o-head">
+<h1 style="font-family: var(--font-display); font-size: 28px; line-height: 36px; font-weight: 700; margin: 0;">Connectez votre base de données</h1>
+<p style="margin: 0; color: var(--ink-muted);">Votre mot de passe est rangé dans un coffre chiffré. Personne ne peut le relire, pas même vous.</p>
+</div>
+<div class="cp-field" style="max-width: none;">
+<span class="cp-label">Comment la plateforme joint-elle votre base ?</span>
+<div class="cp-segmented a-full" role="group" aria-label="Accès réseau" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));"><button type="button" aria-pressed="true" style="justify-content: center;">Adresse accessible sur Internet</button><button type="button" aria-pressed="false" style="justify-content: center;">Relais installé chez vous · Pro</button></div>
+<span class="cp-help">Autorisez seulement nos adresses IP sur votre serveur : <a class="d-link" href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">voir la liste</a>.</span>
+</div>
+<div style="display: grid; grid-template-columns: 160px minmax(0, 1fr) 110px; gap: 12px;">
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="type">Type</label><div class="cp-select-wrap"><select class="cp-input cp-select" id="type" style="width: 100%;"><option>MySQL</option><option>PostgreSQL</option><option>SQL Server</option></select></div></div>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="host">Adresse du serveur</label><input class="cp-input" id="host" type="text" value="db.boutique-awa.cm"></div>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="port">Port</label><input class="cp-input" id="port" type="text" inputmode="numeric" value="3306"></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="db">Nom de la base</label><input class="cp-input" id="db" type="text" value="boutique"></div>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="user">Utilisateur</label><input class="cp-input" id="user" type="text" value="ia_lecture"></div>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="pwd">Mot de passe</label><input class="cp-input" id="pwd" type="password" value="motdepasse" autocomplete="off"></div>
+</div>
+<p class="cp-help" style="margin: -8px 0 0;">Utilisez un utilisateur <b style="color: var(--ink); font-weight: 500;">dédié à l'IA</b>. Les comptes administrateurs sont refusés.</p>
+<label class="cp-switch cp-switch-on" style="gap: 12px;"><span class="b-switch"><input type="checkbox" checked><span></span></span>Connexion chiffrée (SSL)</label>
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<div class="cp-alert cp-alert-success">
+<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+<div><p class="cp-alert-title">Connexion réussie</p><p class="cp-alert-body">24 tables trouvées. L'IA restera en lecture seule tant que vous n'autorisez pas de modification.</p></div>
+</div>
+<div class="cp-alert cp-alert-warning">
+<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+<div><p class="cp-alert-title">Cet utilisateur peut aussi modifier des données</p><p class="cp-alert-body">Ce n'est pas bloquant, mais un utilisateur en lecture seule est plus sûr. <a class="d-link" href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Comment le créer</a></p></div>
+</div>
+</div>
+</form>
+</div>
+<div class="b-bar"><div class="b-bar-in" style="width: 720px;"><button class="cp-btn cp-btn-lg" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour</button><div style="display: flex; gap: 8px;"><button class="cp-btn cp-btn-lg" type="button">Tester à nouveau</button><button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Continuer<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button></div></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

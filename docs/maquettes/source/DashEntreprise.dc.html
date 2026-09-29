@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil — profil entreprise</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavApp" active="accueil" mode="simple" theme="{{theme}}" org="Sodico Distribution" plan="Formule Business" initials="SD" pending="5" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<div class="cp-select-wrap"><select class="cp-input cp-select" aria-label="Espace de travail" style="width: 220px;"><option>Toute l'organisation</option><option>Ventes</option><option>Support</option></select></div>
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher…" aria-label="Rechercher" style="width: 300px;"></div>
+<span class="d-spacer"></span>
+<button class="d-iconbtn" type="button" aria-label="Notifications, 3 nouvelles"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg><span class="d-dotbadge"></span></button>
+<div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div>
+<span class="cp-avatar" aria-label="Estelle Biyong">EB</span>
+</header>
+<main class="d-main">
+<div class="d-head">
+<div><h1 class="d-h1">L'IA dans votre entreprise</h1><p class="d-sub">Septembre 2026 · toute l'organisation</p></div>
+<div style="display: flex; gap: 12px;"><button class="cp-btn" type="button">Exporter le rapport</button><button class="cp-btn cp-btn-primary" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>Inviter des membres</button></div>
+</div>
+<div class="d-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">Dépenses du mois</span><span class="cp-stat-value" style="color: var(--amber-text);">412 300 F</span><div class="cp-meter-track" style="height: 6px;"><div class="cp-meter-fill" style="width: 69%;"></div></div><span class="cp-stat-delta d-muted">69 % du budget de 600 000 F</span></div>
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">Membres actifs</span><span class="cp-stat-value">38 <span class="d-muted" style="font-size: 18px; font-weight: 500;">/ 45</span></span><span class="cp-stat-delta cp-up">▲ 6 ce mois-ci</span></div>
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">Tâches réalisées par l'IA</span><span class="cp-stat-value">8 940</span><span class="cp-stat-delta d-muted">dont 3 120 par 12 agents</span></div>
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">À valider</span><span class="cp-stat-value">5</span><span class="cp-stat-delta" style="color: var(--warning);">2 expirent aujourd'hui</span></div>
+</div>
+<div class="d-grid" style="grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);">
+<section class="d-card" aria-labelledby="team-t">
+<div class="d-card-head"><h2 class="d-card-title" id="team-t">Dépenses par équipe</h2><div class="d-legend"><span><i style="background: var(--chart-1);"></i>Dépensé</span><span><i style="background: var(--ink-muted); width: 2px; height: 14px; border-radius: 1px;"></i>Budget</span></div></div>
+<div style="display: flex; flex-direction: column; gap: 18px; padding: 4px 0;" role="img" aria-label="Dépenses par équipe : Ventes 148 000 sur 200 000, Support 121 500 sur 150 000, Marketing 90 000 sur 100 000, Finance 52 800 sur 150 000 francs CFA">
+<div class="d-hbar" style="grid-template-columns: 100px minmax(0, 1fr) 150px;"><span>Ventes</span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 74%;"></div><span class="d-hbar-limit" style="left: calc(100% - 2px);"></span></div><span class="d-num" style="text-align: right;">148 000 <span class="d-muted">/ 200 000</span></span></div>
+<div class="d-hbar" style="grid-template-columns: 100px minmax(0, 1fr) 150px;"><span>Support</span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 60.75%;"></div><span class="d-hbar-limit" style="left: 75%;"></span></div><span class="d-num" style="text-align: right;">121 500 <span class="d-muted">/ 150 000</span></span></div>
+<div class="d-hbar" style="grid-template-columns: 100px minmax(0, 1fr) 150px;"><span style="display: inline-flex; gap: 6px; align-items: center;">Marketing<svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-label="Budget presque atteint" style="color: var(--warning);"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 45%;"></div><span class="d-hbar-limit" style="left: 50%;"></span></div><span class="d-num" style="text-align: right;">90 000 <span class="d-muted">/ 100 000</span></span></div>
+<div class="d-hbar" style="grid-template-columns: 100px minmax(0, 1fr) 150px;"><span>Finance</span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 26.4%;"></div><span class="d-hbar-limit" style="left: 75%;"></span></div><span class="d-num" style="text-align: right;">52 800 <span class="d-muted">/ 150 000</span></span></div>
+</div>
+<p class="d-muted" style="margin: 0; font-size: 13px;">Montants en FCFA. <a class="d-link" href="#" style="font-size: 13px;">Voir les données</a></p>
+</section>
+<section class="d-card" aria-labelledby="use-t">
+<h2 class="d-card-title" id="use-t">Où va l'IA</h2>
+<div class="d-stack" role="img" aria-label="Agents 46 %, applications 31 %, discussion 23 %"><i style="width: 46%; background: var(--chart-1);"></i><i style="width: 31%; background: var(--chart-2);"></i><i style="width: 23%; background: var(--chart-3);"></i></div>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+<div style="display: flex; align-items: center; gap: 8px;"><i style="width: 10px; height: 10px; border-radius: 3px; background: var(--chart-1);"></i>Agents<span class="d-num" style="margin-left: auto; font-weight: 600;">46 %</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><i style="width: 10px; height: 10px; border-radius: 3px; background: var(--chart-2);"></i>Applications internes<span class="d-num" style="margin-left: auto; font-weight: 600;">31 %</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><i style="width: 10px; height: 10px; border-radius: 3px; background: var(--chart-3);"></i>Discussion<span class="d-num" style="margin-left: auto; font-weight: 600;">23 %</span></div>
+</div>
+<div class="cp-alert cp-alert-warning" style="padding: 12px;">
+<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+<div><p class="cp-alert-title">Budget Marketing à 90 %</p><p class="cp-alert-body">À 100 %, ses nouvelles tâches seront refusées. <a class="d-link" href="#" style="font-size: 14px;">Ajuster</a></p></div>
+</div>
+</section>
+</div>
+<div class="d-grid" style="grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);">
+<section class="d-card" aria-labelledby="appr-t" style="padding-bottom: 8px;">
+<div class="d-card-head"><h2 class="d-card-title" id="appr-t">À valider</h2><a class="d-link" href="#">Tout voir</a></div>
+<table class="cp-table" style="border: 0; box-shadow: none;">
+<thead><tr><th scope="col">Demande</th><th scope="col">Équipe</th><th scope="col">Risque</th><th scope="col">Expire</th><th scope="col"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Actions</span></th></tr></thead>
+<tbody>
+<tr><td><b style="font-weight: 600;">Relances clients</b> veut envoyer 12 e-mails</td><td>Ventes</td><td><span class="cp-risk cp-risk-medium"><span class="cp-risk-bars"><i></i><i></i><i></i></span>Moyen</span></td><td class="d-num">3 h</td><td style="text-align: right;"><button class="cp-btn cp-btn-sm" type="button">Examiner</button></td></tr>
+<tr><td><b style="font-weight: 600;">Remboursements</b> veut rembourser 35 000 F</td><td>Support</td><td><span class="cp-risk cp-risk-high"><span class="cp-risk-bars"><i></i><i></i><i></i></span>Élevé</span></td><td class="d-num">5 h</td><td style="text-align: right;"><button class="cp-btn cp-btn-sm" type="button">Examiner</button></td></tr>
+<tr><td><b style="font-weight: 600;">Rapprochement</b> veut créer 3 écritures</td><td>Finance</td><td><span class="cp-risk cp-risk-medium"><span class="cp-risk-bars"><i></i><i></i><i></i></span>Moyen</span></td><td class="d-num">19 h</td><td style="text-align: right;"><button class="cp-btn cp-btn-sm" type="button">Examiner</button></td></tr>
+</tbody>
+</table>
+</section>
+<section class="d-card" aria-labelledby="sec-t">
+<div class="d-card-head"><h2 class="d-card-title" id="sec-t">Sécurité et règles</h2><a class="d-link" href="#">Réglages</a></div>
+<ul class="d-list">
+<li><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--success);"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg><span>Actions d'écriture : garde-fous renforcés</span></li>
+<li><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--warning);"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg><span>Double authentification : <span class="d-num">36 / 38</span> membres</span><a class="d-link d-right" href="#">Relancer</a></li>
+<li><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--ink-muted);"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg><span>Connexion unique (SSO) non configurée</span><a class="d-link d-right" href="#">Configurer</a></li>
+</ul>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

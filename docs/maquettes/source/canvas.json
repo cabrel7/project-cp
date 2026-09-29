@@ -1,0 +1,507 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AdminGardeFous.dc.html": {
+      "h": 1000,
+      "page": "admin",
+      "title": "IA de la plateforme · garde-fous — clair",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "AdminIA.dc.html": {
+      "h": 1000,
+      "page": "admin",
+      "title": "IA de la plateforme · capacités internes — clair",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "AdminIAEdit.dc.html": {
+      "h": 1000,
+      "page": "admin",
+      "title": "IA de la plateforme · mise en production bloquée par l'évaluation — sombre",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "AdminRoutage.dc.html": {
+      "h": 1000,
+      "page": "admin",
+      "title": "Gateway et routage — sombre",
+      "w": 1440,
+      "x": 4560,
+      "y": 0
+    },
+    "AgentAcces.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Agent Studio · 2. Accès — clair",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "AgentEssai.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Agent Studio · 4. Essai sans effet — clair",
+      "w": 1440,
+      "x": 4560,
+      "y": 0
+    },
+    "AgentObjectif.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Agent Studio · 1. Objectif (proposition de l'IA) — clair",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "AgentRegles.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Agent Studio · 3. Démarrage et règles — clair",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "AgentRun.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Agent Studio · exécution en attente d'accord — clair",
+      "w": 1440,
+      "x": 1520,
+      "y": 1120
+    },
+    "AgentStudio.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Agent Studio · configuration, mode Technique — sombre",
+      "w": 1440,
+      "x": 0,
+      "y": 1120
+    },
+    "CodeSms.dc.html": {
+      "h": 844,
+      "page": "auth",
+      "title": "Code SMS — mobile, clair",
+      "w": 390,
+      "x": 470,
+      "y": 1000
+    },
+    "ConnexionMobile.dc.html": {
+      "h": 844,
+      "page": "auth",
+      "title": "Connexion par téléphone, erreur — mobile, sombre",
+      "w": 390,
+      "x": 0,
+      "y": 1000
+    },
+    "Consentement.dc.html": {
+      "h": 860,
+      "page": "auth",
+      "title": "Consentement OAuth (G8) — desktop, clair",
+      "w": 1280,
+      "x": 4054,
+      "y": 0
+    },
+    "ConsentementMobile.dc.html": {
+      "h": 844,
+      "page": "auth",
+      "title": "Consentement OAuth (G8) — mobile, sombre",
+      "w": 390,
+      "x": 1880,
+      "y": 1000
+    },
+    "DashActivite.dc.html": {
+      "h": 1000,
+      "page": "dash",
+      "title": "Accueil — profil activité, mode Simple, clair",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "DashApps.dc.html": {
+      "h": 1000,
+      "page": "dash",
+      "title": "Accueil — profil applications, mode Technique, sombre",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "DashEntreprise.dc.html": {
+      "h": 1000,
+      "page": "dash",
+      "title": "Accueil — profil entreprise, clair",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "DashMobile.dc.html": {
+      "h": 844,
+      "page": "dash",
+      "title": "Accueil mobile — profil activité, clair",
+      "w": 390,
+      "x": 4560,
+      "y": 0
+    },
+    "DeuxEtapes.dc.html": {
+      "h": 860,
+      "page": "auth",
+      "title": "Vérification en deux étapes — desktop, sombre",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "HeroSysteme.dc.html": {
+      "h": 440,
+      "page": "auth",
+      "title": "Illustration animée de marque (composant réutilisé)",
+      "w": 424,
+      "x": 2350,
+      "y": 1000
+    },
+    "Inscription.dc.html": {
+      "h": 860,
+      "page": "auth",
+      "title": "Inscription — desktop, clair",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 860,
+      "page": "auth",
+      "title": "Connexion — desktop, clair",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "McpActions.dc.html": {
+      "h": 960,
+      "page": "mcp",
+      "title": "3. Actions — mode Simple, clair",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "McpActionsTech.dc.html": {
+      "h": 960,
+      "page": "mcp",
+      "title": "3. Outils — mode Technique, sombre",
+      "w": 1440,
+      "x": 0,
+      "y": 1100
+    },
+    "McpConnexion.dc.html": {
+      "h": 900,
+      "page": "mcp",
+      "title": "2. Connexion à une base de données — clair",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "McpPublie.dc.html": {
+      "h": 900,
+      "page": "mcp",
+      "title": "5. Publié — clair",
+      "w": 1440,
+      "x": 3040,
+      "y": 1100
+    },
+    "McpSource.dc.html": {
+      "h": 900,
+      "page": "mcp",
+      "title": "1. Choisir le système — clair",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "McpVerification.dc.html": {
+      "h": 900,
+      "page": "mcp",
+      "title": "4. Vérification — clair",
+      "w": 1440,
+      "x": 1520,
+      "y": 1100
+    },
+    "MotDePasseOublie.dc.html": {
+      "h": 844,
+      "page": "auth",
+      "title": "Mot de passe oublié — mobile, clair",
+      "w": 390,
+      "x": 940,
+      "y": 1000
+    },
+    "NavAdmin.dc.html": {
+      "h": 1000,
+      "page": "nav",
+      "title": "Barre latérale de l'administration (composant)",
+      "w": 256,
+      "x": 336,
+      "y": 0
+    },
+    "NavApp.dc.html": {
+      "h": 1000,
+      "page": "nav",
+      "title": "Barre latérale de l'application (composant)",
+      "w": 256,
+      "x": 0,
+      "y": 0
+    },
+    "NouveauMotDePasse.dc.html": {
+      "h": 844,
+      "page": "auth",
+      "title": "Nouveau mot de passe — mobile, clair",
+      "w": 390,
+      "x": 1410,
+      "y": 1000
+    },
+    "OnbCapacite.dc.html": {
+      "h": 860,
+      "page": "onb",
+      "title": "2. Choisir une capacité — profil « applications », clair",
+      "w": 1280,
+      "x": 0,
+      "y": 1000
+    },
+    "OnbCreateur.dc.html": {
+      "h": 860,
+      "page": "onb",
+      "title": "3. Brancher — onglet assistant de code, clair",
+      "w": 1280,
+      "x": 1360,
+      "y": 1000
+    },
+    "OnbDev.dc.html": {
+      "h": 860,
+      "page": "onb",
+      "title": "3. Brancher — onglet SDK, mode Technique, sombre",
+      "w": 1280,
+      "x": 2720,
+      "y": 1000
+    },
+    "OnbEntreprise.dc.html": {
+      "h": 860,
+      "page": "onb",
+      "title": "2. Déployer dans l'entreprise — profil « entreprise », clair",
+      "w": 1280,
+      "x": 0,
+      "y": 2000
+    },
+    "OnbObjectif.dc.html": {
+      "h": 860,
+      "page": "onb",
+      "title": "2. Objectif — profil « activité », clair",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "OnbPremierOutil.dc.html": {
+      "h": 860,
+      "page": "onb",
+      "title": "3. Premier outil — profil « activité », clair",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "OnbPretMobile.dc.html": {
+      "h": 844,
+      "page": "onb",
+      "title": "Fin — espace prêt, mobile, clair",
+      "w": 390,
+      "x": 4080,
+      "y": 0
+    },
+    "OnbProfil.dc.html": {
+      "h": 860,
+      "page": "onb",
+      "title": "1. Choix du profil — desktop, clair",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "OnbProfilMobile.dc.html": {
+      "h": 844,
+      "page": "onb",
+      "title": "1. Choix du profil — mobile, sombre",
+      "w": 390,
+      "x": 4080,
+      "y": 1000
+    },
+    "PromptEval.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Prompt Studio · évaluations et production — clair",
+      "w": 1440,
+      "x": 4560,
+      "y": 1120
+    },
+    "PromptStudio.dc.html": {
+      "h": 1000,
+      "page": "studio",
+      "title": "Prompt Studio · éditeur de capacité — sombre",
+      "w": 1440,
+      "x": 3040,
+      "y": 1120
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-29T10:00:00Z",
+    "v": 1
+  },
+  "designSystems": [
+    {
+      "artifact": "https://claude.ai/artifact/UFUhXtS31JR1sGteibuaMw",
+      "copiedAt": "2026-09-29T10:00:00Z",
+      "namespace": "project-cp",
+      "title": "project-cp",
+      "version": null
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t_admin": {
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "admin",
+      "text": "6 · Admin — IA de la plateforme",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_auth": {
+      "kind": "title1",
+      "maxW": 5360,
+      "page": "auth",
+      "text": "1 · Authentification",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_dash": {
+      "kind": "title1",
+      "maxW": 4950,
+      "page": "dash",
+      "text": "3 · Tableau de bord",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_mcp": {
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "mcp",
+      "text": "4 · Assistant MCP Builder",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_nav": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "nav",
+      "text": "7 · Navigation définitive",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_onb": {
+      "kind": "title1",
+      "maxW": 4470,
+      "page": "onb",
+      "text": "2 · Onboarding par profil",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_studio": {
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "studio",
+      "text": "5 · Studios : Agent Studio et Prompt Studio",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Inscription.dc.html",
+    "DeuxEtapes.dc.html",
+    "Consentement.dc.html",
+    "ConnexionMobile.dc.html",
+    "CodeSms.dc.html",
+    "MotDePasseOublie.dc.html",
+    "NouveauMotDePasse.dc.html",
+    "ConsentementMobile.dc.html",
+    "HeroSysteme.dc.html",
+    "OnbProfil.dc.html",
+    "OnbObjectif.dc.html",
+    "OnbPremierOutil.dc.html",
+    "OnbPretMobile.dc.html",
+    "OnbCapacite.dc.html",
+    "OnbCreateur.dc.html",
+    "OnbDev.dc.html",
+    "OnbEntreprise.dc.html",
+    "OnbProfilMobile.dc.html",
+    "DashActivite.dc.html",
+    "DashApps.dc.html",
+    "DashEntreprise.dc.html",
+    "DashMobile.dc.html",
+    "McpSource.dc.html",
+    "McpConnexion.dc.html",
+    "McpActions.dc.html",
+    "McpActionsTech.dc.html",
+    "McpVerification.dc.html",
+    "McpPublie.dc.html",
+    "AgentObjectif.dc.html",
+    "AgentAcces.dc.html",
+    "AgentRegles.dc.html",
+    "AgentEssai.dc.html",
+    "AgentStudio.dc.html",
+    "AgentRun.dc.html",
+    "PromptStudio.dc.html",
+    "PromptEval.dc.html",
+    "AdminIA.dc.html",
+    "AdminIAEdit.dc.html",
+    "AdminGardeFous.dc.html",
+    "AdminRoutage.dc.html",
+    "NavApp.dc.html",
+    "NavAdmin.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "auth",
+      "name": "1 · Authentification"
+    },
+    {
+      "id": "onb",
+      "name": "2 · Onboarding par profil"
+    },
+    {
+      "id": "dash",
+      "name": "3 · Tableau de bord"
+    },
+    {
+      "id": "mcp",
+      "name": "4 · Assistant MCP Builder"
+    },
+    {
+      "id": "studio",
+      "name": "5 · Studios (agents, capacités)"
+    },
+    {
+      "id": "admin",
+      "name": "6 · Admin — IA de la plateforme"
+    },
+    {
+      "id": "nav",
+      "name": "7 · Navigation"
+    }
+  ],
+  "title": "project-cp — Maquettes de validation"
+}

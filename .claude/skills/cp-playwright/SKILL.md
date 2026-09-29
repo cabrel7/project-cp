@@ -19,7 +19,7 @@ apps/web/e2e/
   pages/            # Page Objects (1 par écran) : LoginPage, OnboardingPage, McpBuilderPage, AgentStudioPage, ApprovalsPage…
   fixtures.ts       # test.extend : org isolée par test (API de seed de test), utilisateur connecté (storageState), mode Simple/Technique
   specs/            # *.spec.ts par parcours
-  __screens__/      # références visuelles (baseline) ; reference/ = exports des maquettes validées
+  __screens__/      # baselines Playwright (générées) — les maquettes validées sont dans docs/maquettes/<page>/*.png
 ```
 
 ## Sélecteurs
@@ -37,7 +37,7 @@ await expect(page).toHaveScreenshot('assistants-liste.png', {
   mask: [page.getByTestId('relative-time'), page.getByTestId('credit-balance')],
 })
 ```
-Chaque écran clé : clair + sombre + mobile. Comparer aussi à la maquette validée (`docs/maquettes.md`) lors de la première implémentation :
+Chaque écran clé : clair + sombre + mobile. Comparer aussi à la capture validée (`docs/maquettes/<page>/NN-Nom.png`, index `docs/maquettes.md`) lors de la première implémentation :
 écart de composition = signalé (pas de baseline « acceptée » qui fige un écart).
 Illustrations animées (auth, onboarding) : `animations: 'disabled'` + test séparé `prefers-reduced-motion` (`page.emulateMedia({ reducedMotion: 'reduce' })`).
 

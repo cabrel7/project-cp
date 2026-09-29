@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MCP Builder — accès publié</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+<link rel="stylesheet" href="styles/builder.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="b-root" data-theme="{{theme}}" style="width: 1440px; height: 900px;">
+<header class="b-top">
+<div class="b-top-left"><a class="cp-btn cp-btn-ghost" href="#" aria-label="Fermer" style="width: 40px; padding: 0; justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a><span class="b-title">Base de la boutique</span></div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Système</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Connexion</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Actions</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Vérification</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Publication</li>
+</ol>
+<div class="b-top-right"><div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div></div>
+</header>
+<div class="b-body" style="padding-top: 40px;">
+<div class="b-wrap" style="width: 860px; gap: 24px;">
+<div style="display: flex; gap: 20px; align-items: flex-start;">
+<span style="width: 56px; height: 56px; border-radius: var(--radius-lg); background: var(--success-soft); color: var(--success); display: grid; place-items: center; flex-shrink: 0;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true" style="width: 28px; height: 28px;"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg></span>
+<div class="o-head"><h1 style="font-family: var(--font-display); font-size: 28px; line-height: 36px; font-weight: 700; margin: 0;">Votre boutique est accessible à l'IA</h1><p style="margin: 0; color: var(--ink-muted);">L'IA peut maintenant consulter vos commandes et votre stock. Choisissez où l'utiliser.</p></div>
+</div>
+<div class="o-grid2" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+<div class="o-tile" style="min-height: 0; cursor: default;"><span class="o-ico"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg></span><span><b>Ici, dans la discussion</b><br><small>Posez une question sur votre boutique</small></span><button class="cp-btn cp-btn-primary" type="button">Essayer maintenant</button></div>
+<div class="o-tile" style="min-height: 0; cursor: default;"><span class="o-ico o-ico-accent"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg></span><span><b>Avec un assistant automatique</b><br><small>Par exemple : relancer les commandes en attente</small></span><button class="cp-btn" type="button">Créer un assistant</button></div>
+<div class="o-tile" style="min-height: 0; cursor: default;"><span class="o-ico o-ico-plain" aria-hidden="true" style="font-family: var(--font-display); font-weight: 700;">C</span><span><b>Dans Claude</b><br><small>Ajoutez l'adresse comme connecteur, puis autorisez</small></span><button class="cp-btn" type="button"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c2 0 2 .9 2 2"></path></svg>Copier l'adresse</button></div>
+<div class="o-tile" style="min-height: 0; cursor: default;"><span class="o-ico o-ico-plain" aria-hidden="true" style="font-family: var(--font-display); font-weight: 700;">G</span><span><b>Dans ChatGPT</b><br><small>Même adresse, même autorisation sécurisée</small></span><button class="cp-btn" type="button"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c2 0 2 .9 2 2"></path></svg>Copier l'adresse</button></div>
+</div>
+<div class="cp-secret" style="font-size: 14px;"><code>https://mcp.[domaine]/boutique-awa/base-boutique</code><button class="cp-btn cp-btn-sm" type="button">Copier</button></div>
+<p class="cp-help" style="margin: 0;">Autre outil (Cursor, Claude Desktop…) : <a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">créer un jeton d'accès</a>. Version 1 en ligne · vous pouvez revenir en arrière à tout moment.</p>
+</div>
+</div>
+<div class="b-bar"><div class="b-bar-in" style="width: 860px;"><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none; font-size: 14px;">Voir la fiche de cet accès</a><button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Terminer</button></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

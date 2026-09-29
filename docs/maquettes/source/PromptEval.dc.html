@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prompt Studio — évaluations et mises en production</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+<link rel="stylesheet" href="styles/builder.css">
+<link rel="stylesheet" href="styles/studio.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+.e-best{font-weight:600;color:var(--success)}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavApp" active="fonctions" mode="technique" theme="{{theme}}" org="Kofi Labs" plan="Formule Pro" initials="KL" pending="0" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<div class="cp-select-wrap"><select class="cp-input cp-select" aria-label="Environnement" style="width: 160px;"><option>Production</option><option>Test</option></select></div>
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher…" aria-label="Rechercher" style="width: 300px;"></div>
+<span class="d-spacer"></span>
+<a class="cp-chip" href="#" style="text-decoration: none;">142 700 cr</a>
+<div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="false">Simple</button><button type="button" aria-pressed="true">Technique</button></div>
+<span class="cp-avatar" aria-label="Kofi Mensah">KM</span>
+</header>
+<main class="d-main" style="gap: 18px; padding-top: 24px;">
+<div class="d-head">
+<div>
+<p class="s-crumbs"><a href="#">Capacités</a><span aria-hidden="true">›</span><span class="d-mono">extraire-facture</span></p>
+<div class="s-title"><h1 class="d-h1" style="font-family: var(--font-mono); font-size: 24px; font-weight: 500;">extraire-facture</h1><span class="cp-badge cp-badge-success">v3 · 90 %</span><span class="cp-badge cp-badge-info">v4 · test A/B 10 %</span></div>
+</div>
+<div class="s-actions"><button class="cp-btn cp-btn-primary" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>Évaluer la v5</button></div>
+</div>
+<div class="cp-tabs" role="tablist" aria-label="Sections de la capacité">
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Éditeur</button>
+<button class="cp-tab" role="tab" aria-selected="true" type="button">Évaluations</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Mises en production</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Utilisation</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Réglages</button>
+</div>
+<div class="s-layout" style="grid-template-columns: minmax(0, 1fr) 380px;">
+<div style="display: flex; flex-direction: column; gap: 18px;">
+<section class="d-card" aria-labelledby="ds-t" style="padding-bottom: 8px;">
+<div class="d-card-head"><h2 class="d-card-title" id="ds-t">Jeu d'évaluation « Factures réelles » · 120 cas</h2><a class="d-link" href="#">Gérer les cas</a></div>
+<table class="cp-table" style="border: 0; box-shadow: none;">
+<thead><tr><th scope="col">Critère</th><th scope="col" style="text-align: right;">v3 · production</th><th scope="col" style="text-align: right;">v4 · A/B</th><th scope="col" style="text-align: right;">v5 · brouillon</th></tr></thead>
+<tbody>
+<tr><td>Exactitude des champs</td><td class="d-num" style="text-align: right;">94,2 %</td><td class="d-num" style="text-align: right;">96,8 %</td><td class="d-num" style="text-align: right;"><span class="d-muted">à évaluer</span></td></tr>
+<tr><td>JSON conforme au schéma</td><td class="d-num" style="text-align: right;">100 %</td><td class="d-num" style="text-align: right;">100 %</td><td class="d-num" style="text-align: right;"><span class="d-muted">—</span></td></tr>
+<tr><td>Champs inventés (doit être 0)</td><td class="d-num" style="text-align: right;">2</td><td class="d-num e-best" style="text-align: right;">0</td><td class="d-num" style="text-align: right;"><span class="d-muted">—</span></td></tr>
+<tr><td>Coût moyen</td><td class="d-num" style="text-align: right;">2,1 cr</td><td class="d-num e-best" style="text-align: right;">1,8 cr</td><td class="d-num" style="text-align: right;"><span class="d-muted">—</span></td></tr>
+<tr><td>Latence p95</td><td class="d-num" style="text-align: right;">2,6 s</td><td class="d-num e-best" style="text-align: right;">2,2 s</td><td class="d-num" style="text-align: right;"><span class="d-muted">—</span></td></tr>
+<tr><td><b style="font-weight: 600;">Score global</b></td><td class="d-num" style="text-align: right;">93,1</td><td class="d-num e-best" style="text-align: right;">96,4</td><td class="d-num" style="text-align: right;"><span class="d-muted">—</span></td></tr>
+</tbody>
+</table>
+</section>
+<section class="d-card" aria-labelledby="cmp-t">
+<div class="d-card-head"><h2 class="d-card-title" id="cmp-t">Score global par version</h2><a class="d-link" href="#">Voir les données</a></div>
+<div style="display: flex; flex-direction: column; gap: 14px;" role="img" aria-label="Score global : v1 86,0 ; v2 90,4 ; v3 93,1 ; v4 96,4 ; seuil de mise en production 95">
+<div class="d-hbar" style="grid-template-columns: 110px minmax(0, 1fr) 60px;"><span class="d-mono">v4</span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 96.4%;"></div><span class="d-hbar-limit" style="left: 95%;"></span></div><span class="d-num" style="text-align: right;">96,4</span></div>
+<div class="d-hbar" style="grid-template-columns: 110px minmax(0, 1fr) 60px;"><span class="d-mono">v3</span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 93.1%;"></div><span class="d-hbar-limit" style="left: 95%;"></span></div><span class="d-num" style="text-align: right;">93,1</span></div>
+<div class="d-hbar" style="grid-template-columns: 110px minmax(0, 1fr) 60px;"><span class="d-mono">v2</span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 90.4%;"></div><span class="d-hbar-limit" style="left: 95%;"></span></div><span class="d-num" style="text-align: right;">90,4</span></div>
+<div class="d-hbar" style="grid-template-columns: 110px minmax(0, 1fr) 60px;"><span class="d-mono">v1</span><div class="d-hbar-track"><div class="d-hbar-fill" style="width: 86%;"></div><span class="d-hbar-limit" style="left: 95%;"></span></div><span class="d-num" style="text-align: right;">86,0</span></div>
+</div>
+<p class="cp-help" style="margin: 0;">Trait vertical : seuil de mise en production (95). Échelle de 0 à 100.</p>
+</section>
+</div>
+<aside style="display: flex; flex-direction: column; gap: 16px;">
+<section class="d-card" aria-labelledby="rel-t">
+<h2 class="d-card-title" id="rel-t">Production</h2>
+<div class="d-stack" role="img" aria-label="Trafic : v3 90 %, v4 10 %"><i style="width: 90%; background: var(--chart-1);"></i><i style="width: 10%; background: var(--chart-2);"></i></div>
+<div class="d-legend"><span><i style="background: var(--chart-1);"></i>v3 · 90 %</span><span><i style="background: var(--chart-2);"></i>v4 · 10 %</span></div>
+<div class="cp-alert cp-alert-success" style="padding: 12px;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg><div><p class="cp-alert-title">La v4 fait mieux sur 4 critères sur 5</p><p class="cp-alert-body">4 180 appels réels en test A/B, aucun incident.</p></div></div>
+<button class="cp-btn cp-btn-primary" type="button" style="justify-content: center;">Passer la v4 à 100 %</button>
+<button class="cp-btn" type="button" style="justify-content: center;">Revenir à la v3 seule</button>
+</section>
+<section class="d-card" aria-labelledby="gate-t">
+<h2 class="d-card-title" id="gate-t">Règle de mise en production</h2>
+<dl class="b-kv"><dt>Seuil d'évaluation</dt><dd>95 sur 100</dd><dt>Champs inventés</dt><dd>0 toléré</dd><dt>Test A/B</dt><dd>10 % pendant 3 jours minimum</dd></dl>
+<p class="cp-help" style="margin: 0;">La v5 devra être évaluée avant tout déploiement.</p>
+</section>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil — profil activité</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavApp" active="accueil" mode="simple" theme="{{theme}}" org="Boutique Awa" plan="Formule Starter" initials="BA" pending="1" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher…" aria-label="Rechercher" style="width: 320px;"></div>
+<span class="d-spacer"></span>
+<a class="cp-chip" href="#" style="text-decoration: none;"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M18.09 10.37A6 6 0 1 1 10.34 18"></path><path d="M7 6h1v4"></path><path d="m16.71 13.88.7.71-2.82 2.82"></path></svg>18 450 cr</a>
+<button class="d-iconbtn" type="button" aria-label="Notifications, 2 nouvelles"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg><span class="d-dotbadge"></span></button>
+<div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div>
+<span class="cp-avatar" aria-label="Awa Nkeng">AN</span>
+</header>
+<main class="d-main">
+<div class="d-head">
+<div><h1 class="d-h1">Bonjour Awa</h1><p class="d-sub">Voici ce qui s'est passé depuis hier.</p></div>
+<button class="cp-btn cp-btn-primary cp-btn-lg" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>Créer un agent</button>
+</div>
+<div class="d-grid" style="grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);">
+<section class="d-card" aria-labelledby="ask-t">
+<h2 class="d-card-title" id="ask-t">Posez une question sur votre activité</h2>
+<form class="d-ask"><input type="text" placeholder="Ex. : quels produits se vendent le mieux ce mois-ci ?" aria-label="Votre question"><button class="cp-btn cp-btn-primary" type="submit"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>Demander</button></form>
+<div class="d-sugg"><button type="button">Ventes de la semaine</button><button type="button">Produits presque épuisés</button><button type="button">Clients qui n'ont pas payé</button></div>
+<p class="d-muted" style="margin: 0; font-size: 13px;">Réponses tirées de Google Sheets et Kòmerce.</p>
+</section>
+<section class="cp-wallet" aria-labelledby="wal-t" style="justify-content: space-between;">
+<div style="display: flex; justify-content: space-between; align-items: center;"><h2 id="wal-t" style="margin: 0; font-size: 14px; font-weight: 500; color: var(--ink);">Crédits disponibles</h2><a class="d-link" href="#">Historique</a></div>
+<div><div class="cp-wallet-amount">18 450 cr</div><p style="margin: 0; font-size: 14px; color: var(--ink);">Environ 1 200 questions à votre rythme actuel</p></div>
+<div class="cp-meter"><div class="cp-meter-track"><div class="cp-meter-fill" style="width: 62%;"></div></div><div class="cp-meter-head"><span class="d-muted">62 % du mois restant</span><span class="d-num">renouvellement le 1er oct.</span></div></div>
+<button class="cp-btn" type="button" style="align-self: flex-start;">Recharger</button>
+</section>
+</div>
+<div class="d-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+<section class="d-card" aria-labelledby="app-t" style="border-color: var(--line); box-shadow: var(--shadow-md);">
+<div class="d-card-head"><h2 class="d-card-title" id="app-t"><span class="cp-approval-icon" style="width: 32px; height: 32px;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>À valider</h2><span class="cp-badge cp-badge-warning">Expire dans 21 h</span></div>
+<p style="margin: 0; font-size: 15px; line-height: 22px;">L'agent <b>Relances</b> veut envoyer <b>4 e-mails</b> de rappel à des clients en retard de paiement.</p>
+<ul class="cp-approval-list"><li>Mballa SARL · 125 000 FCFA</li><li>Épicerie Ngo · 48 500 FCFA</li><li>+ 2 autres clients</li></ul>
+<div style="display: flex; gap: 8px;"><button class="cp-btn" type="button">Voir et modifier</button><span style="flex: 1;"></span><button class="cp-btn" type="button">Refuser</button><button class="cp-btn cp-btn-primary" type="button">Approuver</button></div>
+</section>
+<section class="d-card" aria-labelledby="act-t">
+<div class="d-card-head"><h2 class="d-card-title" id="act-t">Activité, 7 derniers jours</h2><a class="d-link" href="#">Voir les données</a></div>
+<div class="d-chart">
+<svg viewBox="0 0 320 164" width="100%" height="164" role="img" aria-label="Questions et tâches par jour : lundi 38, mardi 52, mercredi 45, jeudi 61, vendredi 74, samedi 29, dimanche 12">
+<line class="d-gridline" x1="36" x2="320" y1="10" y2="10"></line>
+<line class="d-gridline" x1="36" x2="320" y1="75" y2="75"></line>
+<line class="d-gridline" x1="36" x2="320" y1="140" y2="140"></line>
+<text class="d-axis" x="28" y="14" text-anchor="end">80</text>
+<text class="d-axis" x="28" y="79" text-anchor="end">40</text>
+<text class="d-axis" x="28" y="144" text-anchor="end">0</text>
+<path d="M47 140 V82.2 Q47 78.2 51 78.2 H69 Q73 78.2 73 82.2 V140 Z" style="fill: var(--chart-1)"></path>
+<path d="M87 140 V59.5 Q87 55.5 91 55.5 H109 Q113 55.5 113 59.5 V140 Z" style="fill: var(--chart-1)"></path>
+<path d="M127 140 V70.9 Q127 66.9 131 66.9 H149 Q153 66.9 153 70.9 V140 Z" style="fill: var(--chart-1)"></path>
+<path d="M167 140 V44.9 Q167 40.9 171 40.9 H189 Q193 40.9 193 44.9 V140 Z" style="fill: var(--chart-1)"></path>
+<path d="M207 140 V23.8 Q207 19.8 211 19.8 H229 Q233 19.8 233 23.8 V140 Z" style="fill: var(--chart-1)"></path>
+<path d="M247 140 V96.9 Q247 92.9 251 92.9 H269 Q273 92.9 273 96.9 V140 Z" style="fill: var(--chart-1)"></path>
+<path d="M287 140 V124.5 Q287 120.5 291 120.5 H309 Q313 120.5 313 124.5 V140 Z" style="fill: var(--chart-1)"></path>
+<text class="d-val" x="220" y="14" text-anchor="middle">74</text>
+<text class="d-axis" x="60" y="158" text-anchor="middle">L</text><text class="d-axis" x="100" y="158" text-anchor="middle">M</text><text class="d-axis" x="140" y="158" text-anchor="middle">M</text><text class="d-axis" x="180" y="158" text-anchor="middle">J</text><text class="d-axis" x="220" y="158" text-anchor="middle">V</text><text class="d-axis" x="260" y="158" text-anchor="middle">S</text><text class="d-axis" x="300" y="158" text-anchor="middle">D</text>
+</svg>
+<div class="d-tip" style="left: 30px; top: -6px;"><b class="d-num">61</b> questions et tâches<br><span class="d-muted">Jeudi 25 septembre</span></div>
+</div>
+<p style="margin: 0; font-size: 14px;"><span class="d-num" style="font-weight: 600;">311</span> <span class="d-muted">cette semaine · +18 % par rapport à la précédente</span></p>
+</section>
+<section class="d-card" aria-labelledby="start-t">
+<div class="d-card-head"><h2 class="d-card-title" id="start-t">Pour bien démarrer</h2><span class="d-muted d-num" style="font-size: 14px;">2 sur 4</span></div>
+<div class="cp-meter-track" style="height: 6px;"><div class="cp-meter-fill cp-meter-fill-primary" style="width: 50%;"></div></div>
+<ul class="d-check">
+<li><span class="d-tick d-tick-on"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span class="d-done">Brancher un premier outil</span></li>
+<li><span class="d-tick d-tick-on"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span class="d-done">Poser une première question</span></li>
+<li><span class="d-tick"></span><span>Créer un agent qui travaille pour vous</span><a class="d-link" href="#" style="margin-left: auto;">Commencer</a></li>
+<li><span class="d-tick"></span><span>Utiliser vos outils depuis Claude ou ChatGPT</span></li>
+</ul>
+</section>
+</div>
+<div class="d-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+<section class="d-card" aria-labelledby="tools-t">
+<div class="d-card-head"><h2 class="d-card-title" id="tools-t">Mes outils</h2><a class="d-link" href="#">Brancher un outil</a></div>
+<ul class="d-list">
+<li><span class="d-ico"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="3" x2="21" y1="15" y2="15"></line><line x1="9" x2="9" y1="9" y2="21"></line><line x1="15" x2="15" y1="9" y2="21"></line></svg></span><span><b style="font-weight: 600;">Google Sheets</b><br><span class="d-muted">Ventes 2026, Stock</span></span><span class="cp-badge cp-badge-success d-right"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>Connecté</span></li>
+<li><span class="d-ico d-ico-accent"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span><span><b style="font-weight: 600;">Kòmerce</b><br><span class="d-muted">Caisse et commandes</span></span><span class="cp-badge cp-badge-warning d-right"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>À reconnecter</span></li>
+</ul>
+</section>
+<section class="d-card" aria-labelledby="rec-t">
+<div class="d-card-head"><h2 class="d-card-title" id="rec-t">Dernières actions</h2><a class="d-link" href="#">Tout voir</a></div>
+<ul class="cp-timeline">
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>L'agent <b>Point stock</b> vous a envoyé le rapport du lundi</span><span class="d-muted">8:02</span></li>
+<li><span class="cp-tl-icon cp-tl-wait"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span><span>L'agent <b>Relances</b> attend votre accord</span><span class="d-muted">7:45</span></li>
+<li><span class="cp-tl-icon"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg></span><span>Vous avez demandé « ventes d'hier par produit »</span><span class="d-muted">Hier</span></li>
+</ul>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

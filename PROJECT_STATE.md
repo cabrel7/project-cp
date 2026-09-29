@@ -1,5 +1,5 @@
 # STATE — project-cp
-Updated: 2026-09-29 22:00 | Session: préparation (aucun code applicatif)
+Updated: 2026-09-29 22:55 | Session: préparation (aucun code applicatif)
 
 ## ✅ Done
 - Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D50, UI/UX).
@@ -8,6 +8,8 @@ Updated: 2026-09-29 22:00 | Session: préparation (aucun code applicatif)
 - Maquettes de validation (7 pages) : authentification, onboarding, tableau de bord, MCP Builder, studios, admin IA, navigation.
 - Kit Claude Code propre au projet : `.claude/` (10 agents, 18 skills `cp-*`, 3 hooks, 5 commandes).
 - Plan de construction `docs/reference/08-plan-construction.md` (D50, 🟡 à valider).
+- Maquettes dans le dépôt : `docs/maquettes/` (43 captures + sources HTML) ; profil mobile corrigé (3 profils).
+- Profils d'onboarding alignés sur D41 : prompt `system.onboarding.copilot` + contrainte `ux.onboarding_progress.profile` (`activity`, `builder`, `enterprise`) ; 21 tests OK.
 
 ## 🔄 Active
 - Validation du plan 08 (D50) par Dylan.

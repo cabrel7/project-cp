@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Agent Studio — 4. Essai</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+<link rel="stylesheet" href="styles/builder.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+.ag-tl li{grid-template-columns:24px minmax(0,1fr) 90px}
+.ag-tl .ag-meta{color:var(--ink-muted);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div class="b-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<header class="b-top">
+<div class="b-top-left"><a class="cp-btn cp-btn-ghost" href="#" aria-label="Quitter (le brouillon est conservé)" style="width: 40px; padding: 0; justify-content: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a><span class="b-title">Relances impayés</span></div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Objectif</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Accès</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Démarrage et règles</li><li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">4</span>Essai</li>
+</ol>
+<div class="b-top-right"><span class="b-saved"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Brouillon enregistré</span><div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div></div>
+</header>
+<div class="b-body" style="padding-top: 28px;">
+<div class="b-wide" style="grid-template-columns: minmax(0, 1fr) 340px;">
+<div style="display: flex; flex-direction: column; gap: 18px;">
+<div class="o-head">
+<h1 style="font-family: var(--font-display); font-size: 28px; line-height: 36px; font-weight: 700; margin: 0;">Faisons un essai</h1>
+<p style="margin: 0; color: var(--ink-muted);">L'assistant travaille sur vos vraies données, mais rien n'est envoyé ni modifié.</p>
+</div>
+<section class="cp-card" style="padding: 20px;" aria-labelledby="run-t">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;"><h2 id="run-t" style="margin: 0; font-size: 16px; font-weight: 600;">Ce qu'il a fait</h2><span class="cp-badge cp-badge-info"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>Essai sans effet</span></div>
+<ol class="cp-timeline ag-tl">
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Démarrage comme un lundi à 8 h</span><span class="ag-meta">0 s</span></li>
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A lu les commandes : <b>4 factures</b> impayées depuis plus de 30 jours</span><span class="ag-meta">1,2 s · 0,5 cr</span></li>
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A retrouvé les clients concernés</span><span class="ag-meta">0,8 s · 0,5 cr</span></li>
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A rédigé 4 e-mails de relance</span><span class="ag-meta">9,4 s · 4,1 cr</span></li>
+<li><span class="cp-tl-icon cp-tl-wait"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg></span><span>Vous aurait demandé votre accord pour l'envoi</span><span class="ag-meta">—</span></li>
+</ol>
+</section>
+<section class="cp-approval" style="max-width: none;" aria-labelledby="mail-t">
+<div class="cp-approval-head"><span class="cp-approval-icon"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span><div><h2 id="mail-t" style="margin: 0; font-size: 16px; font-weight: 600;">Aperçu d'un e-mail · 1 sur 4</h2><span class="cp-help">À : comptabilite@mballa-sarl.cm</span></div></div>
+<div style="padding: 14px 16px; border-radius: var(--radius-md); background: var(--surface-sunken); font-size: 14px; line-height: 22px;"><b>Objet : Rappel — facture F-2026-0412 (125 000 FCFA)</b><br>Bonjour, sauf erreur de notre part, la facture F-2026-0412 du 12 août reste à régler. Pourriez-vous nous indiquer la date de paiement prévue ? Merci d'avance, l'équipe Boutique Awa.</div>
+<p class="cp-ai-note" style="margin: 0;">Rédigé par l'IA</p>
+</section>
+</div>
+<aside class="b-side" style="margin-top: 76px;">
+<section class="cp-card" style="padding: 20px; display: flex; flex-direction: column; gap: 12px;" aria-labelledby="bil-t">
+<h2 id="bil-t" style="margin: 0; font-size: 16px; font-weight: 600; display: flex; gap: 8px; align-items: center;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--success);"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>Essai réussi</h2>
+<dl class="b-kv"><dt>Durée</dt><dd>11,4 s</dd><dt>Coût estimé</dt><dd>7,1 cr par exécution<br><span class="cp-help">dont 2 cr de fonctionnement</span></dd><dt>Par mois</dt><dd>environ 31 cr</dd><dt>Qualité</dt><dd>Équilibré</dd></dl>
+<p class="cp-help" style="margin: 0;">L'essai n'a rien coûté.</p>
+</section>
+<button class="cp-btn cp-btn-lg" type="button" style="justify-content: center;">Refaire un essai</button>
+<p class="cp-help" style="margin: 0;">Pas satisfait du ton ? Dites-le simplement : « plus court », « plus ferme »…</p>
+</aside>
+</div>
+</div>
+<div class="b-bar"><div class="b-bar-in"><button class="cp-btn cp-btn-lg" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour</button><button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Activer l'assistant</button></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

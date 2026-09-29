@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin — IA de la plateforme, capacités internes</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+<link rel="stylesheet" href="styles/studio.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+.a-tbl td,.a-tbl th{padding:10px 14px}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavAdmin" active="ia" theme="{{theme}}" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<span class="cp-badge cp-badge-danger"><span class="cp-dot"></span>Production</span>
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher un client, une organisation, un run…" aria-label="Rechercher" style="width: 380px;"></div>
+<span class="d-spacer"></span>
+<span class="d-muted" style="font-size: 13px;">Session : 6 h 12 restantes</span>
+<button class="cp-btn cp-btn-danger" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z"></path><path d="M8 12h8"></path></svg>Arrêt d'urgence</button>
+<span class="cp-avatar" aria-label="Dylan M.">DM</span>
+</header>
+<main class="d-main" style="gap: 18px; padding-top: 24px;">
+<div class="d-head">
+<div><h1 class="d-h1">IA de la plateforme</h1><p class="d-sub">Nos propres fonctions IA : mêmes outils que les clients, évaluation obligatoire avant production.</p></div>
+<button class="cp-btn cp-btn-primary" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Nouvelle capacité interne</button>
+</div>
+<div class="cp-tabs" role="tablist" aria-label="Sections">
+<button class="cp-tab" role="tab" aria-selected="true" type="button">Capacités internes (14)</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Garde-fous</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Arrêts d'urgence</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Modèles autorisés</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Coûts</button>
+</div>
+<div class="d-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">Coût de l'IA interne, septembre</span><span class="cp-stat-value" style="color: var(--amber-text);">184 200 cr</span><span class="cp-stat-delta d-muted">46 % du budget de 400 000 cr</span></div>
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">Appels internes, 7 jours</span><span class="cp-stat-value">212 400</span><span class="cp-stat-delta cp-up">▲ 9 %</span></div>
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">Blocages des garde-fous, 7 jours</span><span class="cp-stat-value">1 284</span><span class="cp-stat-delta d-muted">0,6 % des requêtes clients</span></div>
+<div class="cp-stat" style="min-width: 0;"><span class="cp-stat-label">Faux positifs à revoir</span><span class="cp-stat-value">17</span><span class="cp-stat-delta" style="color: var(--warning);">5 depuis plus de 48 h</span></div>
+</div>
+<section class="d-card" style="padding: 0; overflow: hidden;" aria-label="Capacités internes">
+<table class="cp-table a-tbl" style="border: 0; border-radius: 0;">
+<thead><tr><th scope="col">Capacité</th><th scope="col">Rôle</th><th scope="col">Profil</th><th scope="col">En production</th><th scope="col" style="text-align: right;">Dernière éval.</th><th scope="col" style="text-align: right;">Coût, septembre</th><th scope="col">État</th></tr></thead>
+<tbody>
+<tr><td class="d-mono">system.chat.workspace_assistant</td><td>Assistant du workspace</td><td>Smart</td><td>v1 · 100 %</td><td class="d-num" style="text-align: right;">91,3</td><td class="d-num" style="text-align: right;">52 600 cr</td><td><span class="cp-badge cp-badge-success"><span class="cp-dot"></span>Production</span></td></tr>
+<tr><td class="d-mono">system.mcp.semantize</td><td>API → outils MCP avec risques</td><td>Max</td><td>v1 · 100 %</td><td class="d-num" style="text-align: right;">92,1</td><td class="d-num" style="text-align: right;">41 200 cr</td><td><span class="cp-badge cp-badge-success"><span class="cp-dot"></span>Production</span></td></tr>
+<tr><td class="d-mono">system.guard.judge</td><td>Juge des actions à risque</td><td>Smart</td><td>v3 · 90 % · v4 · 10 %</td><td class="d-num" style="text-align: right;">97,2</td><td class="d-num" style="text-align: right;">38 700 cr</td><td><span class="cp-badge cp-badge-info"><span class="cp-dot"></span>Test A/B</span></td></tr>
+<tr><td class="d-mono">system.agent.config_from_nl</td><td>« Décris ton agent » → configuration</td><td>Smart</td><td>v2 · 100 %</td><td class="d-num" style="text-align: right;">94,8</td><td class="d-num" style="text-align: right;">18 400 cr</td><td><span class="cp-badge cp-badge-warning"><span class="cp-dot"></span>v3 bloquée (éval.)</span></td></tr>
+<tr><td class="d-mono">system.mcp.sql_templates</td><td>Schéma → requêtes sûres</td><td>Max</td><td>v1 · 100 %</td><td class="d-num" style="text-align: right;">95,6</td><td class="d-num" style="text-align: right;">12 900 cr</td><td><span class="cp-badge cp-badge-success"><span class="cp-dot"></span>Production</span></td></tr>
+<tr><td class="d-mono">system.agent.approval_summary</td><td>Résumé d'une action à valider</td><td>Flash</td><td>v2 · 100 %</td><td class="d-num" style="text-align: right;">96,0</td><td class="d-num" style="text-align: right;">4 100 cr</td><td><span class="cp-badge cp-badge-success"><span class="cp-dot"></span>Production</span></td></tr>
+<tr><td class="d-mono">system.run.explain_error</td><td>Erreurs expliquées simplement</td><td>Flash</td><td class="d-muted">—</td><td class="d-num d-muted" style="text-align: right;">—</td><td class="d-num d-muted" style="text-align: right;">0 cr</td><td><span class="cp-badge"><span class="cp-dot"></span>Brouillon · éval. requise</span></td></tr>
+<tr><td class="d-mono">system.support.triage</td><td>Tri des tickets de support</td><td>Flash</td><td>v1 · 0 %</td><td class="d-num" style="text-align: right;">93,4</td><td class="d-num" style="text-align: right;">2 300 cr</td><td><span class="cp-badge cp-badge-danger"><span class="cp-dot"></span>Arrêtée d'urgence</span></td></tr>
+</tbody>
+</table>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line); font-size: 14px;"><span class="d-muted">8 sur 14 · triées par coût</span><a class="d-link" href="#">Voir les 6 autres</a></div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

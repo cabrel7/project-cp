@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Agent Studio — configuration (mode Technique)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+<link rel="stylesheet" href="styles/builder.css">
+<link rel="stylesheet" href="styles/studio.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavApp" active="agents" mode="technique" theme="{{theme}}" org="Kofi Labs" plan="Formule Pro" initials="KL" pending="2" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<div class="cp-select-wrap"><select class="cp-input cp-select" aria-label="Environnement" style="width: 160px;"><option>Production</option><option>Test</option></select></div>
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher…" aria-label="Rechercher" style="width: 300px;"></div>
+<span class="d-spacer"></span>
+<a class="cp-chip" href="#" style="text-decoration: none;">142 700 cr</a>
+<div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="false">Simple</button><button type="button" aria-pressed="true">Technique</button></div>
+<span class="cp-avatar" aria-label="Kofi Mensah">KM</span>
+</header>
+<main class="d-main" style="gap: 20px;">
+<div class="d-head">
+<div>
+<p class="s-crumbs"><a href="#">Agents</a><span aria-hidden="true">›</span><span>Relances impayés</span></p>
+<div class="s-title"><h1 class="d-h1">Relances impayés</h1><span class="cp-badge cp-badge-success"><span class="cp-dot"></span>Actif</span><span class="cp-badge">v3 en production</span><span class="cp-badge cp-badge-warning">v4 brouillon</span></div>
+</div>
+<div class="s-actions"><button class="cp-btn" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="14" y="4" width="4" height="16" rx="1"></rect><rect x="6" y="4" width="4" height="16" rx="1"></rect></svg>Mettre en pause</button><button class="cp-btn" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>Lancer maintenant</button><button class="cp-btn cp-btn-primary" type="button">Publier la v4</button></div>
+</div>
+<div class="cp-tabs" role="tablist" aria-label="Sections de l'agent">
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Vue d'ensemble</button>
+<button class="cp-tab" role="tab" aria-selected="true" type="button">Configuration</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Accès (4)</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Déclencheurs (1)</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Exécutions</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Mémoire</button>
+<button class="cp-tab" role="tab" aria-selected="false" type="button">Versions</button>
+</div>
+<div class="s-layout" style="grid-template-columns: minmax(0, 1fr) 320px;">
+<div style="display: flex; flex-direction: column; gap: 20px;">
+<section class="s-section" aria-labelledby="c1">
+<h2 class="s-section-title" id="c1">Objectif et instructions</h2>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="ins">Instructions (contexte, ton, règles métier)</label><textarea class="b-textarea" id="ins" style="min-height: 72px;">Relance polie, vouvoiement, jamais de menace. Ne relance pas un client relancé il y a moins de 7 jours (voir mémoire). Mentionne toujours le numéro de facture et le montant en FCFA.</textarea></div>
+</section>
+<section class="s-section" aria-labelledby="c2">
+<h2 class="s-section-title" id="c2">Modèle</h2>
+<div class="s-form" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+<div class="cp-field"><label class="cp-label" for="prof">Profil</label><div class="cp-select-wrap"><select class="cp-input cp-select" id="prof"><option>Smart</option><option>Flash</option><option>Max</option></select></div></div>
+<div class="cp-field"><label class="cp-label" for="mod">Modèle fixé</label><div class="cp-select-wrap"><select class="cp-input cp-select" id="mod"><option>Aucun (routage)</option></select></div></div>
+<div class="cp-field"><label class="cp-label" for="fb">Si le modèle fixé est indisponible</label><div class="cp-select-wrap"><select class="cp-input cp-select" id="fb" disabled><option>Basculer vers le profil</option><option>Échouer</option></select></div></div>
+<div class="cp-field"><label class="cp-label" for="temp">Température</label><input class="cp-input" id="temp" type="text" value="0,3"></div>
+<div class="cp-field"><label class="cp-label" for="tok">Tokens max par appel</label><input class="cp-input" id="tok" type="text" value="2 000"></div>
+<div class="cp-field"><label class="cp-label" for="out">Sortie</label><div class="cp-select-wrap"><select class="cp-input cp-select" id="out"><option>Action</option><option>Texte</option><option>JSON (schéma requis)</option></select></div></div>
+</div>
+</section>
+<section class="s-section" aria-labelledby="c3">
+<h2 class="s-section-title" id="c3">Limites d'exécution</h2>
+<div class="s-form" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+<div class="cp-field"><label class="cp-label" for="it">Itérations max</label><input class="cp-input" id="it" type="text" value="10"></div>
+<div class="cp-field"><label class="cp-label" for="du">Durée max</label><input class="cp-input" id="du" type="text" value="300 s"></div>
+<div class="cp-field"><label class="cp-label" for="to">Délai par outil</label><input class="cp-input" id="to" type="text" value="30 s"></div>
+<div class="cp-field"><label class="cp-label" for="pr">Profondeur max</label><input class="cp-input" id="pr" type="text" value="5"></div>
+</div>
+</section>
+<section class="s-section" aria-labelledby="c4">
+<h2 class="s-section-title" id="c4">Actions sur lui-même</h2>
+<div class="cp-card" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
+<div class="s-toggle"><span><b>Déclencher d'autres agents</b><span class="cp-help">Désactivé par défaut</span></span><label class="b-switch"><input type="checkbox" aria-label="Déclencher d'autres agents"><span></span></label></div>
+<div class="s-toggle"><span><b>Modifier d'autres agents</b><span class="cp-help">Désactivé par défaut</span></span><label class="b-switch"><input type="checkbox" aria-label="Modifier d'autres agents"><span></span></label></div>
+<div class="s-toggle"><span><b>S'appeler lui-même en boucle, lire le coffre, contourner une approbation</b><span class="cp-help">Toujours interdit</span></span><span class="b-lock"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Verrouillé</span></div>
+</div>
+</section>
+</div>
+<aside style="display: flex; flex-direction: column; gap: 16px;">
+<section class="d-card" aria-labelledby="v4-t">
+<h2 class="d-card-title" id="v4-t">Changements de la v4</h2>
+<pre class="s-diff"><span class="s-del">temperature: 0.5</span><span class="s-add">temperature: 0.3</span><span class="s-add">+ règle « 7 jours sans relance »</span></pre>
+<div style="display: flex; gap: 8px;"><button class="cp-btn cp-btn-sm" type="button">Tester la v4</button><button class="cp-btn cp-btn-sm cp-btn-ghost" type="button">Comparer</button></div>
+</section>
+<section class="d-card" aria-labelledby="ex-t">
+<div class="d-card-head"><h2 class="d-card-title" id="ex-t">Exécutions récentes</h2><a class="d-link" href="#">Toutes</a></div>
+<ul class="d-list">
+<li><span class="cp-badge cp-badge-warning">Approbation</span><span class="d-mono">run_7f3a…</span><span class="d-muted d-right d-num">7,1 cr</span></li>
+<li><span class="cp-badge cp-badge-success">Réussie</span><span class="d-mono">run_62c1…</span><span class="d-muted d-right d-num">6,8 cr</span></li>
+<li><span class="cp-badge cp-badge-success">Réussie</span><span class="d-mono">run_5a90…</span><span class="d-muted d-right d-num">7,4 cr</span></li>
+</ul>
+</section>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"dark"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'dark' };
+}
+}
+</script>
+</body>
+</html>

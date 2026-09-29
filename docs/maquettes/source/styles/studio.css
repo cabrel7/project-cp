@@ -1,0 +1,27 @@
+/* Studios (Agent Studio, Prompt Studio) dans la coquille d'application — gabarit G2 Détail / G7 Éditeur. */
+.s-crumbs { font-size: 13px; line-height: 18px; color: var(--ink-muted); margin: 0 0 4px; display: flex; gap: 6px; align-items: center; }
+.s-crumbs a { color: var(--ink-muted); text-decoration: none; }
+.s-title { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.s-actions { display: flex; gap: var(--space-2); align-items: center; }
+.s-layout { display: grid; gap: var(--space-6); align-items: start; min-height: 0; }
+.s-section { display: flex; flex-direction: column; gap: var(--space-4); }
+.s-section-title { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--ink-muted); text-transform: uppercase; }
+.s-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-5); }
+.s-form .cp-field { max-width: none; }
+.s-form .cp-input, .s-form select { width: 100%; }
+.s-toggle { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; font-size: 14px; line-height: 20px; }
+.s-toggle b { display: block; font-weight: 500; }
+.s-versions { list-style: none; margin: 0; padding: var(--space-2); display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.s-versions a { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 2px var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); color: var(--ink); text-decoration: none; font-size: 13px; line-height: 18px; }
+.s-versions a[aria-current="true"] { background: var(--primary-soft); }
+.s-versions b { font-family: var(--font-mono); font-weight: 500; grid-row: 1 / 3; align-self: center; }
+.s-versions .cp-badge { justify-self: start; }
+.s-editor { font-family: var(--font-mono); font-size: 13px; line-height: 20px; width: 100%; min-height: 150px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); resize: vertical; }
+.s-var { display: inline-flex; align-items: center; height: 24px; padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--primary-soft); color: var(--primary); font-family: var(--font-mono); font-size: 12px; }
+.s-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-4); margin: 0; font-size: 13px; line-height: 18px; }
+.s-metrics dt { color: var(--ink-muted); }
+.s-metrics dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+.s-diff { margin: 0; padding: var(--space-3) 0; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); font-family: var(--font-mono); font-size: 12px; line-height: 20px; overflow: hidden; }
+.s-diff span { display: block; padding: 0 var(--space-4); white-space: pre-wrap; }
+.s-add { background: var(--success-soft); }
+.s-del { background: var(--danger-soft); text-decoration: line-through; text-decoration-color: var(--danger); }

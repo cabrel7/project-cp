@@ -21,7 +21,7 @@
 
 **Code SQL** (`schema/`) : `project-cp-schema.sql` (structure), `project-cp-seed-reference.sql` et `project-cp-seed-ai-system.sql` (données initiales), `project-cp-tests.sql` (21 tests).
 
-**Dépôt GitHub** `cabrel7/project-cp` : miroir de travail des agents — `docs/reference/` (ces documents), `db/schema-v1.2/` (le SQL, découpé par domaine), `docs/design-system/`, kit Claude Code dans `.claude/`. Correspondance détaillée : `docs/README.md` du dépôt.
+**Dépôt GitHub** `cabrel7/project-cp` : miroir de travail des agents — `docs/reference/` (ces documents), `db/schema-v1.2/` (le SQL, découpé par domaine), `docs/design-system/`, `docs/maquettes/` (43 captures PNG et sources HTML des maquettes validées), kit Claude Code dans `.claude/`. Correspondance détaillée : `docs/README.md` du dépôt.
 
 **Archives** (`archive/`) : documents v1 issus de la première conversation. **Obsolètes, ne pas utiliser pour construire** ; conservés uniquement pour l'historique. Tout ce qui y reste utile a été repris dans les documents 01 à 05.
 

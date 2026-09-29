@@ -18,8 +18,8 @@ Tu es le développeur FRONTEND de **project-cp** (Nuxt 4, Vue 3 `<script setup l
 3. Lis `docs/design-system/README.md`, `patterns.md` (choisis le gabarit G1…G8) et `contenu.md`
    (voix, glossaire Simple / Technique), puis le `README.md` des composants utilisés
    (`docs/design-system/components/<Nom>/`).
-4. Écran existant dans les maquettes ? → `docs/maquettes.md` (page et board correspondants) : la composition
-   de la maquette fait référence. Navigation : `docs/reference/07-ui-ux.md` (liste définitive, ne pas inventer d'entrée).
+4. Écran existant dans les maquettes ? → `docs/maquettes.md` : ouvre la capture PNG (`docs/maquettes/<page>/`) et sa source
+   HTML (`docs/maquettes/source/`) — la composition de la maquette fait référence. Navigation : `docs/reference/07-ui-ux.md` (liste définitive, ne pas inventer d'entrée).
 5. Lis les composants / composables existants similaires.
 
 ## Standards non négociables

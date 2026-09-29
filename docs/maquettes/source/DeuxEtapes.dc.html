@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Vérification en deux étapes</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 1280px; height: 860px; display: flex; flex-direction: column;">
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 32px 48px;">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<div class="cp-segmented" role="group" aria-label="Langue"><button type="button" aria-pressed="true">Français</button><button type="button" aria-pressed="false">English</button></div>
+</header>
+<main style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 80px;">
+<form class="cp-card" style="width: 460px; padding: 40px; display: flex; flex-direction: column; gap: 24px;">
+<div class="a-icon-soft"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 class="a-h1-sm">Vérification en deux étapes</h1>
+<p class="a-lead">Saisissez le code à 6 chiffres affiché dans votre application d'authentification.</p>
+</div>
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+<legend class="cp-label" style="margin-bottom: 8px;">Code de vérification</legend>
+<div class="a-otp">
+<input inputmode="numeric" maxlength="1" value="4" aria-label="Chiffre 1">
+<input inputmode="numeric" maxlength="1" value="8" aria-label="Chiffre 2">
+<input inputmode="numeric" maxlength="1" value="1" aria-label="Chiffre 3">
+<span class="a-otp-gap"></span>
+<input class="a-otp-on" inputmode="numeric" maxlength="1" value="" aria-label="Chiffre 4">
+<input inputmode="numeric" maxlength="1" value="" aria-label="Chiffre 5">
+<input inputmode="numeric" maxlength="1" value="" aria-label="Chiffre 6">
+</div>
+</fieldset>
+<label class="a-check"><input type="checkbox">Ne plus demander sur cet appareil pendant 30 jours</label>
+<button class="cp-btn cp-btn-primary cp-btn-lg a-full" type="submit" style="justify-content: center;">Vérifier</button>
+<div style="display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--line); padding-top: 16px;">
+<span class="cp-help">Pas accès à votre application ?</span>
+<div style="display: flex; gap: 8px; margin-left: -12px;">
+<button class="cp-btn cp-btn-ghost" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg>Utiliser ma clé d'accès</button>
+<button class="cp-btn cp-btn-ghost" type="button">Utiliser un code de secours</button>
+</div>
+</div>
+</form>
+</main>
+<footer style="text-align: center; padding-bottom: 32px;"><a class="a-link" href="#" style="display: inline-flex; gap: 8px; align-items: center; font-size: 14px;"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour à la connexion</a></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"dark"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'dark' };
+}
+}
+</script>
+</body>
+</html>

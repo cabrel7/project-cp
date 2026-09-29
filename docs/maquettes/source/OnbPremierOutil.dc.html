@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — premier outil (profil activité)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root o-main" data-theme="{{theme}}" style="width: 1280px; height: 860px;">
+<header class="o-top">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Profil</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Objectif</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">3</span>Premier pas</li>
+</ol>
+<a class="cp-btn cp-btn-ghost" href="#" style="text-decoration: none;">Passer pour l'instant</a>
+</header>
+<div class="o-body">
+<div class="o-wrap">
+<div class="o-head">
+<h1 class="a-h1">Branchez votre premier outil</h1>
+<p class="a-lead">C'est là que l'IA ira chercher vos réponses. Choisissez celui que vous utilisez le plus.</p>
+</div>
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input a-full" type="search" placeholder="Rechercher un logiciel…" aria-label="Rechercher un logiciel" style="width: 100%;"></div>
+<div class="o-grid3">
+<button class="o-tile is-on" type="button" aria-pressed="true"><span class="o-ico"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="3" x2="21" y1="15" y2="15"></line><line x1="9" x2="9" y1="9" y2="21"></line><line x1="15" x2="15" y1="9" y2="21"></line></svg></span><span><b>Google Sheets</b><br><small>Vos tableaux en ligne</small></span><svg class="cp-icon o-ok" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-accent"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span><span><b>Kòmerce</b><br><small>Caisse, stock et ventes</small></span><span class="cp-badge cp-badge-new">Nouveau</span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg></span><span><b>Fichier Excel ou CSV</b><br><small>Importez un fichier</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span><span><b>Un autre logiciel</b><br><small>On vous guide pas à pas</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg></span><span><b>Base de données</b><br><small>Avec l'aide de votre technicien</small></span></button>
+<button class="o-tile" type="button" aria-pressed="false"><span class="o-ico o-ico-plain"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span><span><b>Google Workspace</b><br><small>Gmail, Agenda, Drive</small></span></button>
+</div>
+<div class="cp-alert cp-alert-tip">
+<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+<div><p class="cp-alert-title">En lecture seule au départ</p><p class="cp-alert-body">L'IA peut consulter vos données, pas les modifier. Vous décidez plus tard de ce qu'elle a le droit de faire.</p></div>
+</div>
+</div>
+</div>
+<div class="o-bar">
+<div class="o-bar-in">
+<button class="cp-btn cp-btn-lg cp-btn-ghost" type="button">Je le ferai plus tard</button>
+<button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Brancher Google Sheets<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

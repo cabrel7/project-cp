@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Agent Studio — exécution en attente d'accord</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+<link rel="stylesheet" href="styles/builder.css">
+<link rel="stylesheet" href="styles/studio.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+.r-tl li{grid-template-columns:24px minmax(0,1fr) 110px}
+.r-tl .r-meta{color:var(--ink-muted);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+.r-mail{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--line);font-size:14px;line-height:20px}
+.r-mail:first-child{border-top:0;padding-top:0}
+.r-mail input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--primary)}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavApp" active="agents" mode="simple" theme="{{theme}}" org="Boutique Awa" plan="Formule Starter" initials="BA" pending="1" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher…" aria-label="Rechercher" style="width: 320px;"></div>
+<span class="d-spacer"></span>
+<a class="cp-chip" href="#" style="text-decoration: none;">18 450 cr</a>
+<div class="cp-segmented" role="group" aria-label="Mode d'affichage"><button type="button" aria-pressed="true">Simple</button><button type="button" aria-pressed="false">Technique</button></div>
+<span class="cp-avatar" aria-label="Awa Nkeng">AN</span>
+</header>
+<main class="d-main" style="gap: 20px;">
+<div class="d-head">
+<div>
+<p class="s-crumbs"><a href="#">Assistants</a><span aria-hidden="true">›</span><a href="#">Relances impayés</a><span aria-hidden="true">›</span><span>Lundi 29 septembre, 8:00</span></p>
+<div class="s-title"><h1 class="d-h1">Exécution du lundi</h1><span class="cp-badge cp-badge-warning"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>Attend votre accord</span></div>
+</div>
+<div class="s-actions"><button class="cp-btn" type="button">Arrêter</button></div>
+</div>
+<div class="s-layout" style="grid-template-columns: minmax(0, 1fr) 320px;">
+<div style="display: flex; flex-direction: column; gap: 20px;">
+<section class="cp-approval" style="max-width: none;" aria-labelledby="ap-t">
+<div class="cp-approval-head"><span class="cp-approval-icon"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div><h2 id="ap-t" style="margin: 0; font-size: 17px; font-weight: 600;">L'assistant veut envoyer 4 e-mails de relance</h2><span class="cp-help">Total dû : 246 500 FCFA · expire dans 21 h</span></div></div>
+<div>
+<label class="r-mail"><input type="checkbox" checked><span><b>Mballa SARL</b> · facture F-2026-0412<br><span class="cp-help">« Rappel — facture F-2026-0412 (125 000 FCFA) »</span></span><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Lire et modifier</a></label>
+<label class="r-mail"><input type="checkbox" checked><span><b>Épicerie Ngo</b> · facture F-2026-0398<br><span class="cp-help">« Rappel — facture F-2026-0398 (48 500 FCFA) »</span></span><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Lire et modifier</a></label>
+<label class="r-mail"><input type="checkbox" checked><span><b>Tchinda Distribution</b> · facture F-2026-0377<br><span class="cp-help">« Rappel — facture F-2026-0377 (51 000 FCFA) »</span></span><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Lire et modifier</a></label>
+<label class="r-mail"><input type="checkbox"><span><b>Hôtel Le Wouri</b> · facture F-2026-0369<br><span class="cp-help">Décoché : un accord de paiement est en cours</span></span><a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">Lire et modifier</a></label>
+</div>
+<div style="display: flex; gap: 8px; align-items: center;"><span class="cp-help">3 e-mails sur 4 seront envoyés.</span><span style="flex: 1;"></span><button class="cp-btn" type="button">Tout refuser</button><button class="cp-btn cp-btn-primary" type="button">Approuver et envoyer 3 e-mails</button></div>
+</section>
+<section class="cp-card" style="padding: 20px;" aria-labelledby="tl-t">
+<h2 id="tl-t" style="margin: 0 0 16px; font-size: 16px; font-weight: 600;">Déroulement</h2>
+<ol class="cp-timeline r-tl">
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Démarré par le planning du lundi</span><span class="r-meta">8:00:00</span></li>
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A lu les commandes : 4 factures impayées depuis plus de 30 jours</span><span class="r-meta">8:00:01 · 0,5 cr</span></li>
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A vérifié sa mémoire : aucun de ces clients relancé cette semaine</span><span class="r-meta">8:00:02</span></li>
+<li><span class="cp-tl-icon cp-tl-ok"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A rédigé 4 e-mails</span><span class="r-meta">8:00:12 · 4,1 cr</span></li>
+<li><span class="cp-tl-icon cp-tl-wait"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span><span>Attend votre accord (vous avez été prévenue par e-mail)</span><span class="r-meta">depuis 8:00:12</span></li>
+</ol>
+</section>
+</div>
+<aside style="display: flex; flex-direction: column; gap: 16px;">
+<section class="d-card" aria-labelledby="det-t">
+<h2 class="d-card-title" id="det-t">Détails</h2>
+<dl class="b-kv"><dt>Déclencheur</dt><dd>Chaque lundi, 8 h</dd><dt>Version</dt><dd>v3</dd><dt>Qualité</dt><dd>Équilibré</dd><dt>Coût à ce stade</dt><dd>6,6 cr</dd><dt>Budget</dt><dd>500 cr par exécution</dd></dl>
+<div class="cp-meter"><div class="cp-meter-track" style="height: 6px;"><div class="cp-meter-fill" style="width: 2%;"></div></div></div>
+</section>
+<section class="d-card" aria-labelledby="act-t">
+<h2 class="d-card-title" id="act-t">Actions</h2>
+<button class="cp-btn" type="button" style="justify-content: center;">Relancer cette exécution</button>
+<button class="cp-btn cp-btn-ghost" type="button" style="justify-content: center;">Voir le détail technique</button>
+</section>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — espace prêt, mobile</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 390px; height: 844px; display: flex; flex-direction: column;">
+<div style="height: 300px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+<div style="transform: scale(.66); transform-origin: center;"><dc-import name="HeroSysteme" hint-size="424px,440px"></dc-import></div>
+</div>
+<div style="flex-grow: 1; padding: 0 20px 16px; display: flex; flex-direction: column; gap: 16px;">
+<div class="o-head">
+<h1 class="a-h1-sm">Google Sheets est branché</h1>
+<p class="a-lead">Posez votre première question. L'IA répond à partir de vos tableaux.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<span class="cp-label">Essayez par exemple</span>
+<button class="cp-btn cp-btn-lg a-full" type="button" style="justify-content: flex-start; font-weight: 400;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>Quelles ventes cette semaine ?</button>
+<button class="cp-btn cp-btn-lg a-full" type="button" style="justify-content: flex-start; font-weight: 400;"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>Quels produits sont presque épuisés ?</button>
+</div>
+</div>
+<div style="padding: 16px 20px 28px; display: flex; flex-direction: column; gap: 8px;">
+<button class="cp-btn cp-btn-primary cp-btn-lg a-full" type="button" style="justify-content: center;">Poser ma question</button>
+<a class="cp-btn cp-btn-ghost cp-btn-lg a-full" href="#" style="justify-content: center; text-decoration: none;">Aller à l'accueil</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

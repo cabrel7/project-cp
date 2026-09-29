@@ -77,13 +77,13 @@ CREATE INDEX drafts_ws_idx     ON ux.drafts (workspace_id, organization_id);
 CREATE INDEX drafts_expiry_idx ON ux.drafts (expires_at);
 CREATE INDEX drafts_org_idx    ON ux.drafts (organization_id);
 
--- Progression des parcours d'onboarding (par profil : non-dev, vibe coder, dev, entreprise)
+-- Progression des parcours d'onboarding (3 profils, D41 : activité, applications, entreprise)
 CREATE TABLE ux.onboarding_progress (
   id              bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id         bigint      NOT NULL REFERENCES iam.users(id) ON DELETE CASCADE,
   organization_id bigint      REFERENCES iam.organizations(id) ON DELETE CASCADE,
   flow_key        text        NOT NULL,               -- "profile_selection", "first_mcp", "first_agent"...
-  profile         text        CHECK (profile IN ('non_dev','vibe_coder','developer','enterprise')),
+  profile         text        CHECK (profile IN ('activity','builder','enterprise')),
   current_step    text,
   completed_steps text[]      NOT NULL DEFAULT '{}',
   data            jsonb       NOT NULL DEFAULT '{}',

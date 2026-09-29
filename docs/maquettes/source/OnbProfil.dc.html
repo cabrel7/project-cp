@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — choix du profil</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 1280px; height: 860px; display: grid; grid-template-columns: 480px minmax(0, 1fr);">
+<aside style="background: var(--canvas); padding: 40px 48px; display: flex; flex-direction: column; gap: 16px;">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; transform: scale(.88); transform-origin: center;">
+<dc-import name="HeroSysteme" hint-size="424px,440px"></dc-import>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 30px; line-height: 38px; font-weight: 700; letter-spacing: -.01em;">Bienvenue, Awa.</h2>
+<p class="a-lead">Deux ou trois questions, et votre espace est prêt. Vous pourrez tout changer ensuite.</p>
+</div>
+</aside>
+<main class="o-main" style="background: var(--canvas);">
+<header class="o-top" style="justify-content: flex-end; gap: 24px;">
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">1</span>Profil</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">2</span>Objectif</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">3</span>Premier pas</li>
+</ol>
+<a class="cp-btn cp-btn-ghost" href="#" style="text-decoration: none;">Passer pour l'instant</a>
+</header>
+<div style="flex-grow: 1; padding: 24px 56px 120px 16px; display: flex; flex-direction: column; gap: 24px;">
+<div class="o-head">
+<h1 class="a-h1">Par quoi voulez-vous commencer ?</h1>
+<p class="a-lead">Choisissez ce qui vous ressemble le plus. Tout reste accessible selon votre formule : ce choix change seulement ce qu'on vous montre en premier.</p>
+</div>
+<fieldset style="border: 0; margin: 0; padding: 0;">
+<legend class="cp-label" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Votre profil</legend>
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<label class="o-row is-on" style="padding: 20px 24px;">
+<span class="o-ico "><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg></span>
+<span><b>J'utilise l'IA pour mon activité</b><span class="cp-help" style="display: block; margin-top: 2px;">Posez vos questions sur vos ventes, vos stocks, vos clients, et confiez-lui des tâches répétitives.</span><span class="cp-badge" style="margin-top: 10px;">Aucune compétence technique</span></span>
+<input type="radio" name="profil" checked>
+</label>
+<label class="o-row" style="padding: 20px 24px;">
+<span class="o-ico o-ico-accent"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></span>
+<span><b>Je crée des applications</b><span class="cp-help" style="display: block; margin-top: 2px;">Donnez des capacités IA à vos apps en quelques minutes : capacités prêtes, SDK, API, serveurs MCP et agents.</span><span class="cp-badge" style="margin-top: 10px;">Développeurs et créateurs d'apps</span></span>
+<input type="radio" name="profil">
+</label>
+<label class="o-row" style="padding: 20px 24px;">
+<span class="o-ico o-ico-amber"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg></span>
+<span><b>Je déploie l'IA dans mon entreprise</b><span class="cp-help" style="display: block; margin-top: 2px;">Pour toute l'équipe, avec des règles, des budgets et un suivi.</span><span class="cp-badge" style="margin-top: 10px;">Équipe et contrôle</span></span>
+<input type="radio" name="profil">
+</label>
+</div>
+</fieldset>
+</div>
+<div class="o-bar" style="padding: 0 56px 0 16px; background: var(--canvas); border-top: 0;">
+<span class="cp-help">Étape 1 sur 3</span>
+<button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Continuer<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — organisation (profil entreprise)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root o-main" data-theme="{{theme}}" style="width: 1280px; height: 860px;">
+<header class="o-top">
+<div class="a-brand">
+<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill: var(--brand-violet)"></rect><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg>
+<span>project-cp</span>
+</div>
+<ol class="cp-stepper" aria-label="Progression">
+<li class="cp-step cp-step-done"><span class="cp-step-n"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Profil</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step cp-step-current" aria-current="step"><span class="cp-step-n">2</span>Organisation</li>
+<li class="cp-step-sep" aria-hidden="true"></li>
+<li class="cp-step"><span class="cp-step-n">3</span>Premier pas</li>
+</ol>
+<a class="cp-btn cp-btn-ghost" href="#" style="text-decoration: none;">Passer pour l'instant</a>
+</header>
+<div class="o-body" style="padding-top: 8px;">
+<form class="o-wrap" style="gap: 20px;">
+<div class="o-head">
+<h1 class="a-h1">Déployez l'IA dans votre entreprise</h1>
+<p class="a-lead">Créez l'espace de votre équipe : mêmes outils branchés, droits par personne et budget que vous fixez.</p>
+</div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 16px;">
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="org">Nom de l'organisation</label><input class="cp-input" id="org" type="text" value="Boutique Awa SARL"></div>
+<div class="cp-field" style="max-width: none;"><label class="cp-label" for="size">Taille de l'équipe</label><div class="cp-select-wrap"><select class="cp-input cp-select a-full" id="size"><option>1 à 10 personnes</option><option selected>11 à 50 personnes</option><option>51 à 250 personnes</option><option>Plus de 250</option></select></div></div>
+</div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="inv">Invitez votre équipe</label>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 8px;">
+<div class="o-chips">
+<span class="o-chip">paul@boutique-awa.cm<button type="button" aria-label="Retirer paul@boutique-awa.cm"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+<span class="o-chip">nadia@boutique-awa.cm<button type="button" aria-label="Retirer nadia@boutique-awa.cm"><svg class="cp-icon cp-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+<input id="inv" type="email" placeholder="Ajouter une adresse e-mail">
+</div>
+<div class="cp-select-wrap"><select class="cp-input cp-select a-full" aria-label="Rôle des invités"><option>Membre</option><option>Administrateur</option><option>Lecture seule</option></select></div>
+</div>
+<span class="cp-help">Ils recevront un e-mail d'invitation. Vous pourrez ajuster les rôles ensuite.</span>
+</div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="budget">Budget IA mensuel <span style="color: var(--ink-muted); font-weight: 400;">(facultatif)</span></label>
+<div style="display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 12px; align-items: center;">
+<div style="position: relative;"><input class="cp-input a-full" id="budget" type="text" inputmode="numeric" value="50 000" style="padding-right: 64px; font-variant-numeric: tabular-nums;"><span style="position: absolute; right: 12px; top: 10px; font-size: 14px; color: var(--ink-muted);">FCFA</span></div>
+<span class="cp-help">Vous êtes prévenu à 70 % et à 90 %. À 100 %, les nouvelles tâches sont refusées.</span>
+</div>
+</div>
+<div class="cp-gate">
+<div class="cp-gate-icon"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+<div style="flex-grow: 1;"><p class="cp-alert-title">Connexion unique (SSO) pour toute l'équipe</p><p class="cp-alert-body">Google ou Microsoft avec Business, SAML avec Enterprise.</p></div>
+<button class="cp-btn" type="button">Voir les formules</button>
+</div>
+</form>
+</div>
+<div class="o-bar">
+<div class="o-bar-in">
+<button class="cp-btn cp-btn-lg" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Retour</button>
+<button class="cp-btn cp-btn-primary cp-btn-lg" type="button">Créer l'organisation et inviter</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>

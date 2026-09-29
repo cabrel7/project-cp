@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin — Gateway et routage</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+<link rel="stylesheet" href="styles/studio.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+.r-cand{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:13px;line-height:18px}
+.r-cand:first-of-type{border-top:0}
+.r-pos{width:22px;height:22px;border-radius:var(--radius-pill);background:var(--surface-sunken);border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600}
+.r-cand b{display:block;font-size:14px;font-weight:600}
+.r-ok{color:var(--success)} .r-warn{color:var(--warning)}
+.a-tbl td,.a-tbl th{padding:10px 14px}
+</style>
+</helmet>
+<div class="d-root" data-theme="{{theme}}" style="width: 1440px; height: 1000px;">
+<div class="n-slot"><dc-import name="NavAdmin" active="routage" theme="{{theme}}" hint-size="256px,1000px"></dc-import></div>
+<header class="d-top">
+<span class="cp-badge cp-badge-danger"><span class="cp-dot"></span>Production</span>
+<div class="cp-search"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="cp-input" type="search" placeholder="Rechercher un client, une organisation, un run…" aria-label="Rechercher" style="width: 380px;"></div>
+<span class="d-spacer"></span>
+<span class="d-muted" style="font-size: 13px;">Session : 5 h 58 restantes</span>
+<button class="cp-btn cp-btn-danger" type="button"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z"></path><path d="M8 12h8"></path></svg>Arrêt d'urgence</button>
+<span class="cp-avatar" aria-label="Dylan M.">DM</span>
+</header>
+<main class="d-main" style="gap: 18px; padding-top: 24px;">
+<div class="d-head">
+<div><h1 class="d-h1">Gateway et routage</h1><p class="d-sub">Les profils sont des intentions ; le routeur choisit le modèle réel parmi ces candidats.</p></div>
+<div class="s-actions"><button class="cp-btn" type="button">Simuler une requête</button><button class="cp-btn cp-btn-primary" type="button">Publier les changements</button></div>
+</div>
+<div class="d-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+<section class="d-card" aria-labelledby="pf-t" style="gap: 8px;">
+<div class="d-card-head"><h2 class="d-card-title" id="pf-t">Flash</h2><span class="d-muted" style="font-size: 13px;">coût 60 · vitesse 30 · qualité 10</span></div>
+<div class="r-cand"><span class="r-pos">1</span><span><b>F1 · Google (direct)</b><span class="d-muted">poids 70 · p95 0,9 s · erreurs 0,1 %</span></span><span class="r-ok">● Sain</span></div>
+<div class="r-cand"><span class="r-pos">2</span><span><b>F2 · OpenAI (direct)</b><span class="d-muted">poids 30 · p95 1,1 s · erreurs 0,2 %</span></span><span class="r-ok">● Sain</span></div>
+<div class="r-cand"><span class="r-pos">3</span><span><b>F1 · Google Vertex</b><span class="d-muted">secours · p95 1,0 s</span></span><span class="r-ok">● Sain</span></div>
+</section>
+<section class="d-card" aria-labelledby="ps-t" style="gap: 8px;">
+<div class="d-card-head"><h2 class="d-card-title" id="ps-t">Smart</h2><span class="d-muted" style="font-size: 13px;">coût 40 · vitesse 20 · qualité 40</span></div>
+<div class="r-cand"><span class="r-pos">1</span><span><b>S1 · Anthropic (direct)</b><span class="d-muted">poids 60 · p95 2,9 s · erreurs 2,4 %</span></span><span class="r-warn">● Disjoncteur ouvert</span></div>
+<div class="r-cand"><span class="r-pos">2</span><span><b>S1 · AWS Bedrock</b><span class="d-muted">poids 40 · reçoit le trafic du 1</span></span><span class="r-ok">● Sain</span></div>
+<div class="r-cand"><span class="r-pos">3</span><span><b>S2 · Azure</b><span class="d-muted">secours · p95 2,2 s</span></span><span class="r-ok">● Sain</span></div>
+</section>
+<section class="d-card" aria-labelledby="pm-t" style="gap: 8px;">
+<div class="d-card-head"><h2 class="d-card-title" id="pm-t">Max</h2><span class="d-muted" style="font-size: 13px;">coût 10 · vitesse 10 · qualité 80</span></div>
+<div class="r-cand"><span class="r-pos">1</span><span><b>M1 · Anthropic (direct)</b><span class="d-muted">poids 100 · p95 6,8 s · erreurs 0,3 %</span></span><span class="r-ok">● Sain</span></div>
+<div class="r-cand"><span class="r-pos">2</span><span><b>M1 · Google Vertex</b><span class="d-muted">secours · p95 7,4 s</span></span><span class="r-ok">● Sain</span></div>
+<div class="r-cand"><span class="r-pos">3</span><span><b>M2 · OpenAI (direct)</b><span class="d-muted">secours · p95 8,1 s</span></span><span class="r-ok">● Sain</span></div>
+</section>
+</div>
+<div class="cp-alert cp-alert-warning"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg><div><p class="cp-alert-title">S1 · Anthropic (direct) mis de côté depuis 1 min 40</p><p class="cp-alert-body">Plus de 5 échecs en 1 minute. Le trafic Smart passe par Bedrock ; un appel de test sera fait dans 20 s. Aucun client n'a reçu d'erreur.</p></div></div>
+<section class="d-card" style="padding: 0; overflow: hidden;" aria-labelledby="rg-t">
+<div class="d-card-head" style="padding: 16px 16px 0;"><h2 class="d-card-title" id="rg-t">Règles de routage</h2><a class="d-link" href="#">Ajouter une règle</a></div>
+<table class="cp-table a-tbl" style="border: 0; border-radius: 0; margin-top: 12px;">
+<thead><tr><th scope="col">Ordre</th><th scope="col">Si…</th><th scope="col">Alors…</th><th scope="col">Portée</th></tr></thead>
+<tbody>
+<tr><td class="d-num">10</td><td>La requête contient une image</td><td>Seulement les candidats avec vision</td><td>Tous les profils</td></tr>
+<tr><td class="d-num">20</td><td>L'entrée dépasse le contexte du candidat</td><td>Passer au candidat suivant qui le supporte</td><td>Tous les profils</td></tr>
+<tr><td class="d-num">30</td><td>L'organisation a une clé BYOK valide chez ce fournisseur</td><td>Utiliser la clé du client en priorité</td><td>Tous les profils</td></tr>
+<tr><td class="d-num">40</td><td>Région de données « UE uniquement »</td><td>Seulement les sources hébergées en UE</td><td>Enterprise</td></tr>
+<tr><td class="d-num">90</td><td>Échec, délai ou limitation de débit</td><td>Bascule dans le même profil, jamais vers plus cher</td><td>Tous les profils</td></tr>
+</tbody>
+</table>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"dark"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'dark' };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — choix du profil, mobile</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+<link rel="stylesheet" href="styles/onboarding.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 390px; height: 844px; display: flex; flex-direction: column;">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 0;">
+<span class="cp-help">Étape 1 sur 3</span>
+<a class="cp-btn cp-btn-ghost" href="#" style="height: 44px; text-decoration: none; margin-right: -12px;">Passer</a>
+</div>
+<div style="padding: 0 20px;"><div class="cp-meter-track" style="height: 6px;"><div class="cp-meter-fill cp-meter-fill-primary" style="width: 33%;"></div></div></div>
+<div style="flex-grow: 1; padding: 24px 20px 16px; display: flex; flex-direction: column; gap: 20px;">
+<div class="o-head">
+<p class="o-kicker">Bienvenue, Awa</p>
+<h1 class="a-h1-sm">Par quoi voulez-vous commencer ?</h1>
+</div>
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+<legend style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Votre profil</legend>
+<label class="o-row is-on" style="padding: 14px 16px;">
+<span class="o-ico"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg></span>
+<span><b style="font-size: 15px;">J'utilise l'IA pour mon activité</b><span class="cp-help" style="display: block;">Ventes, stock, clients, fichiers</span></span>
+<input type="radio" name="p" checked>
+</label>
+<label class="o-row" style="padding: 14px 16px;">
+<span class="o-ico o-ico-accent"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></span>
+<span><b style="font-size: 15px;">Je crée des applications</b><span class="cp-help" style="display: block;">Capacités prêtes, SDK, API, MCP, agents</span></span>
+<input type="radio" name="p">
+</label>
+<label class="o-row" style="padding: 14px 16px;">
+<span class="o-ico o-ico-amber"><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg></span>
+<span><b style="font-size: 15px;">Je déploie l'IA dans mon entreprise</b><span class="cp-help" style="display: block;">Équipe, règles, budgets</span></span>
+<input type="radio" name="p">
+</label>
+</fieldset>
+<p class="cp-help" style="margin: 0;">Tout reste accessible selon votre formule : ce choix change seulement ce qu'on vous montre en premier.</p>
+</div>
+<div style="padding: 16px 20px 28px;">
+<button class="cp-btn cp-btn-primary cp-btn-lg a-full" type="button" style="justify-content: center;">Continuer</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'dark' };
+}
+}
+</script>
+</body>
+</html>

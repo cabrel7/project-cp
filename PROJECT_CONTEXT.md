@@ -18,7 +18,7 @@ Plateforme « AI Control Plane » du Groupe ELS : rendre n'importe quel logiciel
 | Toutes les décisions datées (D01…) | `docs/reference/06-journal-decisions.md` |
 | UI/UX, navigation définitive, studios | `docs/reference/07-ui-ux.md` |
 | Design system (tokens, gabarits, composants, contenu, graphiques) | `docs/design-system/` |
-| Maquettes de validation (Claude Design) | `docs/maquettes.md` |
+| Maquettes validées (captures + sources) | `docs/maquettes.md` → `docs/maquettes/` |
 
 ## Les 6 briques (vocabulaire technique)
 Control Plane (org → workspaces → environnements → projets, rôles, budgets, audit) · AI Runtime (LiteLLM, profils Flash/Smart/Max, capacités `ai.run`, Prompt Studio) · Action Runtime (8 chemins de connexion, **MCP Builder**, runtime MCP unique piloté par configuration, versions figées) · Garde-fous (pipeline 5 étapes) · Agent Runtime (Temporal ; agent = objectif + accès MCP/capacités + déclencheur + policy) · SDK & Marketplace.

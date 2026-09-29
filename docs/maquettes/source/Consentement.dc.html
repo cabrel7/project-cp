@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Autoriser l'accès</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="ds/project-cp/components/bundle.css">
+<link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="a-root" data-theme="{{theme}}" style="width: 1280px; height: 860px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<form class="cp-card" style="width: 540px; padding: 36px 40px; display: flex; flex-direction: column; gap: 20px; box-shadow: var(--shadow-md);">
+<div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+<div class="a-tile" aria-hidden="true">C</div>
+<svg viewBox="0 0 64 8" width="64" height="8" aria-hidden="true"><line x1="0" y1="4" x2="64" y2="4" style="stroke: var(--line-strong); stroke-width: 1.5; stroke-dasharray: 4 4"></line></svg>
+<div class="a-tile" style="background: var(--brand-violet); border-color: transparent;" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><path d="M16 17 L8 10 M16 17 L25 9 M16 17 L23 25" style="stroke: #fff; stroke-width: 1.75; stroke-linecap: round"></path><circle cx="8" cy="10" r="2.5" style="fill: #fff"></circle><circle cx="25" cy="9" r="2.5" style="fill: #fff"></circle><circle cx="23" cy="25" r="2.5" style="fill: #fff"></circle><circle cx="16" cy="17" r="4" style="fill: #fff"></circle></svg></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; text-align: center;">
+<h1 class="a-h1-sm">Claude souhaite accéder à votre serveur MCP</h1>
+<p class="a-lead" style="font-size: 15px;">Vérifiez ce que Claude pourra faire avant d'autoriser.</p>
+</div>
+<div class="a-account">
+<span class="cp-avatar">AN</span>
+<div style="flex-grow: 1;"><div style="font-weight: 500;">Awa Nkeng</div><div style="color: var(--ink-muted);">Boutique Awa · organisation</div></div>
+<a class="a-link" href="#" style="font-size: 14px;">Changer</a>
+</div>
+<div class="cp-field" style="max-width: none;">
+<label class="cp-label" for="srv">Serveur à connecter</label>
+<div class="cp-select-wrap"><select class="cp-input cp-select a-full" id="srv"><option>Stock et commandes</option><option>Comptabilité</option></select></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<span class="cp-label">Claude pourra :</span>
+<ul class="a-perm">
+<li><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg><span>Consulter vos produits et vos stocks</span><span class="cp-risk cp-risk-low"><span class="cp-risk-bars"><i></i><i></i><i></i></span>Faible</span></li>
+<li><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg><span>Consulter vos commandes</span><span class="cp-risk cp-risk-low"><span class="cp-risk-bars"><i></i><i></i><i></i></span>Faible</span></li>
+<li><svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg><span>Créer une commande<small>Vous validerez chaque commande avant son envoi.</small></span><span class="cp-risk cp-risk-medium"><span class="cp-risk-bars"><i></i><i></i><i></i></span>Moyen</span></li>
+</ul>
+</div>
+<div class="cp-alert cp-alert-info">
+<svg class="cp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+<p class="cp-alert-body" style="margin: 0;">Vous pourrez retirer cet accès à tout moment dans Réglages › Connexions.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<button class="cp-btn cp-btn-lg" type="button" style="justify-content: center;">Refuser</button>
+<button class="cp-btn cp-btn-primary cp-btn-lg" type="submit" style="justify-content: center;">Autoriser</button>
+</div>
+<p class="a-caption" style="text-align: center;">Vous serez redirigé vers <span style="font-family: var(--font-mono); color: var(--ink);">claude.ai</span> · <a class="a-link" href="#">Détails techniques</a></p>
+</form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return { theme: this.props.theme ?? 'light' };
+}
+}
+</script>
+</body>
+</html>
