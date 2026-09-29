@@ -46,7 +46,7 @@
 | **OPA (WebAssembly)** | Politiques déclaratives évaluées **dans le processus**, en quelques millisecondes | Avant chaque appel d'outil | Politiques compilées depuis la base |
 | **ClickHouse** | Analytique à grand volume | Historique long des usages, tableaux de bord, marges | Alimenté par l'outbox |
 | **Langfuse** | Traces des appels aux modèles, qualité, comparaison de prompts | Équipe interne | Reçoit les traces via OpenTelemetry |
-| **SeaweedFS / OVH Object Storage** | Stockage objet compatible S3 (D51) | Fichiers, exports, factures PDF | Métadonnées dans `storage.files` |
+| **SeaweedFS / OVH Object Storage** | Stockage objet compatible S3 (D51). SeaweedFS en développement uniquement ; production = OVH Object Storage | Fichiers, exports, factures PDF | Métadonnées dans `storage.files` |
 | **GlitchTip** | Suivi d'erreurs gratuit, compatible SDK Sentry | API, workers, front | — |
 | **Grafana + Prometheus + Loki + Tempo** | Métriques, journaux, traces | Supervision et alertes | OpenTelemetry |
 | **Nginx** | Reverse proxy, TLS | Entrée unique | — |

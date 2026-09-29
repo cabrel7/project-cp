@@ -35,7 +35,7 @@ services:
       - cp-dev
 
   redis:
-    image: redis:7.4-alpine
+    image: redis:8.0-alpine
     container_name: cp-redis
     restart: unless-stopped
     ports:
@@ -59,7 +59,7 @@ services:
 
   seaweedfs:
     # SeaweedFS (decision D51) — remplace MinIO (images communautaires arretees fin 2025).
-    image: chrislusf/seaweedfs:3.80
+    image: chrislusf/seaweedfs:4.48
     container_name: cp-seaweedfs
     restart: unless-stopped
     ports:
@@ -88,7 +88,7 @@ services:
       - cp-dev
 
   seaweedfs-init:
-    image: chrislusf/seaweedfs:3.80
+    image: chrislusf/seaweedfs:4.48
     container_name: cp-seaweedfs-init
     depends_on:
       seaweedfs:
@@ -106,7 +106,7 @@ services:
       - cp-dev
 
   mailpit:
-    image: axllent/mailpit:v1.22
+    image: axllent/mailpit:v1.31.3
     container_name: cp-mailpit
     restart: unless-stopped
     ports:
@@ -122,7 +122,7 @@ services:
       - cp-dev
 
   litellm:
-    image: ghcr.io/berriai/litellm:main-v1.83.14-stable
+    image: ghcr.io/berriai/litellm:main-v1.100.3-stable
     container_name: cp-litellm
     restart: unless-stopped
     ports:
@@ -146,7 +146,7 @@ services:
 
   temporal:
     # Serveur de dev Temporal (SQLite persistant) : l'image auto-setup ne gere pas SQLite.
-    image: temporalio/temporal:1.5.1
+    image: temporalio/temporal:1.7.3
     container_name: cp-temporal
     restart: unless-stopped
     ports:

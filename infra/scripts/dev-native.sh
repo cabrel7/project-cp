@@ -1,6 +1,7 @@
 #!/bin/bash
-# Demarre PostgreSQL et Redis en natif (sans Docker) pour les sessions cloud.
+# Demarre PostgreSQL 18 et Redis en natif (sans Docker) pour les sessions cloud.
 # Idempotent : ne recree rien si deja lance.
+# EXIGE PostgreSQL 18 (D22 — uuidv7). Si absent, installe via PGDG (apt.postgresql.org).
 # Usage : bash infra/scripts/dev-native.sh        (demarrer)
 #         bash infra/scripts/dev-native.sh stop    (arreter)
 set -euo pipefail
@@ -24,6 +25,8 @@ REDIS_DIR="$LOCAL_DIR/redis-data"
 PID_DIR="$LOCAL_DIR/pids"
 LOG_DIR="$LOCAL_DIR/logs"
 
+PG_BIN="/usr/lib/postgresql/18/bin"
+
 # PostgreSQL ne peut pas tourner en root ; on utilise l'utilisateur systeme "postgres".
 PG_RUNAS=""
 if [ "$(id -u)" -eq 0 ]; then
@@ -43,15 +46,43 @@ run_pg() {
   fi
 }
 
+# ── install_pg18 ────────────────────────────────────────────────────────
+install_pg18() {
+  echo "PostgreSQL 18 non trouve. Installation via PGDG (apt.postgresql.org)..."
+  local CODENAME
+  CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
+  if [ -z "$CODENAME" ]; then
+    echo "ERROR: impossible de determiner le codename Ubuntu/Debian."
+    exit 1
+  fi
+
+  # Ajouter le depot PGDG
+  mkdir -p /etc/apt/keyrings
+  curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+    | gpg --dearmor -o /etc/apt/keyrings/pgdg.gpg 2>/dev/null
+  echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt ${CODENAME}-pgdg main" \
+    > /etc/apt/sources.list.d/pgdg.list
+  apt-get update -y >/dev/null 2>&1
+
+  apt-get install -y --no-install-recommends \
+    postgresql-18 postgresql-18-pgvector >/dev/null 2>&1
+
+  if [ ! -x "$PG_BIN/initdb" ]; then
+    echo "ERROR: l'installation de postgresql-18 a echoue."
+    echo "  Verifiez que apt.postgresql.org est accessible (domaine autorise dans l'environnement cloud)."
+    exit 1
+  fi
+
+  # L'installation apt demarre PG sur un cluster par defaut — on l'arrete car on gere le notre.
+  "$PG_BIN/pg_ctl" -D /var/lib/postgresql/18/main stop -m fast 2>/dev/null || true
+  echo "PostgreSQL 18 + pgvector installes."
+}
+
 # ── stop ────────────────────────────────────────────────────────────────
 if [ "${1:-}" = "stop" ]; then
   echo "Stopping native dev infrastructure..."
-  PG_BIN=""
-  for v in 18 17 16 15; do
-    [ -x "/usr/lib/postgresql/$v/bin/pg_ctl" ] && PG_BIN="/usr/lib/postgresql/$v/bin" && break
-  done
-  if [ -n "$PG_BIN" ] && [ -f "$PGDATA/postmaster.pid" ]; then
-    run_pg "$PG_BIN/pg_ctl -D $PGDATA stop -m fast" 2>/dev/null && echo "PostgreSQL stopped." || echo "PostgreSQL was not running."
+  if [ -x "$PG_BIN/pg_ctl" ] && [ -f "$PGDATA/postmaster.pid" ]; then
+    run_pg "$PG_BIN/pg_ctl -D $PGDATA stop -m fast" 2>/dev/null && echo "PostgreSQL 18 stopped." || echo "PostgreSQL was not running."
   fi
   if [ -f "$PID_DIR/redis.pid" ]; then
     kill "$(cat "$PID_DIR/redis.pid")" 2>/dev/null && echo "Redis stopped." || echo "Redis was not running."
@@ -63,31 +94,30 @@ fi
 # ── start ───────────────────────────────────────────────────────────────
 mkdir -p "$PID_DIR" "$LOG_DIR" "$REDIS_DIR"
 
-# Trouver les binaires PostgreSQL
-PG_BIN=""
-PG_VER=""
-for v in 18 17 16 15; do
-  if [ -x "/usr/lib/postgresql/$v/bin/initdb" ]; then
-    PG_BIN="/usr/lib/postgresql/$v/bin"
-    PG_VER="$v"
-    break
+# Verifier / installer PostgreSQL 18 (D22 — uuidv7 exige PG 18)
+if [ ! -x "$PG_BIN/initdb" ]; then
+  install_pg18
+fi
+
+# Refuser un PGDATA cree par une autre version
+if [ -f "$PGDATA/PG_VERSION" ]; then
+  EXISTING_VER="$(cat "$PGDATA/PG_VERSION")"
+  if [ "$EXISTING_VER" != "18" ]; then
+    echo "ERROR: $PGDATA a ete cree par PostgreSQL $EXISTING_VER. Le schema exige PostgreSQL 18 (D22)."
+    echo "  Supprimez le repertoire : rm -rf $PGDATA"
+    exit 1
   fi
-done
-if [ -z "$PG_BIN" ]; then
-  echo "ERROR: aucune installation PostgreSQL trouvee dans /usr/lib/postgresql/*/bin."
-  exit 1
 fi
 
 echo "=== project-cp dev infrastructure (native) ==="
 echo ""
 
-# ── PostgreSQL ──────────────────────────────────────────────────────────
+# ── PostgreSQL 18 ──────────────────────────────────────────────────────
 if pg_isready -h 127.0.0.1 -p "$POSTGRES_PORT" -q 2>/dev/null; then
-  echo "PostgreSQL $PG_VER : deja lance sur le port $POSTGRES_PORT."
+  echo "PostgreSQL 18 : deja lance sur le port $POSTGRES_PORT."
 else
   if [ ! -d "$PGDATA/base" ]; then
-    echo "Initialisation du repertoire de donnees PostgreSQL $PG_VER..."
-    # Le repertoire doit appartenir a l'utilisateur PG
+    echo "Initialisation du repertoire de donnees PostgreSQL 18..."
     if [ -n "$PG_RUNAS" ]; then
       chown postgres:postgres "$LOCAL_DIR"
     fi
@@ -104,8 +134,7 @@ host    all   all   ::1/128       trust
 EOHBA
   fi
 
-  echo "Demarrage de PostgreSQL $PG_VER..."
-  # Creer les sous-repertoires avec les bons droits
+  echo "Demarrage de PostgreSQL 18..."
   if [ -n "$PG_RUNAS" ]; then
     chown -R postgres:postgres "$PGDATA"
     mkdir -p "$LOG_DIR" && chown postgres:postgres "$LOG_DIR"
@@ -117,7 +146,7 @@ EOHBA
   done
 
   if ! pg_isready -h 127.0.0.1 -p "$POSTGRES_PORT" -q 2>/dev/null; then
-    echo "ERROR: PostgreSQL n'a pas demarre. Voir $LOG_DIR/pg.log"
+    echo "ERROR: PostgreSQL 18 n'a pas demarre. Voir $LOG_DIR/pg.log"
     exit 1
   fi
 
@@ -130,13 +159,12 @@ EOHBA
       -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;" >/dev/null
   fi
 
-  # Installer pgvector si le paquet est disponible mais pas installe
-  PGVECTOR_PKG="postgresql-${PG_VER}-pgvector"
-  if ! dpkg -l "$PGVECTOR_PKG" 2>/dev/null | grep -q "^ii"; then
-    if apt-cache show "$PGVECTOR_PKG" >/dev/null 2>&1; then
-      echo "Installation de $PGVECTOR_PKG..."
-      apt-get install -y --no-install-recommends "$PGVECTOR_PKG" >/dev/null 2>&1 || \
-        echo "WARN: impossible d'installer $PGVECTOR_PKG — l'extension vector sera indisponible."
+  # Installer pgvector si pas encore installe
+  if ! dpkg -l postgresql-18-pgvector 2>/dev/null | grep -q "^ii"; then
+    if apt-cache show postgresql-18-pgvector >/dev/null 2>&1; then
+      echo "Installation de postgresql-18-pgvector..."
+      apt-get install -y --no-install-recommends postgresql-18-pgvector >/dev/null 2>&1 || \
+        echo "WARN: impossible d'installer postgresql-18-pgvector — l'extension vector sera indisponible."
     fi
   fi
 
@@ -154,7 +182,7 @@ EOHBA
     echo "Roles et extensions deja initialises."
   fi
 
-  echo "PostgreSQL $PG_VER : pret sur le port $POSTGRES_PORT."
+  echo "PostgreSQL 18 : pret sur le port $POSTGRES_PORT."
 fi
 
 # ── Redis ───────────────────────────────────────────────────────────────
@@ -182,8 +210,8 @@ fi
 # ── Services absents ────────────────────────────────────────────────────
 echo ""
 echo "Services prets :"
-echo "  PostgreSQL $PG_VER : 127.0.0.1:$POSTGRES_PORT"
-echo "  Redis            : 127.0.0.1:$REDIS_PORT"
+echo "  PostgreSQL 18 : 127.0.0.1:$POSTGRES_PORT"
+echo "  Redis         : 127.0.0.1:$REDIS_PORT"
 echo ""
 echo "Services non disponibles en mode natif :"
 echo "  SeaweedFS (S3)   : non requis avant P1 (stockage fichiers)"
