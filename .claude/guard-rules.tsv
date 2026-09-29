@@ -1,0 +1,21 @@
+# guard-rules.tsv — project-cp — 1 ligne = 1 invariant bloquant (hook PreToolUse)
+# FORMAT (TAB) : GLOBS_INCLUS <TAB> GLOBS_EXCLUS(- si aucun) <TAB> REGEX(grep -E) <TAB> MESSAGE
+# Les globs sont testés sur le chemin ABSOLU du fichier (case bash : * traverse les /).
+# Ajout : à la main (vraies tabulations) ou via /guard "invariant". Source des invariants : CLAUDE.md.
+#
+*	*.md,*.env.example,*node_modules*,*/guard-rules.tsv,*/fixtures/*	(sk-[A-Za-z0-9_-]{20,}|sk-ant-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36}|xox[bp]-[A-Za-z0-9-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----)	SECRET: credential en dur → Infisical (coffre) + module d'environnement typé
+*.ts,*.vue	*.d.ts,*node_modules*,*.config.ts,*/packages/db/src/schema/*,*/generated/*	(:[[:space:]]*any([^a-zA-Z]|$)|as any([^a-zA-Z]|$)|<any>)	TS: 'any' interdit → type strict, ou unknown + garde de type (zod)
+*.vue	*node_modules*	export default (defineComponent|\{)	VUE: Options API interdite → <script setup lang="ts">
+*/apps/*.ts,*/packages/*.ts,*/apps/*.vue	*/env.ts,*/env/*,*/config/*,*.config.ts,*.test.ts,*.spec.ts,*/test/*,*/tests/*,*/scripts/*,*node_modules*	process\.env	CONFIG: process.env éparpillé → module d'environnement typé (src/env.ts, validé par zod) ou useRuntimeConfig() côté Nuxt
+*/apps/*.ts,*/packages/*.ts	*.test.ts,*.spec.ts,*/test/*,*/tests/*,*node_modules*	(\.(get|post|all|on|route)\(|path:[[:space:]]*)['\"\`][^'\"\`]*/(chat/)?completions['\"\`]	INVARIANT 4 (D09): aucun endpoint compatible OpenAI → exposer une capacité (ai.run) routée par profil Flash/Smart/Max
+*/apps/*.ts,*/packages/*.ts	*.test.ts,*.spec.ts,*/test/*,*/tests/*,*/fixtures/*,*node_modules*	(role:[[:space:]]*['\"]system['\"][[:space:]]*,[[:space:]]*content:[[:space:]]*['\"\`]|[^a-zA-Z_.]system:[[:space:]]*['\"\`][A-Za-zÀ-ÿ])	INVARIANT 5: prompt système en dur interdit → ai.capability_versions (Prompt Studio / seed 960), chargé par le runtime
+*.vue,*.css	*/packages/ui/*,*/docs/*,*node_modules*,*/public/*	#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?([0-9a-fA-F]{2})?([^0-9a-zA-Z_-]|$)|rgba?\([[:space:]]*[0-9]	UI: couleur en dur interdite → tokens du design system (var(--cp-…) / classes du thème Nuxt UI)
+*package.json,*.sh,*.yml,*.yaml,*.ts	*node_modules*,*/.claude/*	drizzle-kit[[:space:]]+(generate|push|migrate|up|drop)	INVARIANT 3: le schéma vient du SQL (dbmate). drizzle-kit uniquement en 'pull'
+*/apps/*.ts,*/packages/*.ts	*/packages/db/*,*node_modules*,*.test.ts,*.spec.ts	sql\.raw\(	SQL: sql.raw() interdit hors packages/db → sql`` paramétré ou helper de packages/db
+*/apps/api/*,*/apps/mcp-runtime/*,*/apps/web/*,*/apps/agent-worker/*	*.test.ts,*.spec.ts,*/test/*,*/tests/*	(app_admin|DATABASE_URL_ADMIN|adminDb[^a-zA-Z])	RLS: connexion app_admin interdite ici → app_rw + transaction de contexte (withOrgContext). app_admin = admin/worker uniquement
+*/packages/billing/*.ts,*/apps/*/billing/*.ts	*.test.ts,*.spec.ts	(parseFloat\(|\.toFixed\(|Math\.(round|floor|ceil)\(|Number\()	INVARIANT 7: argent = micro-crédits bigint (dinero.js / BigInt), jamais de flottant ni d'arrondi Math
+*/apps/*.ts,*/apps/*.vue,*/packages/*.ts,*/packages/*.vue	*.test.ts,*.spec.ts,*/scripts/*,*/e2e/*,*node_modules*	console\.(log|debug|info)\(	LOG: console.* interdit → logger pino (serveur) / useLogger (front), sans PII ni secret
+*/apps/web/*.vue,*/apps/admin/*.vue	*node_modules*	(\$fetch|useFetch|[^a-zA-Z_.$]fetch)\(	NUXT: pas d'appel HTTP dans un composant → composable app/composables/use*.ts (client @hey-api + Pinia Colada)
+*/packages/shared/*.ts,*/apps/api/*/schemas/*.ts	*.test.ts	z\.bigint\(	API: bigint jamais exposé → identifiant public_id (UUIDv7, z.uuid()), montants en string ou number d'affichage
+*/apps/*.resource.ts,*/apps/*.routes.ts,*/apps/*/resources/*.ts	*.test.ts,*.spec.ts	[^a-zA-Z_]id:[[:space:]]*[A-Za-z_]+\.id([^A-Za-z_]|$)	INVARIANT 1: id interne bigint exposé → id: row.publicId
+*/connectors/*sql*.ts,*/packages/connectors/*.ts	*.test.ts,*.spec.ts	['\"\`][[:space:]]*(DELETE|DROP|TRUNCATE|ALTER)[[:space:]]	MCP SQL: jamais de DELETE/DDL dans un connecteur base de données (règle 02 §4.5)

@@ -1,0 +1,30 @@
+# Dépendances et builds
+node_modules/
+dist/
+build/
+.nuxt/
+.output/
+.data/
+.turbo/
+.cache/
+*.tsbuildinfo
+
+# Tests
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Environnement (secrets : Infisical)
+.env
+.env.*
+!.env.example
+
+# Éditeurs / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+
+# Claude Code (réglages personnels)
+.claude/settings.local.json
