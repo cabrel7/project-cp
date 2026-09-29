@@ -28,3 +28,13 @@ blob-report/
 
 # Claude Code (réglages personnels)
 .claude/settings.local.json
+
+# Changeset
+.changeset/*.md
+!.changeset/config.json
+
+# pnpm
+pnpm-debug.log*
+
+# Turborepo
+AGENTS.md
