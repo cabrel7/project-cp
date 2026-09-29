@@ -222,7 +222,7 @@ Application séparée (`admin.<domaine>`), authentification distincte, **2FA obl
 - **Production :** VPS-4 OVH (8 vCores, 24 Go, 200 Go NVMe, France) en Docker Compose.
 - Détail des services, bibliothèques, migrations et organisation du dépôt : `03-architecture-technique.md`.
 - **Services :** Nginx · Nuxt (dashboard + admin) · API Hono (API + runtime MCP + workers, un seul code, plusieurs processus) · PostgreSQL 18 + pgvector · Redis · ClickHouse · LiteLLM · Temporal · Infisical · OPA · Langfuse · **GlitchTip** (erreurs, compatible SDK Sentry) · **Grafana + Prometheus + Loki + Tempo** (supervision via OpenTelemetry). Tout est gratuit et open source ; ~12–13 Go de RAM sur 24.
-- **Stockage fichiers :** compatible S3 (MinIO local ou OVH Object Storage).
+- **Stockage fichiers :** compatible S3 — serveur local (SeaweedFS, défaut) ou OVH Object Storage, basculable depuis l'admin (D51, D52).
 - **Sauvegardes :** sauvegarde quotidienne OVH **+** `pg_dump` chiffré vers un stockage externe.
 - **Plus tard :** VPS-1 pour le staging ; séparation application / données sur deux serveurs.
 - **Développement :** système multi-agent sur Claude Code cloud.

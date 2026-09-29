@@ -273,6 +273,13 @@ Format unique :
 - Clés API d'administration : toujours avec expiration.
 - Paramètres historisés à chaque modification. `[DB]` trigger
 - Permissions sensibles (remboursement, suppression, surcharge de droits) : ré-authentification.
+- **Stockage des fichiers (D52)** : plusieurs backends S3 déclarés (serveur local SeaweedFS, OVH Object Storage…). `[DB]`
+  - Un seul backend reçoit les nouveaux fichiers par région de données, et il doit être actif. `[DB]` (test T21)
+  - Chaque fichier retient son backend ; changer de backend actif ne rend aucun fichier illisible. `[DB]`
+  - Migration des fichiers existants : tâche de fond reprenable (copie → vérification de l'empreinte sha256 → bascule → suppression de l'original seulement après vérification) ; une seule migration active par backend source. `[DB]` `[APP]`
+  - Bascule et migration : super admin uniquement, motif obligatoire, ré-authentification, audit. `[APP]`
+  - Alerte quand l'espace utilisé d'un backend local dépasse son seuil (défaut 80 %). `[APP]`
+  - Les clients ne voient ni ne modifient jamais la configuration du stockage. `[DB]` (test T22)
 
 ---
 

@@ -9,7 +9,7 @@
 ## 1. Principes
 
 1. **Tranches verticales.** Chaque phase livre quelque chose qui marche de bout en bout (base → API → écran → tests), démontrable, derrière un feature flag si besoin. Jamais « tout le back puis tout le front ».
-2. **Le schéma existe déjà.** Le SQL v1.2 (181 tables) couvre tout le produit : les phases **activent** des tables existantes ; une migration nouvelle est l'exception, justifiée par l'architect.
+2. **Le schéma existe déjà.** Le SQL v1.2 (183 tables) couvre tout le produit : les phases **activent** des tables existantes ; une migration nouvelle est l'exception, justifiée par l'architect.
 3. **Ordre = dépendances réelles**, pas l'ordre commercial de 01 §10. Le socle IA (gateway, capacités internes) vient avant le MCP Builder, qui en a besoin pour transformer une API en outils. L'ouverture aux clients suit ensuite l'ordre de 01 §10 grâce aux feature flags.
 4. **Une phase est finie quand ses critères de fin sont prouvés** (sorties de tests, captures, démo enregistrée), pas quand le code est écrit.
 5. **Chaque lot passe par `/feature`** (architect → database → backend → frontend → tester → reviewer, + ux-reviewer / e2e-tester). Taille : S ≤ 1 session, M ≤ 3, L = à découper par l'architect.
@@ -78,7 +78,7 @@
 | Lot | Contenu | Agents | Taille |
 |---|---|---|---|
 | P0.1 | Monorepo : pnpm + turborepo, `tsconfig.base`, Biome, lefthook, commits conventionnels, `catalog:` des versions, squelettes des 7 apps et 7 paquets (03 §5) | devops | M |
-| P0.2 | `infra/docker-compose.dev.yml` : PostgreSQL 18 + pgvector, Redis, MinIO, Mailpit, LiteLLM (config vide), Temporal (dev) ; `.env.example` | devops | M |
+| P0.2 | `infra/docker-compose.dev.yml` : PostgreSQL 18 + pgvector, Redis, SeaweedFS (S3), Mailpit, LiteLLM (config vide), Temporal (dev) ; `.env.example` | devops | M |
 | P0.3 | **Baseline dbmate** : `db/schema-v1.2` → `db/migrations/…_0001_baseline.sql` (structure) + migrations de données idempotentes (950, 960) ; tests `001_smoke_tests.sql` → `db/tests/` + `run.sh` | database | M |
 | P0.4 | `packages/db` : `drizzle-kit pull`, client postgres.js, trois pools (`app_rw`, `app_auth`, `app_admin`), `withOrgContext`, helpers `public_id` | database, backend | M |
 | P0.5 | `packages/shared` : codes d'erreur (enum synchronisé avec `platform.error_codes` + test d'égalité), schémas zod de base (UUID, pagination, erreur), constantes du glossaire | backend | S |
@@ -87,7 +87,7 @@
 
 **Critères de fin**
 - `pnpm install && pnpm turbo run build typecheck test` vert en local et en CI.
-- `dbmate up` sur base neuve puis `db/tests/run.sh` : **21 tests OK** ; `dbmate rollback` de la baseline refusé ou documenté (baseline non réversible par nature, dit explicitement).
+- `dbmate up` sur base neuve puis `db/tests/run.sh` : **23 contrôles OK** (T1-T22) ; `dbmate rollback` de la baseline refusé ou documenté (baseline non réversible par nature, dit explicitement).
 - CI rouge si `drizzle-kit pull` diffère du commit.
 - `GET /health` 200 ; une erreur provoquée renvoie le format unique avec `request_id`.
 - Session cloud : `/setup` prépare tout, hooks actifs (une écriture violant un invariant est bloquée).
@@ -126,6 +126,7 @@
 | P2.5 | Onboarding 3 étapes × 3 profils (D41), animations d'auth/onboarding (D36/D38) | frontend | M |
 | P2.6 | Admin : connexion équipe interne (session courte + minuteur), liste et fiche clients, audit | backend, frontend | M |
 | P2.7 | Chantier C en code : **POC OAuth 2.1** (`apps/auth`, oidc-provider) jusqu'à un client MCP de test | backend | M |
+| P2.8 | Stockage des fichiers (D52) : client S3 par backend (`storage.backends`, identifiants Infisical), envoi / liens signés / suppression, `backend_id` enregistré ; premier usage : avatars | backend | M |
 
 **Critères de fin**
 - E2E : les 3 parcours d'onboarding complets, mobile et desktop ; OTP expiré / trop d'essais ; 2FA.
@@ -244,11 +245,12 @@
 
 | Lot | Contenu | Agents | Taille |
 |---|---|---|---|
-| P8.1 | Production sur VPS-4 : compose prod, Nginx/TLS, Infisical, sauvegardes chiffrées hors site + restauration testée | devops | L |
+| P8.1 | Production sur VPS-4 : compose prod (dont SeaweedFS), Nginx/TLS, Infisical, sauvegardes chiffrées hors site (base **et** fichiers) + restauration testée | devops | L |
 | P8.2 | Observabilité : tableaux Grafana, alertes, GlitchTip, Langfuse ; page de statut et incidents | devops, backend | M |
 | P8.3 | Audit de sécurité complet (`/audit-rules`, `cp-security`), tests d'intrusion ciblés (isolation, SSRF, OAuth, injection) | reviewer | L |
 | P8.4 | Performance : budgets de latence tenus, Lighthouse mobile 4G, charge de base (k6) | backend, frontend | M |
 | P8.5 | Admin restant : Pilotage, Support, Conformité, Déploiement progressif, Contenu et traductions | backend, frontend | L |
+| P8.7 | Admin « Stockage » (D52) : backends, espace utilisé et alertes, bascule du backend actif, migration des fichiers en tâche de fond (`apps/worker`, reprenable, vérification sha256) | backend, frontend | M |
 | P8.6 | Chantier D en ligne : CGU, DPA, confidentialité, consentements versionnés | frontend | S |
 
 **Critères de fin**

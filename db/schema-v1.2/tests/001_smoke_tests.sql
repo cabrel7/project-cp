@@ -179,6 +179,40 @@ DO $$ BEGIN
   END;
 END $$;
 
+-- T21 : stockage (D52) — un seul backend d'écriture par région, jamais sur un backend inactif,
+--       chaque fichier sait où il est, pas de migration d'un backend vers lui-même
+DO $$ BEGIN
+  IF (SELECT count(*) FROM storage.backends WHERE is_write_target) <> 1 THEN
+    RAISE EXCEPTION 'T21 ÉCHEC : il faut exactement un backend d''écriture par défaut';
+  END IF;
+  BEGIN
+    UPDATE storage.backends SET status = 'active', is_write_target = true WHERE key = 'ovh_gra';
+    RAISE EXCEPTION 'T21 ÉCHEC : deux backends d''écriture dans la même région';
+  EXCEPTION WHEN unique_violation THEN NULL;
+  END;
+  BEGIN
+    UPDATE storage.backends SET status = 'read_only' WHERE key = 'local';
+    RAISE EXCEPTION 'T21 ÉCHEC : backend d''écriture non actif accepté';
+  EXCEPTION WHEN check_violation THEN NULL;
+  END;
+  BEGIN
+    INSERT INTO storage.files (organization_id, purpose, bucket, storage_key, filename, mime_type, size_bytes, data_region_id)
+    VALUES (1, 'other', 'cp-files', 'x', 'x.txt', 'text/plain', 1, (SELECT id FROM ref.data_regions WHERE code = 'eu-fr'));
+    RAISE EXCEPTION 'T21 ÉCHEC : fichier sans backend accepté';
+  EXCEPTION WHEN not_null_violation THEN NULL;
+  END;
+  BEGIN
+    INSERT INTO storage.backend_migrations (from_backend_id, to_backend_id, reason)
+    SELECT id, id, 'test migration' FROM storage.backends WHERE key = 'local';
+    RAISE EXCEPTION 'T21 ÉCHEC : migration vers le même backend acceptée';
+  EXCEPTION WHEN check_violation THEN NULL;
+  END;
+  RAISE NOTICE 'T21 OK : backends de stockage cohérents (un seul actif en écriture, fichier rattaché)';
+END $$;
+INSERT INTO storage.files (organization_id, purpose, backend_id, bucket, storage_key, filename, mime_type, size_bytes, data_region_id)
+  VALUES (1, 'data_file', (SELECT id FROM storage.backends WHERE key = 'local'), 'cp-files', 'org1/facture.pdf',
+          'facture.pdf', 'application/pdf', 1024, (SELECT id FROM ref.data_regions WHERE code = 'eu-fr'));
+
 -- -------------------------------------------------------- tests RLS (app_rw)
 GRANT app_rw TO CURRENT_USER;
 SET LOCAL ROLE app_rw;
@@ -242,6 +276,23 @@ DO $$ DECLARE n int; BEGIN
   GET DIAGNOSTICS n = ROW_COUNT;
   IF n <> 0 THEN RAISE EXCEPTION 'T17 ÉCHEC : profil système modifié'; END IF;
   RAISE NOTICE 'T17 OK : profils système non modifiables par un client';
+END $$;
+
+-- T22 : un client lit le backend de ses fichiers mais ne modifie jamais le stockage
+DO $$ DECLARE n int; BEGIN
+  IF (SELECT count(*) FROM storage.files) <> 1 THEN RAISE EXCEPTION 'T22 ÉCHEC : fichier propre invisible'; END IF;
+  IF (SELECT count(*) FROM storage.backends) < 2 THEN RAISE EXCEPTION 'T22 ÉCHEC : backends illisibles'; END IF;
+  BEGIN
+    UPDATE storage.backends SET is_write_target = false;
+    RAISE EXCEPTION 'T22 ÉCHEC : un client a modifié un backend';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
+    PERFORM 1 FROM storage.backend_migrations;
+    RAISE EXCEPTION 'T22 ÉCHEC : migrations de stockage visibles par un client';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  RAISE NOTICE 'T22 OK : stockage lisible, jamais modifiable par un client';
 END $$;
 
 RESET ROLE;

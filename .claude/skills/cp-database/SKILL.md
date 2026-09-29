@@ -7,7 +7,7 @@ description: Base de données project-cp — PostgreSQL 18 + pgvector, SQL versi
 
 > Sources : `docs/reference/04-schema-donnees.md` (conventions §2, index §5, partitions §6, sécurité §7) ·
 > `docs/reference/03-architecture-technique.md` §3 (migrations, flux, usage dans le code) ·
-> SQL validé : `db/schema-v1.2/*.sql` (181 tables, 21 tests) → deviendra `db/migrations/0001_baseline.sql`.
+> SQL validé : `db/schema-v1.2/*.sql` (183 tables, 23 contrôles T1-T22) → deviendra `db/migrations/0001_baseline.sql`.
 > **Le SQL fait foi** sur toute doc.
 
 ## 1. Flux de travail (toujours dans cet ordre)

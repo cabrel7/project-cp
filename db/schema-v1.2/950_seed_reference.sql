@@ -392,3 +392,18 @@ ON CONFLICT (key) DO NOTHING;
 
 INSERT INTO platform.api_versions (version, status, released_at) VALUES ('v1', 'beta', '2026-10-01')
 ON CONFLICT (version) DO NOTHING;
+
+-- ------------------------------------------------ stockage (D52)
+-- Défaut : SeaweedFS sur notre serveur (gratuit). OVH Object Storage déclaré mais désactivé,
+-- à activer depuis l'admin (Exploitation → Paramètres → Stockage).
+INSERT INTO storage.backends (key, name, kind, provider, endpoint, region, bucket, force_path_style,
+                              credentials_secret_ref, data_region_id, status, is_write_target)
+SELECT v.key, v.name::jsonb, v.kind, v.provider, v.endpoint, v.region, v.bucket, v.path_style,
+       v.secret_ref, (SELECT id FROM ref.data_regions WHERE code = 'eu-fr'), v.status, v.write_target
+FROM (VALUES
+  ('local',  '{"fr":"Serveur local (SeaweedFS)","en":"Local server (SeaweedFS)"}', 'seaweedfs', 'self_hosted',
+             'http://seaweedfs:8333', 'us-east-1', 'cp-files', true,  '/storage/local',  'active',   true),
+  ('ovh_gra','{"fr":"OVH Object Storage (Gravelines)","en":"OVH Object Storage (Gravelines)"}', 's3', 'ovh',
+             'https://s3.gra.io.cloud.ovh.net', 'gra', 'cp-files', false, '/storage/ovh_gra', 'disabled', false)
+) AS v(key, name, kind, provider, endpoint, region, bucket, path_style, secret_ref, status, write_target)
+ON CONFLICT (key) DO NOTHING;

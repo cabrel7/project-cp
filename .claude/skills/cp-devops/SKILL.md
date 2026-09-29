@@ -1,6 +1,6 @@
 ---
 name: cp-devops
-description: Infrastructure et déploiement de project-cp — Docker Compose sur VPS-4 OVH (budget mémoire), Nginx/TLS, services auto-hébergés (PostgreSQL 18, Redis, LiteLLM, Temporal, Infisical, Langfuse, ClickHouse, MinIO, Grafana/Loki/Tempo/Prometheus, GlitchTip), CI GitHub Actions, migrations dbmate en déploiement, sauvegardes, sessions Claude Code cloud.
+description: Infrastructure et déploiement de project-cp — Docker Compose sur VPS-4 OVH (budget mémoire), Nginx/TLS, services auto-hébergés (PostgreSQL 18, Redis, LiteLLM, Temporal, Infisical, Langfuse, ClickHouse, SeaweedFS, Grafana/Loki/Tempo/Prometheus, GlitchTip), CI GitHub Actions, migrations dbmate en déploiement, sauvegardes, sessions Claude Code cloud.
 ---
 
 # DevOps — project-cp
@@ -9,13 +9,13 @@ description: Infrastructure et déploiement de project-cp — Docker Compose sur
 
 ## Cible
 VPS-4 OVH : 8 vCores, 24 Go RAM, 200 Go ; Docker Compose ; ≈ 12-13 Go de RAM utilisés au total → **limites mémoire obligatoires** par service.
-Stockage objet : MinIO (dev) / OVH Object Storage (prod).
+Stockage objet (D51, D52) : SeaweedFS auto-hébergé (dev et prod, défaut) ; OVH Object Storage en option, basculable depuis l'admin. MinIO abandonné.
 
 ## `infra/`
 ```
 infra/
   docker-compose.yml          # prod : images épinglées (tag@sha256), healthchecks, mem_limit, restart: unless-stopped, réseaux internes
-  docker-compose.dev.yml      # dev : ports exposés, volumes, MinIO, Mailpit
+  docker-compose.dev.yml      # dev : ports exposés, volumes, SeaweedFS, Mailpit ; sans Docker : infra/scripts/dev-native.sh (PG 18 + Redis)
   nginx/                      # api., mcp., auth., app., admin. + TLS (certbot) + en-têtes sécurité ; nginx -t avant reload
   litellm/config.yaml         # déploiements de modèles (noms alignés sur ai.model_deployments), sans clé en clair (env Infisical)
   temporal/                   # dynamic config, namespace
