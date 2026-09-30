@@ -1,5 +1,5 @@
 <template>
-  <div>
-    <h1>project-cp</h1>
-  </div>
+  <UApp>
+    <NuxtPage />
+  </UApp>
 </template>

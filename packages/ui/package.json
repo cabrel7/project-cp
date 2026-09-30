@@ -10,6 +10,12 @@
     "test": "vitest run --passWithNoTests",
     "postinstall": "nuxt prepare"
   },
+  "dependencies": {
+    "@fontsource/geist": "catalog:",
+    "@fontsource/geist-mono": "catalog:",
+    "@fontsource/plus-jakarta-sans": "catalog:",
+    "@nuxt/ui": "catalog:"
+  },
   "devDependencies": {
     "nuxt": "catalog:",
     "typescript": "catalog:",
