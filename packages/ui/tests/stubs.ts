@@ -177,6 +177,95 @@ export const UTabs = defineComponent({
   },
 })
 
+export const UModal = defineComponent({
+  name: 'UModal',
+  props: {
+    open: Boolean,
+    title: String,
+    description: String,
+    dismissible: { type: Boolean, default: true },
+  },
+  emits: ['update:open'],
+  setup(props, { slots, emit, attrs }) {
+    return () =>
+      props.open
+        ? h(
+            'div',
+            {
+              role: 'dialog',
+              'aria-modal': 'true',
+              'data-dismissible': String(props.dismissible),
+              ...attrs,
+            },
+            [
+              h('h2', { 'data-title': '' }, props.title),
+              props.description ? h('p', { 'data-description': '' }, props.description) : null,
+              slots.body?.(),
+              h('div', { 'data-footer': '' }, slots.footer?.()),
+              h('button', {
+                type: 'button',
+                'data-close': '',
+                onClick: () => emit('update:open', false),
+              }),
+            ],
+          )
+        : null
+  },
+})
+
+export const UTable = defineComponent({
+  name: 'UTable',
+  props: {
+    data: { type: Array as () => Record<string, unknown>[], default: () => [] },
+    columns: {
+      type: Array as () => { accessorKey: string; header: string }[],
+      default: () => [],
+    },
+  },
+  setup(props, { slots }) {
+    return () =>
+      h('table', [
+        h(
+          'thead',
+          h(
+            'tr',
+            props.columns.map((column) =>
+              h(
+                'th',
+                { 'data-col': column.accessorKey },
+                slots[`${column.accessorKey}-header`]?.({ column }) ?? column.header,
+              ),
+            ),
+          ),
+        ),
+        h(
+          'tbody',
+          props.data.map((original) =>
+            h(
+              'tr',
+              { 'data-row': '' },
+              props.columns.map((column) =>
+                h(
+                  'td',
+                  { 'data-cell': column.accessorKey },
+                  slots[`${column.accessorKey}-cell`]?.({ row: { original } }),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ])
+  },
+})
+
+export const NuxtLink = defineComponent({
+  name: 'NuxtLink',
+  props: { to: String },
+  setup(props, { slots, attrs }) {
+    return () => h('a', { ...attrs, href: props.to }, slots.default?.())
+  },
+})
+
 export const nuxtUiStubs: Record<string, Component> = {
   UButton,
   UIcon,
@@ -186,4 +275,7 @@ export const nuxtUiStubs: Record<string, Component> = {
   USwitch,
   USkeleton,
   UTabs,
+  UModal,
+  UTable,
+  NuxtLink,
 }

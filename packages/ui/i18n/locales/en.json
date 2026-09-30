@@ -35,6 +35,51 @@
     "loading": "Loading…",
     "skeleton": {
       "loading": "Loading"
+    },
+    "dialog": {
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "confirmDanger": "Delete"
+    },
+    "table": {
+      "empty": "No results",
+      "loading": "Loading data…"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "description": "Start by creating your first item."
+    },
+    "filter": {
+      "search": "Search…",
+      "clear": "Clear filters"
+    },
+    "credits": {
+      "used": "{used} / {total} credits",
+      "percent": "{percent}%",
+      "exhausted": "Credits used up"
+    },
+    "secret": {
+      "show": "Show",
+      "hide": "Hide",
+      "copy": "Copy",
+      "copied": "Copied",
+      "warning": "You will not be able to see it again after leaving this page."
+    },
+    "code": {
+      "copy": "Copy code",
+      "copied": "Copied"
+    },
+    "stepper": {
+      "step": "Step {current} of {total}",
+      "completed": "Completed"
+    },
+    "stat": {
+      "up": "Up",
+      "down": "Down",
+      "flat": "Stable"
+    },
+    "pageHeader": {
+      "breadcrumb": "Breadcrumb"
     }
   }
 }
