@@ -1,5 +1,5 @@
 # STATE — project-cp
-Updated: 2026-09-30 | Session: P0 — Socle
+Updated: 2026-09-30 | Session: P1 — Design system en code
 
 ## ✅ Done
 - Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D52, UI/UX).
@@ -20,11 +20,13 @@ Updated: 2026-09-30 | Session: P0 — Socle
 - **P0.7 — CI GitHub Actions** : `.github/workflows/ci.yml` (5 jobs : lint Biome, typecheck, test, db avec PostgreSQL 18 service container + dbmate + 23 SQL tests + drizzle drift check + squawk, build). Action composite `.github/actions/setup-pnpm/` (Node 22 + pnpm 10 + cache). 42/42 turbo tasks. Reviewer 8.5/10, 0 CRITICAL/MAJOR ouvert (3 corrigés). PR #8 squash-merged dans dev.
 - **P1.0 — Spike D27** : comparaison Nuxt UI vs shadcn-vue — 3 composants témoins (Button, DataTable, Stepper) en clair/sombre/mobile, captures Playwright, code Vue SFC comparatif. Verdict : **Nuxt UI** (6/8 vs 4/8). D27 ✅ validée. PR #9 squash-merged dans dev.
 
+- **P1.1 — Thème Nuxt UI** : `packages/ui` layer Nuxt (tokens.json → tokens.css → `@theme static` Tailwind v4 → app.config.ts Nuxt UI). 39 couleurs sémantiques, 7 échelles Nuxt UI (primary/secondary/success/warning/error/info/warm) interpolées OKLCH, typographie 12 styles (3 familles @fontsource : Plus Jakarta Sans, Geist, Geist Mono), ombres, espacement 4px, rayons, tailles de contrôle, z-index, points de rupture, focus-ring. Pont `--ui-*` pour Nuxt UI. Mode sombre `.dark` + `useColorMode`. Icônes Lucide embarquées localement. Page de démo (palette 31 pastilles, boutons, typographie, icônes, interrupteur sombre). 160 tests (7 fichiers) passés, 42/42 turbo tasks. Reviewer : 2 MAJOR corrigés (`@theme static`, alias `warm`). Branche `p1/01-theme-nuxt-ui`.
+
 ## 🔄 Active
 - Aucun lot en cours.
 
 ## 📋 Queue
-7. **P1 — Design system en code** (thème Nuxt UI, spike D27 d'abord) — en parallèle de P2.
+7. **P1 — Design system en code** (P1.1 ✅, prochains lots P1.2+) — en parallèle de P2.
 8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
@@ -33,7 +35,8 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## ⚠️ Known issues
 - D26 : serveur OAuth 2.1 via `oidc-provider` = POC à valider.
-- D27 : Nuxt UI ✅ validée — responsive mobile-first à vérifier systématiquement lors de P1.1+.
+- D27 : Nuxt UI ✅ validée — responsive mobile-first vérifié P1.1 (grilles 2→4→6 colonnes, min-h-11 tactile).
+- P1.1 : i18n FR/EN non encore appliqué sur la page de démo (texte français en dur — DETTE, lot ultérieur). Contraste pastilles chart décoratifs limité à 2.0:1 (couleur = information, label secondaire).
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).
