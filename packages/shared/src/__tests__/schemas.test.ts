@@ -143,7 +143,7 @@ describe('errorResponseSchema', () => {
         request_id: 'req_01HZX',
         details: { field: 'amount', nested: { a: 1 } },
         hint: 'Vérifiez le champ amount',
-        doc_url: 'https://docs.example.com/errors/mcp_tool_input_invalid',
+        documentation_url: 'https://docs.example.com/errors/mcp_tool_input_invalid',
       },
     }
     expect(errorResponseSchema.parse(full)).toEqual(full)
@@ -179,7 +179,7 @@ describe('errorResponseSchema', () => {
     ['request_id numérique', { request_id: 42 }],
     ['details textuel', { details: 'x' }],
     ['details tableau', { details: [1, 2] }],
-    ['doc_url invalide', { doc_url: 'pas-une-url' }],
+    ['documentation_url invalide', { documentation_url: 'pas-une-url' }],
     ['hint numérique', { hint: 1 }],
   ])('doit rejeter un type invalide (%s)', (_label, override) => {
     expect(
@@ -187,10 +187,7 @@ describe('errorResponseSchema', () => {
     ).toBe(false)
   })
 
-  // Règle 02 §8 : le champ documenté est `documentation_url`. Le schéma déclare `doc_url`
-  // et zod retire silencieusement les clés inconnues : le lien documentaire est perdu.
-  // it.fails passe tant que l'écart existe ; à convertir en `it` une fois aligné.
-  it.fails('devrait conserver documentation_url (règle 02 §8) — ÉCART CONNU : schéma = doc_url', () => {
+  it('doit conserver documentation_url (règle 02 §8)', () => {
     const body = {
       error: { ...minimal.error, documentation_url: 'https://docs.example.com/errors/x' },
     }

@@ -20,7 +20,7 @@ export const errorResponseSchema = z.object({
     request_id: z.string(),
     details: z.record(z.string(), z.unknown()).optional(),
     hint: z.string().optional(),
-    doc_url: z.string().url().optional(),
+    documentation_url: z.string().url().optional(),
   }),
 })
 
