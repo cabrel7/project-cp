@@ -22,6 +22,12 @@ describe('CpApprovalCard', () => {
   })
   afterEach(() => vi.useRealTimers())
 
+  it('échéance illisible : échoue fermé (expiré, actions désactivées)', () => {
+    const { wrapper } = mountWithMode(ApprovalCard, { ...props, deadline: 'pas-une-date' })
+    expect(wrapper.get('[data-cp-deadline]').text()).toBe('Délai dépassé')
+    expect(wrapper.get('[data-cp-action="approve"]').attributes('disabled')).toBeDefined()
+  })
+
   it('affiche titre, résumé, éléments et niveau de risque', () => {
     const { wrapper } = mountWithMode(ApprovalCard, props)
     expect(wrapper.get('h3').text()).toBe('À valider')

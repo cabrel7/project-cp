@@ -79,6 +79,7 @@ const textSize = computed(() => (technicalMode.value ? 'text-body' : 'text-body-
         </ul>
       </div>
 
+      <span v-if="!isAi && content" class="sr-only" data-cp-author-label>{{ t('cp.chat.you') }} :</span>
       <div
         v-if="loading"
         class="flex items-center gap-1 rounded-lg border border-cp-line bg-cp-surface px-4 py-3"

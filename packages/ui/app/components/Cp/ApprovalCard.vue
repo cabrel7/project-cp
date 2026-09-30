@@ -48,11 +48,12 @@ onBeforeUnmount(() => clearInterval(timer))
 const remainingMs = computed(() =>
   props.deadline ? new Date(props.deadline).getTime() - now.value : undefined,
 )
-const expired = computed(() => remainingMs.value !== undefined && remainingMs.value <= 0)
+// Échéance illisible (NaN) : on échoue fermé, l'action n'est pas proposée.
+const expired = computed(() => remainingMs.value !== undefined && !(remainingMs.value > 0))
 
 const remainingLabel = computed(() => {
   const ms = remainingMs.value
-  if (ms === undefined || ms <= 0) return undefined
+  if (ms === undefined || !(ms > 0)) return undefined
   const minutes = Math.max(1, Math.ceil(ms / 60_000))
   if (minutes < 60) return t('cp.approval.minutes', { n: minutes })
   const hours = Math.floor(minutes / 60)

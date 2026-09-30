@@ -3,7 +3,7 @@
 // Barre latérale (surface-sunken) : logo, espace de travail, navigation groupée, élément courant en primary-soft.
 // Barre du haut : recherche, crédits (amber-soft), notifications, ModeToggle, profil.
 // Sous md : la barre latérale devient un tiroir + barre d'onglets en bas (Accueil, Discuter, À valider, Crédits).
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ensureCpMode } from '../../composables/useCpMode'
 import CpModeToggle from './ModeToggle.vue'
 
@@ -58,9 +58,37 @@ function go(value: string): void {
   emit('navigate', value)
 }
 
+const sidebar = ref<HTMLElement>()
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+// Tiroir modal : focus déplacé dedans à l'ouverture, rendu au bouton d'ouverture à la fermeture, Tab piégé.
 function onKeydown(event: KeyboardEvent): void {
-  if (event.key === 'Escape') drawerOpen.value = false
+  if (!drawerOpen.value) return
+  if (event.key === 'Escape') {
+    drawerOpen.value = false
+    return
+  }
+  if (event.key !== 'Tab' || !sidebar.value) return
+  const nodes = [...sidebar.value.querySelectorAll<HTMLElement>(FOCUSABLE)]
+  const first = nodes[0]
+  const last = nodes[nodes.length - 1]
+  if (!first || !last) return
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
 }
+watch(drawerOpen, (open) => {
+  nextTick(() => {
+    const target = open
+      ? sidebar.value?.querySelector<HTMLElement>('[data-cp-drawer-close]')
+      : document.querySelector<HTMLElement>('[data-cp-drawer-open]')
+    target?.focus()
+  })
+})
 onMounted(() => document.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 
@@ -78,6 +106,7 @@ const ICON_BUTTON =
       @click="drawerOpen = false"
     />
     <aside
+      ref="sidebar"
       class="w-sidebar shrink-0 flex-col gap-4 bg-cp-surface-sunken p-4 md:sticky md:top-0 md:flex md:h-screen"
       :class="drawerOpen ? 'fixed inset-y-0 left-0 z-drawer flex' : 'hidden'"
       :role="drawerOpen ? 'dialog' : undefined"
