@@ -31,7 +31,7 @@
 | D24 | 2026-09-29 | Garde-fous | Pipeline 5 étapes, cascade du moins cher au plus cher, actions toujours soumises à des contrôles déterministes, profil Strict automatique, arrêts d'urgence | ✅ | — |
 | D25 | 2026-09-29 | IA interne | Capacités de l'organisation système (id 0) gérées dans l'admin ; évaluation obligatoire avant production | ✅ | — |
 | D26 | 2026-09-29 | Authentification | Briques (arctic, oslo, WebAuthn, argon2, jose) sur nos tables ; serveur OAuth 2.1 via oidc-provider (POC) | 🟡 POC | — |
-| D27 | 2026-09-29 | Composants UI | Nuxt UI (à confirmer contre shadcn-vue pendant le travail UI/UX) | 🟡 | Shadcn (v1) |
+| D27 | 2026-09-30 | Composants UI | **Nuxt UI** (spike P1.0 : 6/8 vs shadcn-vue 4/8 — moins de code, 22/27 composants natifs, intégration Nuxt native). Responsive mobile-first vérifié systématiquement | ✅ | Shadcn (v1) |
 | D28 | 2026-09-29 | Monorepo | pnpm + turborepo ; apps/ + packages/ + db/ ; Biome | ✅ | — |
 | D29 | 2026-09-29 | UI/UX | Conventions et design system fixés dans Claude Design avant toute implémentation | ✅ | — |
 | D30 | 2026-09-29 | Identité visuelle | Direction « Fusion A — Warm Tech » améliorée : crème, violet d'action #5B50C8, violet d'identité #7F77DD, corail #D85A30, ambre #BA7517 | ✅ | — |

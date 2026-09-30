@@ -18,9 +18,10 @@ Updated: 2026-09-30 | Session: P0 — Socle
 - **P0.5 — `packages/shared`** : 62 codes d'erreur synchronisés avec les seeds SQL (950+960), schémas zod de base (publicId UUIDv7 strict, pagination, errorResponse, paginated), glossaire Simple/Technique (18 termes × fr/en). 285 tests (285 passés, `doc_url` → `documentation_url` corrigé). Reviewer : 0 CRITICAL, 0 MAJOR ouvert. PR #6 squash-merged dans dev.
 - **P0.6 — `apps/api` minimal** : env.ts (zod, invariant 8), pino logger (invariant 10), request-id UUIDv7, OTel conditionnel, `AppError` + format unique (doc 02 §8, details omis sur 5xx, HTTPException 4xx → 422), `/health`, `/openapi.json` (D31), `/docs` (Scalar). `doc_url` → `documentation_url` dans `@cp/shared`. 25 tests (5 fichiers), 28/28 turbo tasks. Reviewer 8/10, 0 CRITICAL/MAJOR ouvert. PR #7 squash-merged dans dev.
 - **P0.7 — CI GitHub Actions** : `.github/workflows/ci.yml` (5 jobs : lint Biome, typecheck, test, db avec PostgreSQL 18 service container + dbmate + 23 SQL tests + drizzle drift check + squawk, build). Action composite `.github/actions/setup-pnpm/` (Node 22 + pnpm 10 + cache). 42/42 turbo tasks. Reviewer 8.5/10, 0 CRITICAL/MAJOR ouvert (3 corrigés). PR #8 squash-merged dans dev.
+- **P1.0 — Spike D27** : comparaison Nuxt UI vs shadcn-vue — 3 composants témoins (Button, DataTable, Stepper) en clair/sombre/mobile, captures Playwright, code Vue SFC comparatif. Verdict : **Nuxt UI** (6/8 vs 4/8). D27 ✅ validée. PR #9 squash-merged dans dev.
 
 ## 🔄 Active
-- P1.0 — Spike D27 : comparaison Nuxt UI vs shadcn-vue — verdict PROPOSÉ : Nuxt UI (6/8 vs 4/8). PR #9 ouverte, en attente de validation humaine.
+- Aucun lot en cours.
 
 ## 📋 Queue
 7. **P1 — Design system en code** (thème Nuxt UI, spike D27 d'abord) — en parallèle de P2.
@@ -32,7 +33,7 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## ⚠️ Known issues
 - D26 : serveur OAuth 2.1 via `oidc-provider` = POC à valider.
-- D27 : Nuxt UI PROPOSÉ (spike P1.0, PR #9) — en attente de validation humaine avant de marquer ✅.
+- D27 : Nuxt UI ✅ validée — responsive mobile-first à vérifier systématiquement lors de P1.1+.
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).
