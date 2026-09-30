@@ -20,6 +20,20 @@ describe('CpModeToggle', () => {
     expect(wrapper.get('[data-value="technical"]').attributes('aria-checked')).toBe('true')
   })
 
+  it('clavier : tabulation sur l option cochée seulement, flèches pour changer', async () => {
+    const { wrapper, mode } = mountWithMode(ModeToggle, {})
+    const radios = wrapper.findAll('[role="radio"]')
+    expect(radios.map((r) => r.attributes('tabindex'))).toEqual(['0', '-1'])
+    await radios[0]?.trigger('keydown', { key: 'ArrowRight' })
+    expect(mode.technicalMode.value).toBe(true)
+    expect(wrapper.findAll('[role="radio"]').map((r) => r.attributes('tabindex'))).toEqual([
+      '-1',
+      '0',
+    ])
+    await wrapper.get('[data-value="technical"]').trigger('keydown', { key: 'ArrowLeft' })
+    expect(mode.technicalMode.value).toBe(false)
+  })
+
   it('recliquer sur l option active ne change rien', async () => {
     const { wrapper, mode } = mountWithMode(ModeToggle, {}, { technical: true })
     await wrapper.get('[data-value="technical"]').trigger('click')
