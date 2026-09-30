@@ -1,5 +1,5 @@
 # STATE — project-cp
-Updated: 2026-09-29 | Session: P0 — Socle
+Updated: 2026-09-30 | Session: P0 — Socle
 
 ## ✅ Done
 - Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D52, UI/UX).
@@ -14,13 +14,13 @@ Updated: 2026-09-29 | Session: P0 — Socle
 - **P0.2 — Infra dev** : `infra/docker-compose.dev.yml` (PostgreSQL 18 + pgvector, Redis 8.0 noeviction, SeaweedFS S3 (D51), Mailpit, LiteLLM, Temporal dev-server), `init-dev.sh` (4 rôles + 5 extensions), `.env.example`, scripts `infra:up/down/reset`, ports loopback-only. Mode natif (`dev-native.sh`) : PG + Redis sans Docker pour sessions cloud. Catalog mis à jour (pino 10.3, ioredis 6, bullmq 6.3). 42/42 turbo tasks vertes.
 - Stockage basculable (D51 révisée, D52) : `storage.backends` + `storage.files.backend_id` + `storage.backend_migrations` ; SeaweedFS local par défaut, OVH en option ; tests T21-T22 ; D50 validée.
 - **P0.3 — Baseline dbmate** : migration 0001 (schema-v1.2 → `db/migrations/`), `db/dbmate.sh` wrapper, `db/tests/` (23 contrôles T1-T22), scripts `db:*`, lefthook squawk exclude baseline. dbmate up 1.5s, 23/23 OK sur base neuve.
+- **P0.4 — `packages/db`** : drizzle-kit pull (219 tables, 15 schémas PG), post-pull.sh automatisé (bigint mode, unknown→text, partitions, @ts-nocheck), client postgres.js 3 pools lazy (RW/Auth/Admin), `withOrgContext` RLS (`set_config(..., true)`), helpers UUIDv7 (`generatePublicId`, curseurs), env typé (zod v4), logger pino. 47 tests passés, 21 intégration (RLS) conditionnels. PR #5 squash-merged dans dev.
 
 ## 🔄 Active
-- P0.4 — `packages/db` (drizzle-kit pull, client, withOrgContext).
+- P0.5 — `packages/shared` (codes d'erreur, schémas zod de base).
 
 ## 📋 Queue
-3. **P0.4** — `packages/db` (drizzle-kit pull, client, withOrgContext).
-4. **P0.5** — `packages/shared` (codes d'erreur, schémas zod de base).
+1. **P0.5** — `packages/shared` (codes d'erreur, schémas zod de base).
 5. **P0.6** — `apps/api` minimal (env, pino, request-id, OTel, /health, /openapi.json).
 6. **P0.7** — CI GitHub Actions.
 7. **P1 — Design system en code** (thème Nuxt UI, spike D27 d'abord) — en parallèle de P2.
