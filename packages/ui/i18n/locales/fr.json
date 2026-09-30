@@ -43,7 +43,12 @@
     },
     "table": {
       "empty": "Aucun résultat",
-      "loading": "Chargement des données…"
+      "loading": "Chargement des données…",
+      "sort": {
+        "none": "Non trié",
+        "ascending": "Tri croissant",
+        "descending": "Tri décroissant"
+      }
     },
     "empty": {
       "title": "Rien ici pour l'instant",

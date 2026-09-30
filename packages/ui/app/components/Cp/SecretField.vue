@@ -15,6 +15,13 @@ const props = defineProps<{
 const { t } = useI18n()
 const { copied, copy } = useCpCopy()
 const revealed = ref(false)
+// Un nouveau secret ne doit jamais apparaître déjà révélé.
+watch(
+  () => props.value,
+  () => {
+    revealed.value = false
+  },
+)
 const shown = computed(() => (revealed.value ? props.value : MASK))
 </script>
 

@@ -43,7 +43,12 @@
     },
     "table": {
       "empty": "No results",
-      "loading": "Loading data…"
+      "loading": "Loading data…",
+      "sort": {
+        "none": "Not sorted",
+        "ascending": "Sorted ascending",
+        "descending": "Sorted descending"
+      }
     },
     "empty": {
       "title": "Nothing here yet",
