@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spike D27 — shadcn-vue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* project-cp tokens */
+:root, [data-theme="light"] {
+  --canvas: #F8F7F2; --surface: #FFFFFF; --surface-sunken: #F1EFE7; --surface-raised: #FFFFFF;
+  --line: #E5E1D6; --line-strong: #8A8373; --ink: #1A1330; --ink-muted: #5E586B; --ink-disabled: #A7A2B3;
+  --primary: #5B50C8; --primary-hover: #4A40B0; --primary-soft: #EEEDFE; --on-primary: #FFFFFF;
+  --success: #1F7A4D; --success-soft: #E6F4EC;
+  --danger: #B42335; --danger-soft: #FBE9EB; --on-danger: #FFFFFF;
+  --focus-ring: #5B50C8;
+  --shadow-sm: 0 1px 2px rgba(26,19,48,0.06); --shadow-md: 0 4px 16px rgba(26,19,48,0.08);
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+  --control-sm: 32px; --control-md: 40px; --control-lg: 48px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Geist, ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+[data-theme="dark"] {
+  --canvas: #110E1A; --surface: #1A1626; --surface-sunken: #0C0A13; --surface-raised: #231E33;
+  --line: #2E2842; --line-strong: #6E6690; --ink: #F3F0FA; --ink-muted: #B3ACC4; --ink-disabled: #5C5570;
+  --primary: #A69FF2; --primary-hover: #BDB7F7; --primary-soft: #2A2450; --on-primary: #150F2A;
+  --success: #5CCB93; --success-soft: #12301F;
+  --danger: #F2707C; --danger-soft: #3A1419; --on-danger: #1A0A0D;
+  --focus-ring: #A69FF2;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); background: var(--canvas); color: var(--ink); padding: 24px; }
+h1 { font-family: var(--font-display); font-size: 28px; line-height: 36px; font-weight: 700; margin-bottom: 8px; }
+h2 { font-family: var(--font-display); font-size: 22px; line-height: 30px; font-weight: 600; margin-bottom: 16px; margin-top: 32px; }
+.subtitle { color: var(--ink-muted); font-size: 14px; margin-bottom: 32px; }
+.section { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow-sm); }
+.row { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+
+/* === Button (shadcn Button) === */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500; line-height: 20px;
+  border: none; border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-md { height: var(--control-md); padding: 0 var(--space-4); }
+.btn-sm { height: var(--control-sm); padding: 0 var(--space-3); font-size: 13px; }
+.btn-lg { height: var(--control-lg); padding: 0 var(--space-5); font-size: 16px; }
+.btn-primary { background: var(--primary); color: var(--on-primary); }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); }
+.btn-outline:hover { background: var(--primary-soft); }
+.btn-ghost { background: transparent; color: var(--ink-muted); }
+.btn-ghost:hover { background: var(--primary-soft); color: var(--ink); }
+.btn-destructive { background: var(--danger); color: var(--on-danger); }
+.btn-destructive:hover { opacity: 0.9; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn .spinner { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* === DataTable (TanStack Table + manual render) === */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 20px; }
+thead { background: var(--surface-sunken); }
+th { font-weight: 500; text-align: left; padding: var(--space-3) var(--space-4); color: var(--ink-muted); border-bottom: 1px solid var(--line); white-space: nowrap; }
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--ink); }
+td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); }
+tr:hover td { background: var(--primary-soft); }
+tr { cursor: pointer; }
+.text-right { text-align: right; font-variant-numeric: tabular-nums; }
+.status { display: inline-flex; align-items: center; gap: var(--space-1); font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: var(--radius-sm); }
+.status-active { background: var(--success-soft); color: var(--success); }
+.status-error { background: var(--danger-soft); color: var(--danger); }
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-4); color: var(--ink-muted); font-size: 13px; }
+
+/* === Stepper (manual, no built-in) === */
+.stepper { display: flex; align-items: center; gap: var(--space-2); }
+.step { display: flex; align-items: center; gap: var(--space-2); }
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; flex-shrink: 0;
+}
+.step-done .step-dot { background: var(--success); color: #fff; }
+.step-current .step-dot { background: var(--primary); color: var(--on-primary); }
+.step-pending .step-dot { background: var(--surface-sunken); color: var(--ink-muted); border: 1px solid var(--line); }
+.step-label { font-size: 14px; font-weight: 500; color: var(--ink); }
+.step-pending .step-label { color: var(--ink-muted); }
+.step-connector { width: 32px; height: 2px; background: var(--line); flex-shrink: 0; }
+.step-done + .step-connector { background: var(--success); }
+
+.approach-tag { display: inline-block; background: var(--primary-soft); color: var(--primary); font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-sm); margin-bottom: 12px; }
+</style>
+</head>
+<body data-theme="light">
+
+<h1>shadcn-vue</h1>
+<p class="subtitle">Spike D27 — 3 composants témoins avec tokens project-cp</p>
+
+<!-- Button -->
+<h2>Button</h2>
+<div class="section">
+  <p class="approach-tag">shadcn-vue — Tailwind v4 + CSS vars</p>
+  <div class="row" style="margin-bottom: 16px;">
+    <button class="btn btn-primary btn-md">Créer un agent</button>
+    <button class="btn btn-outline btn-md">Annuler</button>
+    <button class="btn btn-ghost btn-md">En savoir plus</button>
+    <button class="btn btn-destructive btn-md">Supprimer</button>
+  </div>
+  <div class="row" style="margin-bottom: 16px;">
+    <button class="btn btn-primary btn-sm">Ajouter</button>
+    <button class="btn btn-primary btn-md">Créer un agent</button>
+    <button class="btn btn-primary btn-lg">Commencer l'onboarding</button>
+  </div>
+  <div class="row">
+    <button class="btn btn-primary btn-md" disabled>Désactivé</button>
+    <button class="btn btn-primary btn-md"><span class="spinner"></span> Publication…</button>
+  </div>
+</div>
+
+<!-- DataTable -->
+<h2>DataTable (@tanstack/vue-table)</h2>
+<div class="section">
+  <p class="approach-tag">shadcn-vue — TanStack Table + manual template</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="sortable">Nom ▾</th>
+          <th>Type</th>
+          <th>Statut</th>
+          <th class="text-right">Exécutions</th>
+          <th class="text-right">Crédits</th>
+          <th>Dernière exécution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Relances clients</strong></td>
+          <td>Automatisé</td>
+          <td><span class="status status-active">● Actif</span></td>
+          <td class="text-right">1 247</td>
+          <td class="text-right">3 420 cr</td>
+          <td style="color: var(--ink-muted);">Il y a 2 min</td>
+        </tr>
+        <tr>
+          <td><strong>Extraction factures</strong></td>
+          <td>À la demande</td>
+          <td><span class="status status-active">● Actif</span></td>
+          <td class="text-right">856</td>
+          <td class="text-right">12 100 cr</td>
+          <td style="color: var(--ink-muted);">Il y a 15 min</td>
+        </tr>
+        <tr>
+          <td><strong>Analyse sentiments</strong></td>
+          <td>Planifié</td>
+          <td><span class="status status-error">● Erreur</span></td>
+          <td class="text-right">42</td>
+          <td class="text-right">890 cr</td>
+          <td style="color: var(--ink-muted);">Il y a 3 h</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <span>1–3 sur 24 agents</span>
+      <div class="row">
+        <button class="btn btn-ghost btn-sm" disabled>← Précédent</button>
+        <button class="btn btn-ghost btn-sm">Suivant →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stepper -->
+<h2>Stepper (composant maison)</h2>
+<div class="section">
+  <p class="approach-tag">shadcn-vue — pas de Stepper intégré, composant CpStepper maison</p>
+  <div class="stepper">
+    <div class="step step-done">
+      <div class="step-dot">✓</div>
+      <span class="step-label">Connecteur</span>
+    </div>
+    <div class="step-connector" style="background: var(--success);"></div>
+    <div class="step step-current">
+      <div class="step-dot">2</div>
+      <span class="step-label">Actions</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step step-pending">
+      <div class="step-dot">3</div>
+      <span class="step-label">Garde-fous</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step step-pending">
+      <div class="step-dot">4</div>
+      <span class="step-label">Vérification</span>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('keydown', e => {
+  if (e.key === 'd') document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+});
+</script>
+</body>
+</html>
