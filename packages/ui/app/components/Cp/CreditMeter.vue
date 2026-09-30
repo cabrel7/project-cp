@@ -9,14 +9,17 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 
-const rawPercent = computed(() =>
-  props.total > 0 ? Math.round((props.used / props.total) * 100) : props.used > 0 ? 100 : 0,
-)
-const percent = computed(() => Math.min(100, Math.max(0, rawPercent.value)))
-const exhausted = computed(() => props.total <= 0 || percent.value >= 100)
+// Arrondi vers le bas : 99,6 % ne doit jamais s'afficher « 100 % / épuisé » tant qu'il reste des crédits.
+const isFull = computed(() => props.total <= 0 || props.used >= props.total)
+const percent = computed(() => {
+  if (props.total <= 0) return props.used > 0 ? 100 : 0
+  if (isFull.value) return 100
+  return Math.min(99, Math.max(0, Math.floor((props.used / props.total) * 100)))
+})
+const exhausted = computed(() => isFull.value)
 
 const level = computed<'ok' | 'warning' | 'danger'>(() => {
-  if (percent.value >= 100) return 'danger'
+  if (exhausted.value) return 'danger'
   return percent.value > 70 ? 'warning' : 'ok'
 })
 

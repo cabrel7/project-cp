@@ -19,7 +19,11 @@ const names = (wrapper: ReturnType<typeof mount>) =>
 describe('CpDataTable', () => {
   it('affiche les en-têtes et les lignes', () => {
     const wrapper = mount(DataTable, { props: { columns, rows } })
-    expect(wrapper.findAll('th').map((h) => h.text())).toEqual(['Nom', 'Exécutions', 'Responsable'])
+    expect(
+      wrapper
+        .findAll('th')
+        .map((h) => h.text().replace(/ (Non trié|Tri croissant|Tri décroissant)$/, '')),
+    ).toEqual(['Nom', 'Exécutions', 'Responsable'])
     expect(wrapper.findAll('[data-row]')).toHaveLength(3)
     expect(names(wrapper)).toEqual(['Relances', 'Devis', 'Factures'])
   })
@@ -61,16 +65,18 @@ describe('CpDataTable', () => {
     ])
   })
 
-  it('tri : croissant puis décroissant, aria-sort mis à jour', async () => {
+  it('tri : croissant puis décroissant, état de tri annoncé', async () => {
     const wrapper = mount(DataTable, { props: { columns, rows } })
     const button = wrapper.get('[data-sort="name"]')
-    expect(button.attributes('aria-sort')).toBe('none')
+    expect(button.attributes('data-sort-state')).toBe('none')
+    expect(button.attributes('aria-sort')).toBeUndefined()
+    expect(button.text()).toContain('Non trié')
     await button.trigger('click')
     expect(names(wrapper)).toEqual(['Devis', 'Factures', 'Relances'])
-    expect(wrapper.get('[data-sort="name"]').attributes('aria-sort')).toBe('ascending')
+    expect(wrapper.get('[data-sort="name"]').attributes('data-sort-state')).toBe('ascending')
     await wrapper.get('[data-sort="name"]').trigger('click')
     expect(names(wrapper)).toEqual(['Relances', 'Factures', 'Devis'])
-    expect(wrapper.get('[data-sort="name"]').attributes('aria-sort')).toBe('descending')
+    expect(wrapper.get('[data-sort="name"]').attributes('data-sort-state')).toBe('descending')
   })
 
   it('tri numérique', async () => {

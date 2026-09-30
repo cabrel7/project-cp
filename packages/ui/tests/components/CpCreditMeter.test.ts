@@ -48,6 +48,12 @@ describe('CpCreditMeter', () => {
     expect(wrapper.find('[data-icon="i-lucide-circle-alert"]').exists()).toBe(true)
   })
 
+  it("99,6 % ne s'arrondit jamais à 100 % ni à « épuisé »", () => {
+    const { wrapper } = bar(996, 1000)
+    expect(wrapper.get('[role="progressbar"]').attributes('aria-valuenow')).toBe('99')
+    expect(wrapper.find('[data-cp-exhausted]').exists()).toBe(false)
+  })
+
   it('pas de message « épuisé » sous 100 %', () => {
     expect(bar(99, 100).wrapper.find('[data-cp-exhausted]').exists()).toBe(false)
   })

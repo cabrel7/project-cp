@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Base du gabarit Liste : UTable + états chargement / vide. Tri local sur les colonnes `sortable`.
+// aria-sort n'est valide que sur le columnheader (géré par UTable) : l'état est donc annoncé en texte masqué.
 // Personnalisation d'une cellule : slot `cell-<key>` (reçoit `row`).
 import CpEmptyState from './EmptyState.vue'
 import CpSkeleton from './Skeleton.vue'
@@ -67,7 +68,7 @@ function cellValue(row: CpDataTableRow, key: string): string {
 
 <template>
   <div class="rounded-lg border border-cp-line bg-cp-surface shadow-sm" data-cp-table>
-    <div v-if="loading" class="p-4" :aria-label="t('cp.table.loading')">
+    <div v-if="loading" class="p-4" role="status" aria-busy="true" :aria-label="t('cp.table.loading')">
       <CpSkeleton shape="line" :count="5" />
     </div>
     <CpEmptyState v-else-if="rows.length === 0" :title="emptyText ?? t('cp.table.empty')" />
@@ -78,11 +79,12 @@ function cellValue(row: CpDataTableRow, key: string): string {
           type="button"
           class="flex items-center gap-1 text-label text-cp-ink"
           :data-sort="column.key"
-          :aria-sort="ariaSort(column.key)"
+          :data-sort-state="ariaSort(column.key)"
           @click="toggleSort(column.key)"
         >
           {{ column.label }}
           <UIcon :name="sortIcon(column.key)" class="size-4 text-cp-ink-muted" aria-hidden="true" />
+          <span class="sr-only">{{ t(`cp.table.sort.${ariaSort(column.key)}`) }}</span>
         </button>
         <span v-else class="text-label text-cp-ink">{{ column.label }}</span>
       </template>

@@ -57,6 +57,8 @@ catalog:
   "@pinia/colada": "^1.4.6"
   "@vueuse/nuxt": "^15.0.0"
   "@tanstack/vue-table": "^8.21.0"
+  echarts: "^5.6.0"
+  vue-echarts: "^7.0.0"
   # Testing
   vitest: "^5.0.2"
   "@vitejs/plugin-vue": "^6.0.9"

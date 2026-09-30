@@ -43,7 +43,12 @@
     },
     "table": {
       "empty": "Aucun résultat",
-      "loading": "Chargement des données…"
+      "loading": "Chargement des données…",
+      "sort": {
+        "none": "Non trié",
+        "ascending": "Tri croissant",
+        "descending": "Tri décroissant"
+      }
     },
     "empty": {
       "title": "Rien ici pour l'instant",
@@ -80,6 +85,62 @@
     },
     "pageHeader": {
       "breadcrumb": "Fil d'Ariane"
+    },
+    "shell": {
+      "logo": "project-cp",
+      "workspace": "Espace de travail",
+      "switchWorkspace": "Changer d'espace de travail",
+      "nav": "Navigation principale",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "search": "Rechercher",
+      "notifications": "Notifications",
+      "profile": "Profil",
+      "credits": "Crédits",
+      "tabs": "Navigation rapide",
+      "tab": {
+        "home": "Accueil",
+        "chat": "Discuter",
+        "approvals": "À valider",
+        "credits": "Crédits"
+      }
+    },
+    "mode": {
+      "label": "Mode d'affichage",
+      "simple": "Simple",
+      "technique": "Technique"
+    },
+    "chat": {
+      "aiLabel": "Assistant IA",
+      "you": "Vous",
+      "disclaimer": "Généré par l'IA — vérifiez les informations importantes",
+      "toolCalls": "Sources consultées ({count})",
+      "typing": "L'assistant écrit…",
+      "error": "Le message n'a pas pu être affiché."
+    },
+    "chart": {
+      "viewData": "Voir les données",
+      "viewChart": "Voir le graphique",
+      "noData": "Aucune donnée à afficher pour cette période",
+      "category": "Période",
+      "chartLabel": "Graphique"
+    },
+    "approval": {
+      "title": "À valider",
+      "approve": "Approuver",
+      "modify": "Modifier",
+      "reject": "Refuser",
+      "deadline": "Délai restant : {time}",
+      "expired": "Délai dépassé",
+      "minutes": "{n} min",
+      "hours": "{n} h",
+      "days": "{n} j",
+      "items": "Éléments concernés",
+      "parameters": "Paramètres exacts"
+    },
+    "planGate": {
+      "locked": "Inclus dans le plan {plan}",
+      "viewPlans": "Voir les plans"
     }
   }
 }

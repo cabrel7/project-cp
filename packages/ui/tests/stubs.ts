@@ -266,6 +266,15 @@ export const NuxtLink = defineComponent({
   },
 })
 
+/** Doublure de vue-echarts : expose l'option reçue en JSON (pas de canvas sous happy-dom). Non enregistrée globalement. */
+export const VChart = defineComponent({
+  name: 'VChart',
+  props: { option: { type: Object as () => Record<string, unknown>, default: () => ({}) } },
+  setup(props) {
+    return () => h('div', { 'data-vchart': '', 'data-option': JSON.stringify(props.option) })
+  },
+})
+
 export const nuxtUiStubs: Record<string, Component> = {
   UButton,
   UIcon,
