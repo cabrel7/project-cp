@@ -15,13 +15,13 @@ Updated: 2026-09-30 | Session: P0 — Socle
 - Stockage basculable (D51 révisée, D52) : `storage.backends` + `storage.files.backend_id` + `storage.backend_migrations` ; SeaweedFS local par défaut, OVH en option ; tests T21-T22 ; D50 validée.
 - **P0.3 — Baseline dbmate** : migration 0001 (schema-v1.2 → `db/migrations/`), `db/dbmate.sh` wrapper, `db/tests/` (23 contrôles T1-T22), scripts `db:*`, lefthook squawk exclude baseline. dbmate up 1.5s, 23/23 OK sur base neuve.
 - **P0.4 — `packages/db`** : drizzle-kit pull (219 tables, 15 schémas PG), post-pull.sh automatisé (bigint mode, unknown→text, partitions, @ts-nocheck), client postgres.js 3 pools lazy (RW/Auth/Admin), `withOrgContext` RLS (`set_config(..., true)`), helpers UUIDv7 (`generatePublicId`, curseurs), env typé (zod v4), logger pino. 47 tests passés, 21 intégration (RLS) conditionnels. PR #5 squash-merged dans dev.
+- **P0.5 — `packages/shared`** : 62 codes d'erreur synchronisés avec les seeds SQL (950+960), schémas zod de base (publicId UUIDv7 strict, pagination, errorResponse, paginated), glossaire Simple/Technique (18 termes × fr/en). 285 tests (284 passés, 1 `it.fails` attendu pour `doc_url`/`documentation_url`). Reviewer : 0 CRITICAL, 0 MAJOR ouvert. PR #6 squash-merged dans dev.
 
 ## 🔄 Active
-- P0.5 — `packages/shared` (codes d'erreur, schémas zod de base).
+- P0.6 — `apps/api` minimal (env, pino, request-id, OTel, /health, /openapi.json).
 
 ## 📋 Queue
-1. **P0.5** — `packages/shared` (codes d'erreur, schémas zod de base).
-5. **P0.6** — `apps/api` minimal (env, pino, request-id, OTel, /health, /openapi.json).
+1. **P0.6** — `apps/api` minimal (env, pino, request-id, OTel, /health, /openapi.json).
 6. **P0.7** — CI GitHub Actions.
 7. **P1 — Design system en code** (thème Nuxt UI, spike D27 d'abord) — en parallèle de P2.
 8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
