@@ -17,12 +17,12 @@ Updated: 2026-09-30 | Session: P0 — Socle
 - **P0.4 — `packages/db`** : drizzle-kit pull (219 tables, 15 schémas PG), post-pull.sh automatisé (bigint mode, unknown→text, partitions, @ts-nocheck), client postgres.js 3 pools lazy (RW/Auth/Admin), `withOrgContext` RLS (`set_config(..., true)`), helpers UUIDv7 (`generatePublicId`, curseurs), env typé (zod v4), logger pino. 47 tests passés, 21 intégration (RLS) conditionnels. PR #5 squash-merged dans dev.
 - **P0.5 — `packages/shared`** : 62 codes d'erreur synchronisés avec les seeds SQL (950+960), schémas zod de base (publicId UUIDv7 strict, pagination, errorResponse, paginated), glossaire Simple/Technique (18 termes × fr/en). 285 tests (285 passés, `doc_url` → `documentation_url` corrigé). Reviewer : 0 CRITICAL, 0 MAJOR ouvert. PR #6 squash-merged dans dev.
 - **P0.6 — `apps/api` minimal** : env.ts (zod, invariant 8), pino logger (invariant 10), request-id UUIDv7, OTel conditionnel, `AppError` + format unique (doc 02 §8, details omis sur 5xx, HTTPException 4xx → 422), `/health`, `/openapi.json` (D31), `/docs` (Scalar). `doc_url` → `documentation_url` dans `@cp/shared`. 25 tests (5 fichiers), 28/28 turbo tasks. Reviewer 8/10, 0 CRITICAL/MAJOR ouvert. PR #7 squash-merged dans dev.
+- **P0.7 — CI GitHub Actions** : `.github/workflows/ci.yml` (5 jobs : lint Biome, typecheck, test, db avec PostgreSQL 18 service container + dbmate + 23 SQL tests + drizzle drift check + squawk, build). Action composite `.github/actions/setup-pnpm/` (Node 22 + pnpm 10 + cache). 42/42 turbo tasks. Reviewer 8.5/10, 0 CRITICAL/MAJOR ouvert (3 corrigés). PR #8 squash-merged dans dev.
 
 ## 🔄 Active
-- P0.7 — CI GitHub Actions.
+- P1.0 — Spike D27 : comparaison Nuxt UI vs shadcn-vue.
 
 ## 📋 Queue
-1. **P0.7** — CI GitHub Actions.
 7. **P1 — Design system en code** (thème Nuxt UI, spike D27 d'abord) — en parallèle de P2.
 8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
