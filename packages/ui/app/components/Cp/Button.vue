@@ -24,7 +24,7 @@ const appearance = computed(() => {
 </script>
 
 <template>
-  <UButton v-bind="{ ...appearance, ...$attrs }">
+  <UButton v-bind="{ ...$attrs, ...appearance }">
     <template v-for="(_, name) in $slots" :key="name" #[name]="slotProps">
       <slot :name="name" v-bind="slotProps ?? {}" />
     </template>
