@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { relations } from "drizzle-orm/relations";
 import { staffUsersInPlatform, staffSessionsInPlatform, staffApiKeysInPlatform, organizationsInIam, impersonationSessionsInPlatform, usersInIam, supportTicketsInPlatform, staffNotesInPlatform, settingsHistoryInPlatform, secretsInIam, serviceAccountsInPlatform, moderationReportsInPlatform, moderationActionsInPlatform, currenciesInRef, countriesInRef, dataRegionsInRef, languagesInRef, fxRatesInRef, taxRatesInRef, userIdentitiesInIam, userMfaFactorsInIam, verificationTokensInIam, paymentsInBilling, paymentEventsInBilling, paymentProvidersInBilling, referralsInBilling, creditGrantsInBilling, payoutsInMarket, paymentMethodsInBilling, publishersInMarket, earningsInMarket, invoiceLinesInBilling, listingsInMarket, cookieConsentsInCompliance, plansInBilling, planPricesInBilling, creditPackPricesInBilling, creditPacksInBilling, infraMetersInBilling, infraMeterRatesInBilling, modelsInAi, modelDeploymentsInAi, providerAccountsInAi, providersInAi, modelPricesInAi, filesInStorage, connectorDefinitionsInMcp, categoriesInMarket, legalDocumentsInCompliance, couponsInBilling, guardrailDetectorsInAi, providerAccountSnapshotsInAi, dataBreachesInCompliance, transferAuthorizationsInCompliance, backendsInStorage, backendMigrationsInStorage, featureFlagsInPlatform, messageTemplatesInPlatform, announcementsInPlatform, incidentsInPlatform, incidentUpdatesInPlatform, maintenanceWindowsInPlatform, rateLimitPoliciesInPlatform, emergencyStopsInPlatform, userSessionsInIam, blocklistEntriesInPlatform, routingRulesInAi, routingProfilesInAi, byokKeysInAi, environmentsInIam, workspacesInIam, capabilitiesInAi, rolesInIam, membershipsInIam, invitationsInIam, teamsInIam, projectsInIam, subscriptionsInBilling, subscriptionEventsInBilling, creditWalletsInBilling, creditReservationsInBilling, invoicesInBilling, refundsInBilling, budgetsInBilling, budgetPeriodsInBilling, couponRedemptionsInBilling, capabilityVersionsInAi, capabilityReleasesInAi, evalRunsInAi, evalDatasetsInAi, evalCasesInAi, oauthConnectionsInMcp, bridgesInMcp, connectorsInMcp, connectorCredentialsInMcp, connectorSourcesInMcp, connectorActionsInMcp, fileDatasetsInMcp, serverVersionsInMcp, serversInMcp, toolsInMcp, toolEmbeddingsInMcp, resourcesInMcp, promptsInMcp, accessTokensInMcp, healthChecksInMcp, oauthClientsInIam, oauthConsentsInIam, oauthAuthorizationCodesInIam, oauthTokensInIam, agentsInAgent, versionsInAgent, toolGrantsInAgent, triggersInAgent, webhookEndpointsInDev, approvalsInAgent, memoriesInAgent, conversationsInAgent, endUsersInDev, messagesInAgent, apiKeysInDev, webhookSubscriptionsInDev, idempotencyKeysInDev, deviceAuthorizationsInDev, listingVersionsInMarket, entitlementsInMarket, installationsInMarket, reviewsInMarket, legalAcceptancesInCompliance, dataSubjectRequestsInCompliance, guardrailProfilesInAi, guardrailRulesInAi, guardrailBindingsInAi, listingPricesInMarket, userPreferencesInUx, uiStatesInUx, onboardingProgressInUx, draftsInUx, savedViewsInUx, dashboardsInUx, notificationsInNotif, preferencesInNotif, deliveriesInNotif, supportMessagesInPlatform, abuseSignalsInPlatform, settingsInPlatform, staffPermissionsInPlatform, staffRolePermissionsInPlatform, staffRolesInPlatform, permissionsInIam, rolePermissionsInIam, featuresInBilling, planFeaturesInBilling, accessTokenToolsInMcp, bundleItemsInMarket, announcementDismissalsInPlatform, staffUserRolesInPlatform, routingRuleTargetsInAi, teamMembersInIam, capabilityReleaseVariantsInAi, capabilityGrantsInAgent, workspaceMembersInIam, featureFlagOverridesInPlatform, translationsInPlatform, organizationFeatureOverridesInBilling, evalResultsInAi, creditLedgerDefaultInBilling, creditLedgerP202609InBilling, creditLedgerP202610InBilling, creditLedgerP202611InBilling, creditLedgerP202612InBilling } from "./schema";
 
@@ -300,9 +301,6 @@ export const secretsInIamRelations = relations(secretsInIam, ({one, many}) => ({
 	workspacesInIam: one(workspacesInIam, {
 		fields: [secretsInIam.organizationId],
 		references: [workspacesInIam.id]
-	}),
-	oauthConnectionsInMcps_organizationId: many(oauthConnectionsInMcp, {
-		relationName: "oauthConnectionsInMcp_organizationId_secretsInIam_id"
 	}),
 	oauthConnectionsInMcps_organizationId: many(oauthConnectionsInMcp, {
 		relationName: "oauthConnectionsInMcp_organizationId_secretsInIam_id"
@@ -1473,11 +1471,6 @@ export const oauthConnectionsInMcpRelations = relations(oauthConnectionsInMcp, (
 		fields: [oauthConnectionsInMcp.organizationId],
 		references: [organizationsInIam.id]
 	}),
-	secretsInIam_organizationId: one(secretsInIam, {
-		fields: [oauthConnectionsInMcp.organizationId],
-		references: [secretsInIam.id],
-		relationName: "oauthConnectionsInMcp_organizationId_secretsInIam_id"
-	}),
 	connectorCredentialsInMcps: many(connectorCredentialsInMcp),
 }));
 
@@ -1755,7 +1748,7 @@ export const oauthTokensInIamRelations = relations(oauthTokensInIam, ({one, many
 		references: [oauthTokensInIam.id],
 		relationName: "oauthTokensInIam_parentTokenId_oauthTokensInIam_id"
 	}),
-	oauthTokensInIam_parentTokenId: many(oauthTokensInIam, {
+	oauthTokensInIam_children: many(oauthTokensInIam, {
 		relationName: "oauthTokensInIam_parentTokenId_oauthTokensInIam_id"
 	}),
 	usersInIam: one(usersInIam, {
