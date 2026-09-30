@@ -1,3 +1,4 @@
+import { HTTPException } from 'hono/http-exception'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { createApp } from '../app.js'
 import { AppError } from '../lib/errors.js'
@@ -22,6 +23,12 @@ describe("onError (gestionnaire d'erreurs global)", () => {
       throw new AppError('PLATFORM_VALIDATION_ERROR', {
         issues: [{ path: ['name'], message: 'required' }],
       })
+    })
+    app.get('/test/server-details', () => {
+      throw new AppError('PLATFORM_INTERNAL_ERROR', { sql: 'SELECT secret' })
+    })
+    app.post('/test/json', () => {
+      throw new HTTPException(400, { message: 'Malformed JSON' })
     })
     app.get('/test/server-error', () => {
       throw new AppError('PLATFORM_INTERNAL_ERROR')
@@ -77,5 +84,23 @@ describe("onError (gestionnaire d'erreurs global)", () => {
     const res = await app.request('/test/server-error')
     const body: Json = await res.json()
     expect(body.error).not.toHaveProperty('details')
+  })
+
+  it('ne doit pas exposer details sur une erreur 5xx', async () => {
+    const res = await app.request('/test/server-details')
+    expect(res.status).toBe(500)
+    const body: Json = await res.json()
+    expect(body.error.details).toBeUndefined()
+  })
+
+  it('doit renvoyer 4xx (pas 500) sur JSON malformé', async () => {
+    const res = await app.request('/test/json', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{bad',
+    })
+    expect(res.status).toBe(422)
+    const body: Json = await res.json()
+    expect(body.error.code).toBe('PLATFORM_VALIDATION_ERROR')
   })
 })

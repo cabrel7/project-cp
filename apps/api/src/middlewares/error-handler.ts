@@ -1,4 +1,5 @@
 import type { ErrorHandler, NotFoundHandler } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import type { AppEnv } from '../context.js'
 import { AppError } from '../lib/errors.js'
 
@@ -31,7 +32,15 @@ export const onError: ErrorHandler<AppEnv> = (err, c) => {
     } else {
       logger?.warn({ code: err.code, details: err.details, requestId }, err.code)
     }
-    return c.json(errorBody(err.code, err.code, requestId, err.details), err.httpStatus as 400)
+    // Never expose details on 5xx: they may carry internal context.
+    const details = err.httpStatus >= 500 ? undefined : err.details
+    return c.json(errorBody(err.code, err.code, requestId, details), err.httpStatus as 400)
+  }
+
+  // Hono framework errors (malformed JSON body, etc.): 4xx client error, not 500.
+  if (err instanceof HTTPException && err.status >= 400 && err.status < 500) {
+    logger?.warn({ status: err.status, requestId }, 'PLATFORM_VALIDATION_ERROR')
+    return c.json(errorBody('PLATFORM_VALIDATION_ERROR', 'The request is invalid.', requestId), 422)
   }
 
   logger?.error({ err, requestId }, 'PLATFORM_INTERNAL_ERROR')
