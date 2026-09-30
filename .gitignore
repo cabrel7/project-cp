@@ -28,6 +28,7 @@ blob-report/
 
 # Claude Code (réglages personnels)
 .claude/settings.local.json
+.claude/worktrees/
 
 # Changeset
 .changeset/*.md
