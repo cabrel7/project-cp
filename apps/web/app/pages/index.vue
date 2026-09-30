@@ -41,11 +41,11 @@ const swatches: Swatch[] = [
   { name: 'danger-soft', swatch: 'bg-cp-danger-soft', text: 'text-cp-danger' },
   { name: 'info', swatch: 'bg-cp-info', text: 'text-cp-canvas' },
   { name: 'info-soft', swatch: 'bg-cp-info-soft', text: 'text-cp-info' },
-  { name: 'chart-1', swatch: 'bg-cp-chart-1', text: 'text-cp-ink' },
-  { name: 'chart-2', swatch: 'bg-cp-chart-2', text: 'text-cp-ink' },
-  { name: 'chart-3', swatch: 'bg-cp-chart-3', text: 'text-cp-ink' },
-  { name: 'chart-4', swatch: 'bg-cp-chart-4', text: 'text-cp-ink' },
-  { name: 'chart-5', swatch: 'bg-cp-chart-5', text: 'text-cp-ink' },
+  { name: 'chart-1', swatch: 'bg-cp-chart-1', text: 'text-cp-on-primary' },
+  { name: 'chart-2', swatch: 'bg-cp-chart-2', text: 'text-cp-on-primary' },
+  { name: 'chart-3', swatch: 'bg-cp-chart-3', text: 'text-cp-on-primary' },
+  { name: 'chart-4', swatch: 'bg-cp-chart-4', text: 'text-cp-on-primary' },
+  { name: 'chart-5', swatch: 'bg-cp-chart-5', text: 'text-cp-on-primary' },
   { name: 'chart-6', swatch: 'bg-cp-chart-6', text: 'text-cp-ink' },
 ]
 
