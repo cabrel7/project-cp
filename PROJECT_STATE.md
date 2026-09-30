@@ -22,11 +22,13 @@ Updated: 2026-09-30 | Session: P1 — Design system en code
 
 - **P1.1 — Thème Nuxt UI** : `packages/ui` layer Nuxt (tokens.json → tokens.css → `@theme static` Tailwind v4 → app.config.ts Nuxt UI). 39 couleurs sémantiques, 7 échelles Nuxt UI (primary/secondary/success/warning/error/info/warm) interpolées OKLCH, typographie 12 styles (3 familles @fontsource : Plus Jakarta Sans, Geist, Geist Mono), ombres, espacement 4px, rayons, tailles de contrôle, z-index, points de rupture, focus-ring. Pont `--ui-*` pour Nuxt UI. Mode sombre `.dark` + `useColorMode`. Icônes Lucide embarquées localement. Page de démo (palette 31 pastilles, boutons, typographie, icônes, interrupteur sombre). 160 tests (7 fichiers) passés, 42/42 turbo tasks. Reviewer : 2 MAJOR corrigés (`@theme static`, alias `warm`). Branche `p1/01-theme-nuxt-ui`.
 
+- **P1.2 — 27 composants design system** (`packages/ui`) : 3 sous-lots. P1.2a (10 atomes + infra : Button, TextField, Select, Switch, StatusBadge, Skeleton, Alert, Tabs, RiskTag, useCpToast). P1.2b (11 molécules : ConfirmDialog, DataTable, EmptyState, FilterBar, PageHeader, StatTile, CreditMeter, Stepper, Timeline, SecretField, CodeBlock, useCpCopy). P1.2c (6 organismes : AppShell, ModeToggle, ChatMessage, Chart/ECharts, ApprovalCard, PlanGate, useCpMode, cpChart utils). Infra : `@nuxtjs/i18n` (D53), préfixe `Cp` (D54), tests `@vue/test-utils` + `happy-dom` (D55), echarts + vue-echarts. 408 tests (35 fichiers), typecheck propre. Reviewer P1.2b 8.5/10 (3 MAJOR corrigés), reviewer P1.2c 8.5/10 (4 MAJOR corrigés), UX 6.5/10 (3 CRITICAL corrigés — hauteurs contrôles, hover AA, polices titres). Branche `p1/02-components-p12a`.
+
 ## 🔄 Active
 - Aucun lot en cours.
 
 ## 📋 Queue
-7. **P1 — Design system en code** (P1.1 ✅, prochains lots P1.2+) — en parallèle de P2.
+7. **P1 — Design system en code** (P1.1 ✅, P1.2 ✅, prochains lots P1.3+) — en parallèle de P2.
 8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
@@ -37,6 +39,7 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 - D26 : serveur OAuth 2.1 via `oidc-provider` = POC à valider.
 - D27 : Nuxt UI ✅ validée — responsive mobile-first vérifié P1.1 (grilles 2→4→6 colonnes, min-h-11 tactile).
 - P1.1 : i18n FR/EN non encore appliqué sur la page de démo (texte français en dur — DETTE, lot ultérieur). Contraste pastilles chart décoratifs limité à 2.0:1 (couleur = information, label secondaire).
+- P1.2 — UX MAJOR restants (non bloquants, à traiter P1.3+) : ApprovalCard « Refuser » devrait être secondary ; ChatMessage disclaimer par défaut activé ; Alert devrait lire useCpMode au lieu de prop ; DataTable manque mobile cards, alignement montants, colonnes technicalOnly ; ConfirmDialog saisie confirmation ; AppShell lien d'évitement, transition tiroir, bandeau hors ligne ; Chart reduced-motion, formats localisés, > 6 séries ; PlanGate aperçu grisé + slot ; TextField/Select role="alert" sur erreur, props form ; persistance useCpMode via API.
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).
