@@ -20,7 +20,7 @@ Updated: 2026-09-30 | Session: P0 — Socle
 - **P0.7 — CI GitHub Actions** : `.github/workflows/ci.yml` (5 jobs : lint Biome, typecheck, test, db avec PostgreSQL 18 service container + dbmate + 23 SQL tests + drizzle drift check + squawk, build). Action composite `.github/actions/setup-pnpm/` (Node 22 + pnpm 10 + cache). 42/42 turbo tasks. Reviewer 8.5/10, 0 CRITICAL/MAJOR ouvert (3 corrigés). PR #8 squash-merged dans dev.
 
 ## 🔄 Active
-- P1.0 — Spike D27 : comparaison Nuxt UI vs shadcn-vue.
+- P1.0 — Spike D27 : comparaison Nuxt UI vs shadcn-vue — verdict PROPOSÉ : Nuxt UI (6/8 vs 4/8). PR #9 ouverte, en attente de validation humaine.
 
 ## 📋 Queue
 7. **P1 — Design system en code** (thème Nuxt UI, spike D27 d'abord) — en parallèle de P2.
@@ -32,7 +32,7 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## ⚠️ Known issues
 - D26 : serveur OAuth 2.1 via `oidc-provider` = POC à valider.
-- D27 : Nuxt UI à confirmer contre shadcn-vue lors de `packages/ui`.
+- D27 : Nuxt UI PROPOSÉ (spike P1.0, PR #9) — en attente de validation humaine avant de marquer ✅.
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).
