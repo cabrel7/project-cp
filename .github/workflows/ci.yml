@@ -70,6 +70,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # requis pour `git diff origin/<base>...HEAD` (squawk)
 
       - name: Init database (roles + extensions)
         env:
@@ -87,8 +89,9 @@ jobs:
 
       - name: Install dbmate
         run: |
-          curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64
-          chmod +x /usr/local/bin/dbmate
+          curl -fsSL -o /tmp/dbmate https://github.com/amacneil/dbmate/releases/download/v2.36.0/dbmate-linux-amd64
+          sudo install -m 0755 /tmp/dbmate /usr/local/bin/dbmate
+          dbmate --version
 
       - name: Run migrations (dbmate up)
         env:
@@ -112,6 +115,7 @@ jobs:
 
       - name: Check schema drift
         run: |
+          git add -N packages/db/src/schema/  # detecte aussi les fichiers nouveaux non suivis
           if ! git diff --exit-code packages/db/src/schema/; then
             echo "::error::Schema drift detected! 'drizzle-kit pull' produced different output than what is committed."
             echo "Run 'pnpm --filter @cp/db db:pull' locally after 'dbmate up', commit the result, and push again."
