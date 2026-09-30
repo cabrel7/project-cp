@@ -16,7 +16,9 @@
     "@fontsource/plus-jakarta-sans": "catalog:",
     "@iconify-json/lucide": "catalog:",
     "@nuxt/ui": "catalog:",
-    "@nuxtjs/i18n": "catalog:"
+    "@nuxtjs/i18n": "catalog:",
+    "echarts": "catalog:",
+    "vue-echarts": "catalog:"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",
