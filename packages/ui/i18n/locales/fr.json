@@ -1,0 +1,85 @@
+{
+  "cp": {
+    "status": {
+      "active": "Actif",
+      "online": "En ligne",
+      "success": "Réussi",
+      "paused": "En pause",
+      "warning": "Attention",
+      "pending": "À valider",
+      "error": "Erreur",
+      "failed": "Échec",
+      "revoked": "Révoqué",
+      "draft": "Brouillon",
+      "archived": "Archivé",
+      "running": "En cours",
+      "validating": "En validation"
+    },
+    "risk": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "critical": "Critique"
+    },
+    "alert": {
+      "close": "Fermer",
+      "copy": "Copier",
+      "copied": "Copié",
+      "errorCode": "Code : {code}",
+      "requestId": "Requête : {id}"
+    },
+    "toast": {
+      "close": "Fermer",
+      "undo": "Annuler"
+    },
+    "loading": "Chargement…",
+    "skeleton": {
+      "loading": "Chargement en cours"
+    },
+    "dialog": {
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "confirmDanger": "Supprimer"
+    },
+    "table": {
+      "empty": "Aucun résultat",
+      "loading": "Chargement des données…"
+    },
+    "empty": {
+      "title": "Rien ici pour l'instant",
+      "description": "Commencez par créer votre premier élément."
+    },
+    "filter": {
+      "search": "Rechercher…",
+      "clear": "Effacer les filtres"
+    },
+    "credits": {
+      "used": "{used} / {total} crédits",
+      "percent": "{percent} %",
+      "exhausted": "Crédits épuisés"
+    },
+    "secret": {
+      "show": "Afficher",
+      "hide": "Masquer",
+      "copy": "Copier",
+      "copied": "Copié",
+      "warning": "Vous ne pourrez plus la voir après avoir quitté cette page."
+    },
+    "code": {
+      "copy": "Copier le code",
+      "copied": "Copié"
+    },
+    "stepper": {
+      "step": "Étape {current} sur {total}",
+      "completed": "Terminée"
+    },
+    "stat": {
+      "up": "En hausse",
+      "down": "En baisse",
+      "flat": "Stable"
+    },
+    "pageHeader": {
+      "breadcrumb": "Fil d'Ariane"
+    }
+  }
+}
