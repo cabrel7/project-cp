@@ -10,14 +10,25 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@cp/shared": "workspace:*",
+    "@hono/node-server": "catalog:",
+    "@hono/otel": "catalog:",
+    "@hono/zod-openapi": "catalog:",
+    "@opentelemetry/auto-instrumentations-node": "catalog:",
+    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "@scalar/hono-api-reference": "catalog:",
     "hono": "catalog:",
-    "@hono/node-server": "catalog:"
+    "pino": "catalog:",
+    "uuidv7": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "typescript": "catalog:",
+    "pino-pretty": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   }
 }
