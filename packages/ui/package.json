@@ -15,12 +15,17 @@
     "@fontsource/geist-mono": "catalog:",
     "@fontsource/plus-jakarta-sans": "catalog:",
     "@iconify-json/lucide": "catalog:",
-    "@nuxt/ui": "catalog:"
+    "@nuxt/ui": "catalog:",
+    "@nuxtjs/i18n": "catalog:"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:",
     "nuxt": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
+    "vue": "catalog:",
     "vue-tsc": "catalog:"
   }
 }

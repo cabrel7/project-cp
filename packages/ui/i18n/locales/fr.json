@@ -1,0 +1,40 @@
+{
+  "cp": {
+    "status": {
+      "active": "Actif",
+      "online": "En ligne",
+      "success": "Réussi",
+      "paused": "En pause",
+      "warning": "Attention",
+      "pending": "À valider",
+      "error": "Erreur",
+      "failed": "Échec",
+      "revoked": "Révoqué",
+      "draft": "Brouillon",
+      "archived": "Archivé",
+      "running": "En cours",
+      "validating": "En validation"
+    },
+    "risk": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "critical": "Critique"
+    },
+    "alert": {
+      "close": "Fermer",
+      "copy": "Copier",
+      "copied": "Copié",
+      "errorCode": "Code : {code}",
+      "requestId": "Requête : {id}"
+    },
+    "toast": {
+      "close": "Fermer",
+      "undo": "Annuler"
+    },
+    "loading": "Chargement…",
+    "skeleton": {
+      "loading": "Chargement en cours"
+    }
+  }
+}

@@ -186,7 +186,7 @@ describe('theme.css — pont --ui-* (Nuxt UI → jetons --cp-*)', () => {
 describe('app.config.ts — alias de couleurs Nuxt UI', () => {
   const load = async (): Promise<{ ui: { colors: Record<string, string> } }> => {
     vi.stubGlobal('defineAppConfig', (config: unknown) => config)
-    const module = (await import('../app.config')) as {
+    const module = (await import('../app/app.config')) as {
       default: { ui: { colors: Record<string, string> } }
     }
     return module.default
@@ -228,7 +228,7 @@ describe('app.config.ts — alias de couleurs Nuxt UI', () => {
   })
 
   it('ne doit contenir aucune couleur en dur ni classe de palette Tailwind par défaut', () => {
-    const source = read('../app.config.ts')
+    const source = read('../app/app.config.ts')
     expect(source).not.toMatch(/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|oklch\(/)
   })
 })

@@ -1,0 +1,40 @@
+{
+  "cp": {
+    "status": {
+      "active": "Active",
+      "online": "Online",
+      "success": "Succeeded",
+      "paused": "Paused",
+      "warning": "Warning",
+      "pending": "To review",
+      "error": "Error",
+      "failed": "Failed",
+      "revoked": "Revoked",
+      "draft": "Draft",
+      "archived": "Archived",
+      "running": "Running",
+      "validating": "Validating"
+    },
+    "risk": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "alert": {
+      "close": "Close",
+      "copy": "Copy",
+      "copied": "Copied",
+      "errorCode": "Code: {code}",
+      "requestId": "Request: {id}"
+    },
+    "toast": {
+      "close": "Close",
+      "undo": "Undo"
+    },
+    "loading": "Loading…",
+    "skeleton": {
+      "loading": "Loading"
+    }
+  }
+}

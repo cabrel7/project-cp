@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { basename } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import { declMap, exists, pathOf, read, rulesWithPrelude, tokens } from './helpers'
@@ -32,7 +33,7 @@ const uiPackage = JSON.parse(read('../package.json')) as {
 describe('packages/ui/nuxt.config.ts — layer Nuxt', () => {
   it('doit charger uniquement le module @nuxt/ui (pas @nuxt/fonts, qui télécharge à la compilation)', async () => {
     const config = await loadConfig('../nuxt.config.ts')
-    expect(config.modules).toEqual(['@nuxt/ui'])
+    expect(config.modules).toEqual(['@nuxt/ui', '@nuxtjs/i18n'])
   })
 
   it('doit déclarer theme.css comme seule feuille de style globale, en chemin absolu existant', async () => {
@@ -75,7 +76,7 @@ describe('packages/ui/nuxt.config.ts — layer Nuxt', () => {
   it('doit être résolu comme layer par le paquet (main = nuxt.config.ts existant)', () => {
     expect(uiPackage.main).toBe('./nuxt.config.ts')
     expect(exists('../nuxt.config.ts')).toBe(true)
-    expect(exists('../app.config.ts')).toBe(true)
+    expect(exists('../app/app.config.ts')).toBe(true)
   })
 })
 
