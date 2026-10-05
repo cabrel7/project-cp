@@ -11,7 +11,7 @@ describe('CpLayoutAuth', () => {
     expect(wrapper.get('article h1').text()).toBe('Autoriser Boutique+')
     expect(wrapper.get('article p').text()).toBe('Cette application demande l’accès.')
     expect(wrapper.get('[data-cp-layout-auth]').classes()).toEqual(
-      expect.arrayContaining(['flex', 'min-h-screen', 'items-center', 'justify-center']),
+      expect.arrayContaining(['flex', 'min-h-dvh', 'items-center', 'justify-center']),
     )
   })
 

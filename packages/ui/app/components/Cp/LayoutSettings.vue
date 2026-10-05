@@ -1,5 +1,7 @@
 <script setup lang="ts">
 // Gabarit G5 — Réglages (organisation, workspace, profil, facturation). Zone dangereuse en dernier.
+import CpPageHeader from './PageHeader.vue'
+
 export interface CpSettingsSection {
   value: string
   label: string
@@ -47,7 +49,7 @@ function select(value: string): void {
           </li>
         </ul>
       </nav>
-      <main class="flex min-w-0 flex-1 flex-col gap-8">
+      <div class="flex min-w-0 flex-1 flex-col gap-8" data-cp-settings-content>
         <div v-for="section in sections" v-show="section.value === activeSection" :key="section.value">
           <div
             class="rounded-lg border bg-cp-surface p-6"
@@ -56,11 +58,11 @@ function select(value: string): void {
             :data-danger="section.danger || undefined"
           >
             <slot :name="`section-${section.value}`">
-              <slot />
+              <slot v-if="section.value === activeSection" />
             </slot>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </template>

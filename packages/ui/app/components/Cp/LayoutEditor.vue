@@ -34,9 +34,9 @@ const { t } = useI18n()
       >
         <slot name="palette" />
       </aside>
-      <main class="relative flex-1 bg-cp-canvas" data-cp-editor-canvas>
+      <section class="relative flex-1 bg-cp-canvas" data-cp-editor-canvas>
         <slot name="canvas" />
-      </main>
+      </section>
       <aside
         class="hidden w-72 shrink-0 flex-col overflow-y-auto border-l border-cp-line bg-cp-surface p-4 lg:flex"
         data-cp-editor-properties

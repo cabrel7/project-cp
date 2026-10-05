@@ -18,9 +18,9 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-cp-canvas p-4" data-cp-layout-auth>
+  <div class="flex min-h-dvh items-center justify-center bg-cp-canvas p-4" data-cp-layout-auth>
     <article
-      class="flex w-full max-w-reading-max flex-col gap-6 rounded-lg border border-cp-line bg-cp-surface p-6 shadow-lg md:p-8"
+      class="flex w-full max-w-reading-max flex-col gap-6 rounded-lg border border-cp-line bg-cp-surface p-6 shadow-sm md:p-8"
     >
       <header class="flex flex-col items-center gap-3 text-center">
         <slot name="header">

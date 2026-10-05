@@ -23,8 +23,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const messageContainer = ref<HTMLElement | null>(null)
-
 function submit(): void {
   if (!props.inputDisabled && inputModel.value.trim().length > 0) emit('send')
 }
@@ -37,7 +35,7 @@ function submit(): void {
         <h2 class="text-heading-2 text-cp-ink">{{ title }}</h2>
       </slot>
     </header>
-    <div ref="messageContainer" class="flex flex-1 flex-col gap-4 overflow-y-auto p-4 md:p-6" data-cp-messages>
+    <div role="log" aria-live="polite" class="flex flex-1 flex-col gap-4 overflow-y-auto p-4 md:p-6" data-cp-messages>
       <div v-if="showSuggestions && suggestions?.length" class="flex flex-wrap justify-center gap-2">
         <button
           v-for="s in suggestions"
@@ -52,12 +50,13 @@ function submit(): void {
       </div>
       <slot />
     </div>
-    <footer class="sticky bottom-0 border-t border-cp-line bg-cp-surface p-3 md:p-4" data-cp-chat-input>
+    <footer class="sticky bottom-0 z-sticky border-t border-cp-line bg-cp-surface p-3 md:p-4" data-cp-chat-input>
       <form class="mx-auto flex max-w-reading-max items-end gap-2" @submit.prevent="submit">
         <slot name="input-actions" />
         <UTextarea
           v-model="inputModel"
           :placeholder="inputPlaceholder ?? t('cp.layout.chatPlaceholder')"
+          :aria-label="t('cp.layout.chatPlaceholder')"
           autoresize
           :rows="1"
           :maxrows="6"
