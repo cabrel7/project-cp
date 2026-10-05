@@ -37,10 +37,14 @@ const emit = defineEmits<{
   navigate: [value: string]
 }>()
 
+const visibleItems = computed(() =>
+  props.items.filter((item) => !item.external || safeHref(item.href) !== undefined),
+)
 const entries = computed(() =>
-  props.items.map((item, index) => ({
+  visibleItems.value.map((item, index) => ({
     item,
-    heading: item.group && item.group !== props.items[index - 1]?.group ? item.group : undefined,
+    heading:
+      item.group && item.group !== visibleItems.value[index - 1]?.group ? item.group : undefined,
   })),
 )
 

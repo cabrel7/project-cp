@@ -40,7 +40,7 @@ const DEFAULT_TABS: CpMobileTab[] = [
   { value: 'home', icon: 'i-lucide-house', label: 'cp.shell.tab.home' },
   { value: 'chat', icon: 'i-lucide-message-circle', label: 'cp.shell.tab.chat' },
   { value: 'approvals', icon: 'i-lucide-shield-check', label: 'cp.shell.tab.approvals' },
-  { value: 'credits', icon: 'i-lucide-coins', label: 'cp.shell.tab.credits' },
+  { value: 'billing', icon: 'i-lucide-coins', label: 'cp.shell.tab.credits' },
 ]
 
 const tabs = computed(() => props.mobileTabs ?? DEFAULT_TABS)
@@ -80,8 +80,16 @@ watch(drawerOpen, (open) => {
     target?.focus()
   })
 })
-onMounted(() => document.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown)
+  const mql = window.matchMedia('(min-width: 768px)')
+  const close = () => { drawerOpen.value = false }
+  mql.addEventListener('change', close)
+  onBeforeUnmount(() => {
+    document.removeEventListener('keydown', onKeydown)
+    mql.removeEventListener('change', close)
+  })
+})
 
 const ICON_BUTTON =
   'relative flex size-11 items-center justify-center rounded-md text-cp-ink-muted hover:bg-cp-surface-sunken hover:text-cp-ink md:size-10'

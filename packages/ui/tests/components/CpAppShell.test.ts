@@ -113,8 +113,8 @@ describe('CpAppShell', () => {
     const tabs = wrapper.findAll('[data-cp-tabbar] [data-tab]')
     expect(tabs.map((t) => t.text())).toEqual(['Accueil', 'Discuter', 'À valider', 'Crédits'])
     expect(wrapper.get('[data-tab="chat"]').attributes('aria-current')).toBe('page')
-    await wrapper.get('[data-tab="credits"]').trigger('click')
-    expect(wrapper.findComponent(AppShell).emitted('navigate')).toEqual([['credits']])
+    await wrapper.get('[data-tab="billing"]').trigger('click')
+    expect(wrapper.findComponent(AppShell).emitted('navigate')).toEqual([['billing']])
   })
 
   it('mobile : le tiroir s ouvre, se ferme (bouton, fond, Échap, navigation)', async () => {

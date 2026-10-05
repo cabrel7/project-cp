@@ -59,8 +59,16 @@ watch(drawerOpen, (open) => {
     target?.focus()
   })
 })
-onMounted(() => document.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown)
+  const mql = window.matchMedia('(min-width: 768px)')
+  const close = () => { drawerOpen.value = false }
+  mql.addEventListener('change', close)
+  onBeforeUnmount(() => {
+    document.removeEventListener('keydown', onKeydown)
+    mql.removeEventListener('change', close)
+  })
+})
 
 const ICON_BUTTON =
   'relative flex size-11 items-center justify-center rounded-md text-cp-ink-muted hover:bg-cp-surface-sunken hover:text-cp-ink md:size-10'
@@ -183,8 +191,8 @@ const ICON_BUTTON =
 
           <button
             type="button"
-            class="flex items-center gap-2 rounded-md bg-cp-danger px-3 py-1.5 text-label font-semibold text-cp-on-danger hover:bg-cp-danger/85"
-            :class="{ 'animate-pulse': emergencyStopActive }"
+            class="flex min-h-11 items-center gap-2 rounded-md bg-cp-danger px-3 py-1.5 text-label font-semibold text-cp-on-danger hover:bg-cp-danger/85 md:min-h-10"
+            :class="{ 'animate-pulse motion-reduce:animate-none': emergencyStopActive }"
             :aria-label="t('cp.admin.emergencyStop')"
             :aria-pressed="emergencyStopActive || undefined"
             data-cp-emergency-stop

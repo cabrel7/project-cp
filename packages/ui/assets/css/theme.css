@@ -229,6 +229,22 @@
   --width-sidebar: 256px;
   --width-content-max: 1200px;
   --width-reading-max: 720px;
+  --max-width-content-max: 1200px;
+  --max-width-reading-max: 720px;
+}
+
+/* Tailwind v4 : --z-* enregistre des valeurs numériques, pas des noms. */
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-drawer {
+  z-index: var(--z-drawer);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+@utility z-toast {
+  z-index: var(--z-toast);
 }
 
 /*
