@@ -25,11 +25,7 @@ abstract class ShellPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto(this.path)
-    // Hydratation terminée : le premier clic doit déclencher l'événement Vue.
-    await this.page.waitForFunction(() =>
-      document.querySelector('#__nuxt')?.hasAttribute('data-v-app'),
-    )
+    await this.page.goto(this.path, { waitUntil: 'networkidle' })
   }
 
   get nav(): Locator {
