@@ -1,8 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, type Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import { gotoHydrated } from '../helpers'
 
-// Accessibilité WCAG 2.0 AA (axe-core) : les règles ne dépendent ni du thème ni du viewport,
-// un seul projet suffit.
 const PAGES: ReadonlyArray<{ name: string; path: string }> = [
   { name: 'index', path: '/' },
   { name: 'AppShell', path: '/app' },
@@ -17,11 +16,6 @@ const PAGES: ReadonlyArray<{ name: string; path: string }> = [
   { name: 'G8 authentification', path: '/gabarit-auth' },
   { name: 'catalogue', path: '/catalog' },
 ]
-
-async function gotoHydrated(page: Page, path: string): Promise<void> {
-  await page.goto(path)
-  await page.waitForFunction(() => document.querySelector('#__nuxt')?.hasAttribute('data-v-app'))
-}
 
 test.describe('Accessibilité WCAG 2.0 AA', () => {
   test.beforeEach((_fixtures, info) =>
