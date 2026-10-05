@@ -96,8 +96,10 @@ const ICON_BUTTON =
     <!-- Sidebar -->
     <aside
       ref="sidebar"
-      class="fixed inset-y-0 left-0 z-drawer flex w-sidebar shrink-0 flex-col gap-4 bg-cp-surface-sunken p-4 transition-[transform,visibility] duration-250 ease-out motion-reduce:transition-none md:sticky md:top-0 md:h-screen md:translate-x-0"
-      :class="drawerOpen ? 'translate-x-0' : '-translate-x-full max-md:invisible'"
+      class="fixed inset-y-0 left-0 z-drawer flex w-sidebar shrink-0 flex-col gap-4 bg-cp-surface-sunken p-4 duration-250 ease-out motion-reduce:transition-none md:sticky md:top-0 md:h-screen md:translate-x-0"
+      :class="drawerOpen
+        ? 'translate-x-0 transition-transform'
+        : '-translate-x-full transition-[transform,visibility] max-md:invisible'"
       :role="drawerOpen ? 'dialog' : undefined"
       :aria-modal="drawerOpen ? 'true' : undefined"
       :aria-label="t('cp.admin.nav')"

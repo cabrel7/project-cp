@@ -1,9 +1,8 @@
 import { expect, test } from '@playwright/test'
+import { isDark, isMobile } from '../helpers'
 import { AdminShellPage } from '../pages/ShellPage'
 
 // Parcours admin : AdminShell + SidebarNav compacte (maquette docs/maquettes/7-navigation/43-NavAdmin.png).
-const isMobile = (name: string) => name.startsWith('mobile')
-const isDark = (name: string) => name.endsWith('dark')
 
 test.describe('AdminShell — thèmes', () => {
   test('les tokens appliquent le bon thème', async ({ page }, info) => {
@@ -105,6 +104,17 @@ test.describe('AdminShell — mobile 375×667', () => {
   test.beforeEach(({}, testInfo) =>
     test.skip(!isMobile(testInfo.project.name), 'mobile uniquement'),
   )
+
+  test('aucun débordement horizontal (viewport 375 px respecté)', async ({ page }) => {
+    const shell = new AdminShellPage(page)
+    await shell.goto()
+    const { scrollWidth, innerWidth } = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+    }))
+    expect(innerWidth).toBe(375)
+    expect(scrollWidth).toBeLessThanOrEqual(innerWidth)
+  })
 
   test('tiroir : ouverture, focus, fermeture Échap / scrim, profil visible dans le tiroir', async ({
     page,

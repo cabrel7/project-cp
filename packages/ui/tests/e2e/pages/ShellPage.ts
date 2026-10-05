@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import fr from '../../../i18n/locales/fr.json' with { type: 'json' }
+import { gotoHydrated } from '../helpers'
 
 const s = fr.cp.shell
 const a = fr.cp.admin
@@ -25,7 +26,7 @@ abstract class ShellPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto(this.path, { waitUntil: 'networkidle' })
+    await gotoHydrated(this.page, this.path)
   }
 
   get nav(): Locator {

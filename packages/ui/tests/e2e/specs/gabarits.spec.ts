@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { gotoHydrated, isDark } from '../helpers'
+import { gotoHydrated, isDark, prepareFullPage } from '../helpers'
 
 // Régression visuelle des 8 gabarits (docs/design-system/ — patterns G1 à G8).
 // Les 4 projets (desktop/mobile x clair/sombre) produisent chacun leurs captures.
@@ -22,6 +22,7 @@ test.describe('Gabarits — pleine page', () => {
       await expect(page.locator('html')).toHaveClass(
         isDark(info.project.name) ? /\bdark\b/ : /^(?!.*\bdark\b)/,
       )
+      await prepareFullPage(page)
       await expect(page).toHaveScreenshot(`${g.id}-full.png`, { fullPage: true })
     })
   }

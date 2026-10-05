@@ -92,7 +92,7 @@ onMounted(() => {
 })
 
 const ICON_BUTTON =
-  'relative flex size-11 items-center justify-center rounded-md text-cp-ink-muted hover:bg-cp-surface-sunken hover:text-cp-ink md:size-10'
+  'relative flex size-11 shrink-0 items-center justify-center rounded-md text-cp-ink-muted hover:bg-cp-surface-sunken hover:text-cp-ink md:size-10'
 </script>
 
 <template>
@@ -117,8 +117,10 @@ const ICON_BUTTON =
     <!-- Sidebar : fixe dès md, tiroir animé en dessous -->
     <aside
       ref="sidebar"
-      class="fixed inset-y-0 left-0 z-drawer flex w-sidebar shrink-0 flex-col gap-4 bg-cp-surface-sunken p-4 transition-[transform,visibility] duration-250 ease-out motion-reduce:transition-none md:sticky md:top-0 md:h-screen md:translate-x-0"
-      :class="drawerOpen ? 'translate-x-0' : '-translate-x-full max-md:invisible'"
+      class="fixed inset-y-0 left-0 z-drawer flex w-sidebar shrink-0 flex-col gap-4 bg-cp-surface-sunken p-4 duration-250 ease-out motion-reduce:transition-none md:sticky md:top-0 md:h-screen md:translate-x-0"
+      :class="drawerOpen
+        ? 'translate-x-0 transition-transform'
+        : '-translate-x-full transition-[transform,visibility] max-md:invisible'"
       :role="drawerOpen ? 'dialog' : undefined"
       :aria-modal="drawerOpen ? 'true' : undefined"
       :aria-label="t('cp.shell.nav')"
@@ -207,7 +209,7 @@ const ICON_BUTTON =
               {{ notificationCount }}
             </span>
           </button>
-          <CpModeToggle class="hidden md:inline-flex" />
+          <div class="hidden md:block"><CpModeToggle /></div>
           <button type="button" :class="ICON_BUTTON" :aria-label="t('cp.shell.profile')" data-cp-profile @click="emit('profile')">
             <span
               v-if="userName"

@@ -15,6 +15,7 @@ export default defineConfig({
   testDir: './specs',
   snapshotPathTemplate: '{testDir}/../__screens__/{testFileName}/{projectName}/{arg}{ext}',
   fullyParallel: true,
+  workers: process.env.CI ? 1 : 2,
   retries: 0,
   reporter: [['list']],
   use: {

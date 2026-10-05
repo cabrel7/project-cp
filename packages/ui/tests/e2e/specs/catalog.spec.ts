@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { gotoHydrated } from '../helpers'
+import { gotoHydrated, prepareFullPage } from '../helpers'
 
 // Régression visuelle du catalogue de composants (docs/design-system/ — 27 composants).
 const SECTIONS = [
@@ -16,6 +16,7 @@ test.describe('Catalogue — pleine page', () => {
   test('capture pleine page', async ({ page }) => {
     await gotoHydrated(page, '/catalog')
     await expect(page.locator('[data-page="catalog"]')).toBeVisible()
+    await prepareFullPage(page)
     await expect(page).toHaveScreenshot('catalog-full.png', { fullPage: true })
   })
 })

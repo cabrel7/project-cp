@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test'
+import fr from '../../../i18n/locales/fr.json' with { type: 'json' }
+import { isDark, isMobile } from '../helpers'
 import { AppShellPage } from '../pages/ShellPage'
 
 // Parcours client : AppShell + SidebarNav + OrgSelector (maquette docs/maquettes/7-navigation/42-NavApp.png).
-const isMobile = (name: string) => name.startsWith('mobile')
-const isDark = (name: string) => name.endsWith('dark')
 
 test.describe('AppShell — thèmes', () => {
   test('les tokens appliquent le bon thème (classe .dark, fond canvas, texte ink)', async ({
@@ -127,16 +127,17 @@ test.describe('AppShell — desktop', () => {
     await expect(shell.navItem('Activité')).toHaveAttribute('aria-current', 'page')
   })
 
-  test("mode Technique : l'interrupteur est présent dans la barre du haut", async ({ page }) => {
+  test("mode Technique : l'interrupteur Simple/Technique bascule l'état coché", async ({
+    page,
+  }) => {
     const shell = new AppShellPage(page)
     await shell.goto()
-    await expect(
-      page
-        .getByRole('switch')
-        .or(page.getByRole('radiogroup'))
-        .or(page.getByRole('button', { name: /Technique/ }))
-        .first(),
-    ).toBeVisible()
+    const toggle = page.getByRole('radiogroup', { name: fr.cp.mode.label })
+    await expect(toggle).toBeVisible()
+    await expect(toggle.getByRole('radio', { name: fr.cp.mode.simple })).toBeChecked()
+    await toggle.getByRole('radio', { name: fr.cp.mode.technique }).click()
+    await expect(toggle.getByRole('radio', { name: fr.cp.mode.technique })).toBeChecked()
+    await expect(toggle.getByRole('radio', { name: fr.cp.mode.simple })).not.toBeChecked()
   })
 })
 
@@ -145,6 +146,17 @@ test.describe('AppShell — mobile 375×667', () => {
   test.beforeEach(({}, testInfo) =>
     test.skip(!isMobile(testInfo.project.name), 'mobile uniquement'),
   )
+
+  test('aucun débordement horizontal (viewport 375 px respecté)', async ({ page }) => {
+    const shell = new AppShellPage(page)
+    await shell.goto()
+    const { scrollWidth, innerWidth } = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+    }))
+    expect(innerWidth).toBe(375)
+    expect(scrollWidth).toBeLessThanOrEqual(innerWidth)
+  })
 
   test('tiroir fermé : sidebar masquée, onglets visibles, bouton menu replié', async ({ page }) => {
     const shell = new AppShellPage(page)
@@ -170,19 +182,17 @@ test.describe('AppShell — mobile 375×667', () => {
     await expect(page).toHaveScreenshot('app-shell-drawer-open.png')
   })
 
-  test("le tiroir glisse (transform animé), il n'apparaît pas instantanément", async ({ page }) => {
+  test("le tiroir glisse (translate animé), il n'apparaît pas instantanément", async ({ page }) => {
     const shell = new AppShellPage(page)
     await shell.goto()
     const aside = page.locator('[data-cp-sidebar]')
-    const closed = await aside.evaluate(
-      (el) => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41,
-    )
-    expect(closed).toBeLessThan(0)
+    // Tailwind v4 anime la propriété `translate` (et non `transform`) : "-256px" fermé, "none"/"0px" ouvert.
+    const offsetX = () =>
+      aside.evaluate((el) => Number.parseFloat(getComputedStyle(el).translate) || 0)
+    expect(await offsetX()).toBeLessThan(0)
     await shell.openMenuButton.click()
     await expect(shell.drawer).toBeVisible()
-    await expect
-      .poll(() => aside.evaluate((el) => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41))
-      .toBe(0)
+    await expect.poll(offsetX).toBe(0)
   })
 
   test('fermeture : bouton Fermer, Échap, clic sur le scrim — le focus revient sur le bouton menu', async ({
@@ -251,7 +261,7 @@ test.describe('AppShell — mobile 375×667', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     const shell = new AppShellPage(page)
     await shell.goto()
-    await expect(page.locator('[data-cp-sidebar]')).toHaveCSS('transition-duration', /^0s$/)
+    await expect(page.locator('[data-cp-sidebar]')).toHaveCSS('transition-property', 'none')
     await shell.openDrawer()
   })
 })
