@@ -153,12 +153,12 @@ Point de départ : le schéma actuel devient la **migration de base** (`0001_bas
 | Éditeur de code | `vue-codemirror` (CodeMirror 6) | Prompts, JSON, requêtes SQL (plus léger que Monaco) |
 | Rendu | `@nuxtjs/mdc`, `shiki` | Markdown et code dans le chat |
 | Chat en streaming | `@ai-sdk/vue` | Interface de chat |
-| Ressources | `@nuxt/icon`, `@nuxt/fonts`, `@nuxt/image` | Icônes, polices, images |
+| Ressources | `@nuxt/icon`, `@fontsource/*` (D56), `@nuxt/image` | Icônes, polices auto-hébergées, images |
 | Sécurité | `nuxt-security` | En-têtes, CSP |
 | Temps réel | SSE natif (et WebSocket via Nitro si besoin) | Runs en direct, notifications |
 | Site et documentation | `@nuxt/content`, `@nuxtjs/seo` | Docs bilingues, landing |
-| Catalogue de composants | Histoire (ou Storybook Vue) | Documentation vivante du design system |
-| Tests | `@nuxt/test-utils`, `vitest`, `playwright` | Unitaires, bout en bout |
+| Catalogue de composants | Pages Nuxt de démonstration + Playwright (D57) | Documentation vivante et régression visuelle du design system |
+| Tests | `vitest` ; `@nuxt/test-utils` (apps) ; `@vue/test-utils` + `happy-dom` (`packages/ui`, D55) ; `playwright` | Unitaires, composants, bout en bout |
 
 ### 4.3 Outillage commun
 - **Monorepo :** `pnpm` workspaces + `turborepo`.

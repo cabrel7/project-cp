@@ -104,7 +104,7 @@
 | P1.2 | Les 27 composants (`Cp*` ou Nuxt UI configurés) selon `docs/design-system/components/*/README.md`, avec états, a11y, clair/sombre | frontend | L (3 lots) |
 | P1.3 | `AppShell` + navigations **définitives** client et admin (07), `ModeToggle`, sélecteur org/workspace, barre du haut, tiroir mobile | frontend | M |
 | P1.4 | Gabarits G1-G8 en layouts/composants de page réutilisables | frontend | M |
-| P1.5 | Catalogue vivant (Histoire) + régression visuelle Playwright des composants et gabarits (clair, sombre, mobile) comparée aux maquettes | e2e-tester, ux-reviewer | M |
+| P1.5 | Catalogue vivant (pages Nuxt de démonstration, D57) + régression visuelle Playwright des composants et gabarits (clair, sombre, mobile) comparée aux maquettes | e2e-tester, ux-reviewer | M |
 
 **Critères de fin**
 - Zéro couleur/taille en dur dans `apps/*` (règle du guard) ; tous les composants du design system disponibles.

@@ -13,7 +13,9 @@ description: Stratégie de tests de project-cp — Vitest (unitaires, services, 
 | Unitaire | Vitest | `packages/*/src/**/*.test.ts`, services | logique pure, calculs (crédits en bigint), résolution du routage, détecteurs |
 | Intégration API | Vitest + `app.request()` + Testcontainers Postgres + Redis | `apps/api/test/` | routes complètes sous RLS, erreurs du catalogue, idempotence |
 | SQL | psql / Vitest + Testcontainers | `db/tests/*.sql` | isolation RLS, FK composites, triggers, contraintes (T01…T21 et suivants) |
-| Front | `@nuxt/test-utils` + MSW | `apps/web/test/` | composants et composables : loading / empty / error / succès, mode Technique |
+| Front (apps) | `@nuxt/test-utils` + MSW | `apps/web/test/`, `apps/admin/test/` | pages, composants et composables : loading / empty / error / succès, mode Technique |
+| Design system | `@vue/test-utils` + `happy-dom` (D55) | `packages/ui/tests/` | composants `Cp*` : états, a11y, clair/sombre ; auto-imports Nuxt mockés dans `setup.ts` |
+| Catalogue | Playwright + axe-core (D57) | `packages/ui/tests/e2e/` | pages de démonstration : régression visuelle clair/sombre/mobile ; références validées par Dylan contre les maquettes |
 | Workflows | `@temporalio/testing` | `apps/agent-worker/test/` | approbations, limites, annulation (temps sauté) |
 | E2E | Playwright | `apps/*/e2e/` | parcours critiques (skill `cp-playwright`) |
 

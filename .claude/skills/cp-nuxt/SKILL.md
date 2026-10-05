@@ -1,6 +1,6 @@
 ---
 name: cp-nuxt
-description: Implémentation front de project-cp — Nuxt 4 (apps/web, apps/admin), Vue 3 script setup, Nuxt UI + Tailwind v4 (thème depuis les tokens, packages/ui), Pinia + Pinia Colada, client API généré @hey-api, i18n FR/EN, mode Simple/Technique, SSE, tests @nuxt/test-utils. Design → cp-ui-ux.
+description: Implémentation front de project-cp — Nuxt 4 (apps/web, apps/admin), Vue 3 script setup, Nuxt UI + Tailwind v4 (thème depuis les tokens, packages/ui), Pinia + Pinia Colada, client API généré @hey-api, i18n FR/EN, mode Simple/Technique, SSE, tests @nuxt/test-utils (apps) / @vue/test-utils (packages/ui). Design → cp-ui-ux.
 ---
 
 # Nuxt 4 — project-cp
@@ -33,7 +33,7 @@ packages/ui/          # thème Nuxt UI + composants du design system partagés w
 - `app.config.ts` : `ui.colors = { primary: 'primary', secondary: 'accent', neutral: 'ink', success, warning, error: 'danger', info }` ;
   surcharges `ui.button`, `ui.input`… pour reproduire les rendus `cp-*` de `docs/design-system/components/bundle.css`.
 - Jamais de couleur/taille en dur dans un composant : classes du thème (`bg-(--cp-surface)`, `text-(--cp-ink-muted)`) ou props Nuxt UI (`color="primary"`).
-- Polices via `@nuxt/fonts` (Plus Jakarta Sans, Geist, Geist Mono) ; icônes `@nuxt/icon` collection `lucide` (`i-lucide-bot`).
+- Polices auto-hébergées via `@fontsource` importées dans `packages/ui/assets/css/theme.css` (Plus Jakarta Sans, Geist, Geist Mono — D56 ; jamais `@nuxt/fonts` ni Google Fonts) ; icônes `@nuxt/icon` collection `lucide` (`i-lucide-bot`).
 
 ## Composants
 - `<script setup lang="ts">` toujours ; `defineProps<{…}>()`, `defineEmits<{…}>()`, `defineModel()` ; pas d'Options API.
@@ -103,7 +103,7 @@ Même layer `@cp/ui`, navigation admin définitive (cp-ui-ux §7), mode Techniqu
 toute action sensible → `ConfirmDialog` avec motif obligatoire (audité côté API).
 
 ## Tests
-`@nuxt/test-utils` + Vitest (`environment: 'nuxt'`) : `mountSuspended(Component)` ; MSW pour l'API ; tester loading / empty / error / succès,
+Apps (`apps/web`, `apps/admin`) : `@nuxt/test-utils` + Vitest (`environment: 'nuxt'`) : `mountSuspended(Component)` ; `packages/ui` : `@vue/test-utils` + `happy-dom`, auto-imports Nuxt mockés dans `tests/setup.ts` (D55) ; catalogue = pages de `packages/ui/tests/e2e/fixture` + Playwright (D57) ; MSW pour l'API ; tester loading / empty / error / succès,
 et le mode Technique. E2E → `cp-playwright`.
 
 ## Anti-patterns interdits
