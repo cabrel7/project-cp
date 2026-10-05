@@ -18,10 +18,14 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
   END \$\$;
 
   -- Users applicatifs (LOGIN, un par pool de connexion)
-  CREATE USER cp_rw       WITH PASSWORD '${CP_DB_PASSWORD_RW:-cp_rw_dev}'         IN ROLE app_rw;
-  CREATE USER cp_auth     WITH PASSWORD '${CP_DB_PASSWORD_AUTH:-cp_auth_dev}'     IN ROLE app_auth;
-  CREATE USER cp_admin    WITH PASSWORD '${CP_DB_PASSWORD_ADMIN:-cp_admin_dev}'   IN ROLE app_admin;
-  CREATE USER cp_readonly WITH PASSWORD '${CP_DB_PASSWORD_RO:-cp_readonly_dev}'   IN ROLE app_readonly;
+  -- ATTENTION : BYPASSRLS est un attribut de role, il n'est PAS herite par appartenance (IN ROLE) :
+  -- seuls les privileges sur objets le sont. Il doit donc etre pose explicitement sur chaque user LOGIN
+  -- concerne (cp_auth, cp_admin, cp_readonly) ; cp_rw reste SOUMIS a la RLS (NOBYPASSRLS par defaut).
+  -- Verifie par packages/db/src/__tests__/pool-visibility.test.ts.
+  CREATE USER cp_rw       WITH PASSWORD '${CP_DB_PASSWORD_RW:-cp_rw_dev}'         NOBYPASSRLS IN ROLE app_rw;
+  CREATE USER cp_auth     WITH PASSWORD '${CP_DB_PASSWORD_AUTH:-cp_auth_dev}'     BYPASSRLS   IN ROLE app_auth;
+  CREATE USER cp_admin    WITH PASSWORD '${CP_DB_PASSWORD_ADMIN:-cp_admin_dev}'   BYPASSRLS   IN ROLE app_admin;
+  CREATE USER cp_readonly WITH PASSWORD '${CP_DB_PASSWORD_RO:-cp_readonly_dev}'   BYPASSRLS   IN ROLE app_readonly;
 
   -- Extensions
   CREATE EXTENSION IF NOT EXISTS citext;

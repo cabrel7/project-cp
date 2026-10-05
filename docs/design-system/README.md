@@ -31,7 +31,7 @@ La plateforme rend n'importe quel système compatible avec l'IA, pour tout le mo
 - `body` (16px) est la taille par défaut en mode Simple ; `body-sm` (14px) pour les tableaux et le mode Technique dense.
 - Casse de phrase partout (« Créer un agent », pas « Créer Un Agent ») ; majuscules seulement dans `caption` des badges.
 - Chiffres tabulaires (`font-variant-numeric: tabular-nums`) dans les tableaux, compteurs et `kpi`.
-- Polices chargées depuis Google Fonts (Geist, Geist Mono, Plus Jakarta Sans) ; repli système défini dans les familles.
+- Polices auto-hébergées via `@fontsource` (Geist, Geist Mono, Plus Jakarta Sans — D56), importées par `packages/ui` ; repli système défini dans les familles. (`components/bundle.css` garde l'import Google Fonts : référence visuelle seulement, jamais chargé par l'app.)
 
 ## Espacement et mise en page
 

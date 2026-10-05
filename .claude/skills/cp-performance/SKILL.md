@@ -39,7 +39,7 @@ contexte (`system.context.compress`) ; juge IA échantillonné ; verdicts de gar
 - Cibles : LCP < 2,5 s en 4G lente, INP < 200 ms, CLS < 0,1 ; JS initial des pages mobiles (chat, approbations, portefeuille) < 170 Ko gzip.
 - `routeRules` : pages marketing/docs en ISR, dashboard en SSR léger ou SPA selon la page ; composants lourds (`vue-echarts`, `@vue-flow/core`,
   CodeMirror, shiki) en import dynamique (`LazyX`, `defineAsyncComponent`) uniquement sur les écrans qui les utilisent.
-- `@nuxt/image` (AVIF/WebP, dimensions fixées), `@nuxt/fonts` (subset, `font-display: swap`, préchargement de Geist seulement).
+- `@nuxt/image` (AVIF/WebP, dimensions fixées), `@fontsource` (D56 : sous-ensemble latin, `font-display: swap`, préchargement de Geist seulement).
 - Listes longues virtualisées ; SSE plutôt que polling ; tolérance aux coupures (reprise `Last-Event-ID`).
 - Analyse du bundle : `nuxi analyze`.
 

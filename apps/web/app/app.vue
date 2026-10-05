@@ -1,5 +1,10 @@
+<script setup lang="ts">
+provideCpMode()
+const uiLocale = useCpLocale()
+</script>
+
 <template>
-  <div>
-    <h1>project-cp</h1>
-  </div>
+  <UApp :locale="uiLocale">
+    <NuxtPage />
+  </UApp>
 </template>

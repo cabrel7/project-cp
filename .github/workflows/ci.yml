@@ -1,0 +1,165 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev, 'claude/**', 'p*/**']
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Lint ──────────────────────────────────────────────────────────────
+  lint:
+    name: Lint (Biome)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+      - name: Biome CI
+        run: pnpm biome ci .
+
+  # ── Typecheck ─────────────────────────────────────────────────────────
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+      - name: Turbo typecheck
+        run: pnpm turbo run typecheck
+
+  # ── Tests ─────────────────────────────────────────────────────────────
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+      - name: Turbo test
+        run: pnpm turbo run test
+
+  # ── Database ──────────────────────────────────────────────────────────
+  db:
+    name: Database
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: pgvector/pgvector:pg18
+        env:
+          POSTGRES_DB: cp_test
+          POSTGRES_USER: cp_owner
+          POSTGRES_PASSWORD: cp_owner_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cp_owner -d cp_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+          --health-start-period 10s
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # requis pour `git diff origin/<base>...HEAD` (squawk)
+
+      - name: Init database (roles + extensions)
+        env:
+          PGHOST: localhost
+          PGPORT: '5432'
+          PGUSER: cp_owner
+          PGPASSWORD: cp_owner_dev
+          POSTGRES_USER: cp_owner
+          POSTGRES_DB: cp_test
+          CP_DB_PASSWORD_RW: cp_rw_dev
+          CP_DB_PASSWORD_AUTH: cp_auth_dev
+          CP_DB_PASSWORD_ADMIN: cp_admin_dev
+          CP_DB_PASSWORD_RO: cp_readonly_dev
+        run: bash infra/postgres/init-dev.sh
+
+      - name: Install dbmate
+        run: |
+          curl -fsSL -o /tmp/dbmate https://github.com/amacneil/dbmate/releases/download/v2.36.0/dbmate-linux-amd64
+          sudo install -m 0755 /tmp/dbmate /usr/local/bin/dbmate
+          dbmate --version
+
+      - name: Run migrations (dbmate up)
+        env:
+          DBMATE_DATABASE_URL: 'postgres://cp_owner:cp_owner_dev@localhost:5432/cp_test?sslmode=disable'
+        run: bash db/dbmate.sh up
+
+      - name: Run SQL tests (23 controls T1-T22)
+        env:
+          PGHOST: localhost
+          PGPORT: '5432'
+          PGUSER: cp_owner
+          PGPASSWORD: cp_owner_dev
+        run: bash db/tests/run.sh cp_test
+
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Run RLS & integration tests (packages/db)
+        env:
+          DATABASE_URL: 'postgres://cp_owner:cp_owner_dev@localhost:5432/cp_test?sslmode=disable'
+          DATABASE_URL_RW: 'postgres://cp_rw:cp_rw_dev@localhost:5432/cp_test?sslmode=disable'
+          DATABASE_URL_AUTH: 'postgres://cp_auth:cp_auth_dev@localhost:5432/cp_test?sslmode=disable'
+          DATABASE_URL_ADMIN: 'postgres://cp_admin:cp_admin_dev@localhost:5432/cp_test?sslmode=disable'
+          DB_POOL_MAX_RW: '2'
+          DB_POOL_MAX_AUTH: '2'
+          DB_POOL_MAX_ADMIN: '2'
+        run: pnpm --filter @cp/db test
+
+      - name: Drizzle-kit pull
+        env:
+          DATABASE_URL: 'postgres://cp_owner:cp_owner_dev@localhost:5432/cp_test?sslmode=disable'
+        run: pnpm --filter @cp/db db:pull
+
+      - name: Check schema drift
+        run: |
+          git add -N packages/db/src/schema/  # detecte aussi les fichiers nouveaux non suivis
+          if ! git diff --exit-code packages/db/src/schema/; then
+            # Le diff est aussi publié en annotation (lisible sans accès aux journaux bruts).
+            DIFF=$(git diff --stat packages/db/src/schema/; git diff -U1 packages/db/src/schema/ | head -80)
+            DIFF="${DIFF//'%'/'%25'}"; DIFF="${DIFF//$'\n'/'%0A'}"
+            echo "::error title=Schema drift (diff)::${DIFF}"
+            echo "::error::Schema drift detected! 'drizzle-kit pull' produced different output than what is committed."
+            echo "Run 'pnpm --filter @cp/db db:pull' locally after 'dbmate up', commit the result, and push again."
+            exit 1
+          fi
+
+      - name: Install squawk
+        run: npm install -g squawk-cli
+
+      - name: Squawk lint migrations
+        if: github.event_name == 'pull_request'
+        run: |
+          CHANGED=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- 'db/migrations/*.sql' | grep -v '_0001_baseline.sql' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "Linting modified migrations:"
+            echo "$CHANGED"
+            squawk $CHANGED
+          else
+            echo "No modified migrations to lint."
+          fi
+
+  # ── Build ─────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [lint, typecheck, test, db]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+      - name: Turbo build
+        run: pnpm turbo run build

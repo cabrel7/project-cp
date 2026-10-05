@@ -4,16 +4,31 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./admin": "./src/admin.ts",
+    "./context": "./src/context.ts",
+    "./public-id": "./src/public-id.ts"
   },
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "db:pull": "drizzle-kit pull --config=drizzle.config.ts && bash scripts/post-pull.sh"
+  },
+  "dependencies": {
+    "drizzle-orm": "catalog:",
+    "pino": "catalog:",
+    "postgres": "catalog:",
+    "uuidv7": "^1.0.2",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "5.0.2",
+    "drizzle-kit": "catalog:",
     "tsup": "catalog:",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   }
 }

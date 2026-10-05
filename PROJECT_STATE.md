@@ -1,8 +1,8 @@
 # STATE — project-cp
-Updated: 2026-09-29 | Session: P0 — Socle
+Updated: 2026-10-05 | Session: fin P1 — passage dev → main
 
 ## ✅ Done
-- Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D52, UI/UX).
+- Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D57, UI/UX).
 - Schéma PostgreSQL v1.2 : `db/schema-v1.2/` — 183 tables, RLS, 23 contrôles passés sur base neuve (T1-T22).
 - Design system « project-cp » (tokens, 8 gabarits, 27 composants) : `docs/design-system/`.
 - Maquettes de validation (7 pages) : authentification, onboarding, tableau de bord, MCP Builder, studios, admin IA, navigation.
@@ -11,28 +11,52 @@ Updated: 2026-09-29 | Session: P0 — Socle
 - Maquettes dans le dépôt : `docs/maquettes/` (43 captures + sources HTML) ; profil mobile corrigé (3 profils).
 - Profils d'onboarding alignés sur D41 : prompt `system.onboarding.copilot` + contrainte `ux.onboarding_progress.profile` (`activity`, `builder`, `enterprise`) ; 21 tests OK.
 - **P0.1 — Monorepo** : pnpm 10 + turborepo 2.11, tsconfig.base strict (TS 5.9), Biome 2.5, lefthook 2.1, commits conventionnels, changesets, catalog de versions (Nuxt 4.5, Hono 4.13, zod 4, vitest 5, drizzle-orm 0.45), 7 apps + 7 paquets squelettes. 42/42 turbo tasks (build + typecheck + test) vertes.
-- **P0.2 — Infra dev** : `infra/docker-compose.dev.yml` (PostgreSQL 18 + pgvector, Redis 8.0 noeviction, SeaweedFS S3 (D51), Mailpit, LiteLLM, Temporal dev-server), `init-dev.sh` (4 rôles + 5 extensions), `.env.example`, scripts `infra:up/down/reset`, ports loopback-only. Mode natif (`dev-native.sh`) : PG + Redis sans Docker pour sessions cloud. Catalog mis à jour (pino 10.3, ioredis 6, bullmq 6.3). 42/42 turbo tasks vertes.
+- **P0.2 — Infra dev** : `infra/docker-compose.dev.yml` (PostgreSQL 18 + pgvector, Redis 8.0 noeviction, SeaweedFS S3 (D51), Mailpit, LiteLLM, Temporal dev-server), `init-dev.sh` (4 rôles NOLOGIN + 4 users LOGIN, BYPASSRLS explicite sur cp_auth/cp_admin/cp_readonly, 5 extensions), `.env.example`, scripts `infra:up/down/reset`, ports loopback-only. Mode natif (`dev-native.sh`) : PG + Redis sans Docker pour sessions cloud. Catalog mis à jour (pino 10.3, ioredis 6, bullmq 6.3).
 - Stockage basculable (D51 révisée, D52) : `storage.backends` + `storage.files.backend_id` + `storage.backend_migrations` ; SeaweedFS local par défaut, OVH en option ; tests T21-T22 ; D50 validée.
 - **P0.3 — Baseline dbmate** : migration 0001 (schema-v1.2 → `db/migrations/`), `db/dbmate.sh` wrapper, `db/tests/` (23 contrôles T1-T22), scripts `db:*`, lefthook squawk exclude baseline. dbmate up 1.5s, 23/23 OK sur base neuve.
+- **P0.4 — `packages/db`** : drizzle-kit pull (tablesFilter exclut partitions enfants, 9 parents dans `partitioned.ts`), post-pull.sh automatisé (bigint mode, unknown→text, customType markers bytea/citext/tstzrange, @ts-nocheck), client postgres.js 3 pools lazy (RW/Auth/Admin), admin isolé via `@cp/db/admin` (guard rule), `withOrgContext({ orgId, userId })` RLS (`set_config(..., true)`, orgId 0n rejeté), helpers UUIDv7 (`generatePublicId`, curseurs), env typé (zod v4), logger pino. 48 tests unitaires + 28 partitions + 9 pool-visibility conditionnels. PR #5 squash-merged dans dev.
+- **P0.5 — `packages/shared`** : 62 codes d'erreur synchronisés avec les seeds SQL (950+960), schémas zod de base (publicId UUIDv7 strict, pagination, errorResponse, paginated `{ data, next_cursor }`), glossaire Simple/Technique (18 termes × fr/en). 282 tests passés. Reviewer : 0 CRITICAL, 0 MAJOR ouvert. PR #6 squash-merged dans dev.
+- **P0.6 — `apps/api` minimal** : env.ts (zod, invariant 8), pino logger (invariant 10), request-id UUIDv7, OTel conditionnel, `AppError` + format unique (doc 02 §8, details `{}` sur 5xx, HTTPException 401/404/429 mappés, 400→400, autre 4xx→422, documentation_url lowercase), `/health`, `/openapi.json` (D31), `/docs` (Scalar). 28 tests (5 fichiers). Reviewer 8/10, 0 CRITICAL/MAJOR ouvert. PR #7 squash-merged dans dev.
+- **P0.7 — CI GitHub Actions** : `.github/workflows/ci.yml` (5 jobs : lint Biome, typecheck, test, db avec PostgreSQL 18 service container + dbmate + 23 SQL tests + RLS integration tests + drizzle drift check + squawk, build). Branches PR : `main`, `dev`, `claude/**`, `p*/**`. Action composite `.github/actions/setup-pnpm/` (Node 22 + pnpm 10 + cache). Reviewer 8.5/10, 0 CRITICAL/MAJOR ouvert (3 corrigés). PR #8 squash-merged dans dev.
+- **P1.0 — Spike D27** : comparaison Nuxt UI vs shadcn-vue — 3 composants témoins (Button, DataTable, Stepper) en clair/sombre/mobile, captures Playwright, code Vue SFC comparatif. Verdict : **Nuxt UI** (6/8 vs 4/8). D27 ✅ validée par Dylan (2026-10-05). PR #9 squash-merged dans dev.
+
+- **P1.1 — Thème Nuxt UI** : `packages/ui` layer Nuxt (tokens.json → tokens.css → `@theme static` Tailwind v4 → app.config.ts Nuxt UI). 39 couleurs sémantiques, 7 échelles Nuxt UI (primary/secondary/success/warning/error/info/warm) interpolées OKLCH, typographie 12 styles (3 familles @fontsource : Plus Jakarta Sans, Geist, Geist Mono), ombres, espacement 4px, rayons, tailles de contrôle, z-index, points de rupture, focus-ring. Pont `--ui-*` pour Nuxt UI. Mode sombre `.dark` + `useColorMode`. Icônes Lucide embarquées localement. Page de démo (palette 31 pastilles, boutons, typographie, icônes, interrupteur sombre). 160 tests (7 fichiers) passés, 42/42 turbo tasks. Reviewer : 2 MAJOR corrigés (`@theme static`, alias `warm`). Branche `p1/01-theme-nuxt-ui`.
+
+- **P1.2 — 27 composants design system** (`packages/ui`) : 3 sous-lots. P1.2a (10 atomes + infra : Button, TextField, Select, Switch, StatusBadge, Skeleton, Alert, Tabs, RiskTag, useCpToast). P1.2b (11 molécules : ConfirmDialog, DataTable, EmptyState, FilterBar, PageHeader, StatTile, CreditMeter, Stepper, Timeline, SecretField, CodeBlock, useCpCopy). P1.2c (6 organismes : AppShell, ModeToggle, ChatMessage, Chart/ECharts, ApprovalCard, PlanGate, useCpMode, cpChart utils). Infra : `@nuxtjs/i18n` (D53), préfixe `Cp` (D54), tests `@vue/test-utils` + `happy-dom` (D55), echarts + vue-echarts. 408 tests (35 fichiers), typecheck propre. Reviewer P1.2b 8.5/10 (3 MAJOR corrigés), reviewer P1.2c 8.5/10 (4 MAJOR corrigés), UX 6.5/10 (3 CRITICAL corrigés — hauteurs contrôles, hover AA, polices titres). Branche `p1/02-components-p12a`.
+
+- **P1.3 — AppShell + navigations définitives** (`packages/ui`) : AppShell refactorisé (skip link, tiroir animé 250ms, scrim, inert, matchMedia resize, tabs mobile), AdminShell (nav compacte sm, arrêt d'urgence, timer, 2FA, tiroir), SidebarNav réutilisable (groupes, badges, liens externes safeHref, tailles md/sm), OrgSelector, useClientNav (19 items Simple/Technique, docsUrl), useAdminNav (19 items). i18n fr/en (~80 clés cp.nav.*, cp.adminNav.*, cp.admin.*). Thème : @utility z-sticky/z-drawer/z-modal/z-toast, --max-width-*. 497 tests (40 fichiers). Reviewer 8/10 (5 MAJOR corrigés : safeHref, noopener noreferrer, invisible drawer, 2FA sr-only, computed import). UX reviewer : C1 z-index corrigé, M1/M2/M6/M7 corrigés. Branche `claude/jolly-johnson-qbhlwb`.
+
+- **P1.4 — Gabarits G1-G8** (`packages/ui`) : 8 composants CpLayout* de présentation pure (LayoutList, LayoutDetail, LayoutWizard, LayoutDashboard, LayoutSettings, LayoutConversation, LayoutEditor, LayoutAuth). 11 clés i18n `cp.layout.*` (fr/en). UTextarea stub ajouté. 572 tests (48 fichiers). Reviewer 8.5/10 (3 MAJOR corrigés : `<main>` imbriqué → `<div>`/`<section>`, slot default dupliqué, import CpPageHeader manquant). UX 7.0/10 (2 CRITICAL corrigés : G6 role="log" + z-sticky + aria-label textarea, G8 min-h-dvh + shadow-sm). Branche `claude/jolly-johnson-qbhlwb`.
+
+- **P1.5 — Catalogue vivant + régression visuelle Playwright** (`packages/ui`) : fixture Nuxt minimale (`tests/e2e/fixture/`), 10 pages de démo (catalog, 8 gabarits G1-G8, app shell), Playwright 4 projets (desktop/mobile × clair/sombre). Specs : `catalog.spec.ts` (1 fullPage + 7 sections), `gabarits.spec.ts` (8 fullPage G1-G8), `app-shell.spec.ts` (fonctionnel + visuel + a11y), `admin-shell.spec.ts` (fonctionnel + visuel + a11y). Helpers : `gotoHydrated` (data-cp-hydrated marker), `prepareFullPage` (neutralise fixed/sticky avant fullPage). Correctifs composants : shrink-0 boutons icônes, transition split tiroir (focus), CpModeToggle hidden mobile (overflow). WCAG : title + lang dans fixture. 142 e2e passés, 572 unit tests, 0 échecs. Reviewer 7/10 (4 MAJOR corrigés). Branche `claude/jolly-johnson-qbhlwb`.
+
+- **Revue 05/10** : PR #10 (5 BLOQUANTS + 5 MAJEURS corrigés : partitions Drizzle, BYPASSRLS, `@cp/db/admin`, `withOrgContext`, RLS en CI, pagination, erreurs, SidebarNav NuxtLink + `locked`, ApprovalCard secondary, Chart reduced-motion) ; PR #11 (D27, D53-D57) ; PR #12 fidélité UI (`<UApp :locale>`, mode Simple/Technique fourni à la racine des apps, nav client/admin via `useClientNav`/`useAdminNav`, densité nav 32 px desktop, G3 plein écran, planche `docs/review/fidelite-1.png` validée par Dylan le 2026-10-05).
 
 ## 🔄 Active
-- P0.4 — `packages/db` (drizzle-kit pull, client, withOrgContext).
+- Passage `dev` → `main` (fin P0 + P1), puis recréer `dev` depuis `main`.
 
 ## 📋 Queue
-3. **P0.4** — `packages/db` (drizzle-kit pull, client, withOrgContext).
-4. **P0.5** — `packages/shared` (codes d'erreur, schémas zod de base).
-5. **P0.6** — `apps/api` minimal (env, pino, request-id, OTel, /health, /openapi.json).
-6. **P0.7** — CI GitHub Actions.
-7. **P1 — Design system en code** (thème Nuxt UI, spike D27 d'abord) — en parallèle de P2.
-8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
+7. **P1 — Design system en code** ✅ (P1.0 à P1.5 + revue fidélité). Écarts mineurs restants en Known issues.
+8. **P2 — Identité** : à lancer **après validation de Dylan** (lots et critères dans 08).
+9. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## 🏗️ Decisions
+- 2026-10-05 : D27, D53, D54, D55 (portée `packages/ui`) validées ; D56 polices `@fontsource` ; D57 catalogue = pages Nuxt + Playwright (pas d'Histoire).
 - Source unique : `docs/reference/06-journal-decisions.md` (ne pas dupliquer ici).
 
 ## ⚠️ Known issues
 - D26 : serveur OAuth 2.1 via `oidc-provider` = POC à valider.
-- D27 : Nuxt UI à confirmer contre shadcn-vue lors de `packages/ui`.
+- P1.1 : i18n FR/EN non encore appliqué sur la page de démo (texte français en dur — DETTE, lot ultérieur). Contraste pastilles chart décoratifs limité à 2.0:1 (couleur = information, label secondaire).
+- P1.2 — UX MAJOR restants (non bloquants) : ChatMessage disclaimer par défaut activé ; Alert devrait lire useCpMode au lieu de prop ; DataTable manque mobile cards, alignement montants, colonnes technicalOnly ; ConfirmDialog saisie confirmation ; Chart formats localisés, > 6 séries ; PlanGate aperçu grisé + slot ; TextField/Select role="alert" sur erreur, props form ; persistance useCpMode via API.
+- P1.4 — UX MAJOR/MINOR restants (non bloquants) : G7 palette/propriétés hidden sous lg (tiroir ou vue liste forcée) ; G1/G2/G4 pas de prop error/empty (états délégués à l'appelant) ; G1 double rendu desktop/mobile-cards ; G3 sticky footer sans safe-area-inset-bottom, boutons < 48px mobile, pas d'indicateur brouillon, details open non contrôlé ; G5 sections v-show pas v-if, danger non trié en dernier ; G2 tabs sans tabpanel/aria-controls, aside sans aria-label ; G6 Enter sans isComposing (IME), h2 sans h1, pas de défilement auto ; G4 pas de slot filtres de période ; G8 min-h-dvh dans slot AppShell (OK hors shell).
+- P1.3 — UX MINOR/deferred : SidebarNav sans `<ul>/<li>` (regroupement ARIA) ; OrgSelector sans `aria-haspopup` ni workspace ; topbar admin peut déborder à 360px (minuteur à masquer sous sm) ; topbar client serrée à 360px ; tabbar hors inert derrière tiroir, pas de safe-area-inset-bottom, badge text-[10px] → text-caption ; badges sans plafond 99+ ; skip link sans tabindex="-1" (Safari) ; pas de transition hover/active 150ms sur items nav ; piège focus incomplet (input/select/textarea) ; logique tiroir dupliquée → extraire useDrawer ; « AI Access/Functions » → minuscule en EN ; icône admin compliance book-copy → scroll-text ; pas de maquette mobile navigation (trou design).
+- P1.5 — MINOR restants (non bloquants) : couverture catalogue partielle (7/15 sections testées visuellement) ; a11y axe-core seulement desktop-light (4 projets à couvrir) ; launchOptions dupliqué dans config (projects + use global) ; 2 captures potentiellement instables (g7-editor desktop-dark, g8-auth mobile-light — contenu minimal). Règle guard suggérée : E2E doivent utiliser `gotoHydrated`, jamais `networkidle` ni `waitForTimeout`.
+- Fidélité UI (revue PR #12, MINEUR) : logo en tuile couleur ; badge « À valider » (couleur chaude, `pendingApprovals` dans la fixture) ; recherche en champ dans la barre du haut ; carte organisation/profil surélevée ; G3 « Brouillon enregistré » + barre d'actions collante desktop + alignement ; graphiques G4 ; test e2e du badge « Systèmes connectés » à rétablir.
+- CI : dérive Drizzle intermittente **corrigée** (2026-10-06) — `drizzle-kit pull` sortait les politiques RLS dans un ordre variable (et `using` sur la première seulement) ; `post-pull.sh` les retire (`strip-policies.mjs`) : la RLS est dans le SQL et couverte par les tests. Sortie identique vérifiée sur 2 bases neuves.
+- `bytea` typé `text` dans le schéma Drizzle : à corriger avant P2 (fichiers, secrets).
+- Override Biome `.vue` (noUnused désactivé) sans décision : à restreindre ou documenter.
+- Codes d'erreur : incohérences doc 02 à trancher (402 BILLING, IDEMPOTENCY 409 vs 422, VALIDATION_ERROR vs _FAILED).
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).

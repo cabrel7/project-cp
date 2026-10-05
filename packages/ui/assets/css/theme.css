@@ -1,0 +1,309 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+@import "./tokens.css";
+
+/* Polices auto-hébergées (sous-ensemble latin) : titres 600/700, interface 400/500/600, code 400/500 */
+@import "@fontsource/plus-jakarta-sans/latin-600.css";
+@import "@fontsource/plus-jakarta-sans/latin-700.css";
+@import "@fontsource/geist/latin-400.css";
+@import "@fontsource/geist/latin-500.css";
+@import "@fontsource/geist/latin-600.css";
+@import "@fontsource/geist-mono/latin-400.css";
+@import "@fontsource/geist-mono/latin-500.css";
+
+/*
+ * Point d'entrée CSS du thème project-cp (Fusion A - Warm Tech).
+ * Source de vérité : docs/design-system/tokens.json -> tokens.css (variables --cp-*).
+ * Les échelles 50-950 de Nuxt UI sont ancrées sur les valeurs du design system ;
+ * les nuances intermédiaires sont interpolées en OKLCH.
+ */
+
+@theme static {
+  /* Couleurs sémantiques (dynamiques clair / sombre via var(--cp-*)) */
+  --color-cp-canvas: var(--cp-canvas);
+  --color-cp-surface: var(--cp-surface);
+  --color-cp-surface-sunken: var(--cp-surface-sunken);
+  --color-cp-surface-raised: var(--cp-surface-raised);
+  --color-cp-scrim: var(--cp-scrim);
+  --color-cp-line: var(--cp-line);
+  --color-cp-line-strong: var(--cp-line-strong);
+  --color-cp-ink: var(--cp-ink);
+  --color-cp-ink-muted: var(--cp-ink-muted);
+  --color-cp-ink-disabled: var(--cp-ink-disabled);
+  --color-cp-brand-violet: var(--cp-brand-violet);
+  --color-cp-primary: var(--cp-primary);
+  --color-cp-primary-hover: var(--cp-primary-hover);
+  --color-cp-primary-soft: var(--cp-primary-soft);
+  --color-cp-on-primary: var(--cp-on-primary);
+  --color-cp-accent: var(--cp-accent);
+  --color-cp-on-accent: var(--cp-on-accent);
+  --color-cp-accent-text: var(--cp-accent-text);
+  --color-cp-accent-soft: var(--cp-accent-soft);
+  --color-cp-amber: var(--cp-amber);
+  --color-cp-amber-text: var(--cp-amber-text);
+  --color-cp-amber-soft: var(--cp-amber-soft);
+  --color-cp-success: var(--cp-success);
+  --color-cp-success-soft: var(--cp-success-soft);
+  --color-cp-warning: var(--cp-warning);
+  --color-cp-warning-soft: var(--cp-warning-soft);
+  --color-cp-danger: var(--cp-danger);
+  --color-cp-danger-soft: var(--cp-danger-soft);
+  --color-cp-on-danger: var(--cp-on-danger);
+  --color-cp-info: var(--cp-info);
+  --color-cp-info-soft: var(--cp-info-soft);
+  --color-cp-focus-ring: var(--cp-focus-ring);
+  --color-cp-chart-1: var(--cp-chart-1);
+  --color-cp-chart-2: var(--cp-chart-2);
+  --color-cp-chart-3: var(--cp-chart-3);
+  --color-cp-chart-4: var(--cp-chart-4);
+  --color-cp-chart-5: var(--cp-chart-5);
+  --color-cp-chart-6: var(--cp-chart-6);
+  --color-cp-chart-grid: var(--cp-chart-grid);
+
+  /* Échelles Nuxt UI (50-950) */
+  /* primary (violet d'action) */
+  --color-primary-50: #eeedfe;
+  --color-primary-100: #e3e2fd;
+  --color-primary-200: #cfccfa;
+  --color-primary-300: #bab5f6;
+  --color-primary-400: #a69ff2;
+  --color-primary-500: #7f77dd;
+  --color-primary-600: #5b50c8;
+  --color-primary-700: #4a40b0;
+  --color-primary-800: #3b327e;
+  --color-primary-900: #2a2450;
+  --color-primary-950: #150f2a;
+  /* secondary (corail) */
+  --color-secondary-50: #fbeae3;
+  --color-secondary-100: #fbdccf;
+  --color-secondary-200: #f9c0a9;
+  --color-secondary-300: #f5a283;
+  --color-secondary-400: #f0845c;
+  --color-secondary-500: #e46f47;
+  --color-secondary-600: #d85a30;
+  --color-secondary-700: #b0431c;
+  --color-secondary-800: #72301a;
+  --color-secondary-900: #3a1d14;
+  --color-secondary-950: #22120d;
+  /* success */
+  --color-success-50: #e6f4ec;
+  --color-success-100: #d4eedf;
+  --color-success-200: #afe3c6;
+  --color-success-300: #89d7ad;
+  --color-success-400: #5ccb93;
+  --color-success-500: #3ea26f;
+  --color-success-600: #1f7a4d;
+  --color-success-700: #1c603d;
+  --color-success-800: #17472e;
+  --color-success-900: #12301f;
+  --color-success-950: #14241a;
+  /* warning */
+  --color-warning-50: #fdf1dc;
+  --color-warning-100: #fce9c9;
+  --color-warning-200: #f8d9a4;
+  --color-warning-300: #f5c97b;
+  --color-warning-400: #f2b84b;
+  --color-warning-500: #c68829;
+  --color-warning-600: #9a5b00;
+  --color-warning-700: #754a05;
+  --color-warning-800: #54390a;
+  --color-warning-900: #35270c;
+  --color-warning-950: #261e10;
+  /* error (danger) */
+  --color-error-50: #fbe9eb;
+  --color-error-100: #fcd8dc;
+  --color-error-200: #fbb7bd;
+  --color-error-300: #f8949d;
+  --color-error-400: #f2707c;
+  --color-error-500: #d34c58;
+  --color-error-600: #b42335;
+  --color-error-700: #89202e;
+  --color-error-800: #601b24;
+  --color-error-900: #3a1419;
+  --color-error-950: #1a0a0d;
+  /* info */
+  --color-info-50: #e6effa;
+  --color-info-100: #d7e7f9;
+  --color-info-200: #b9d5f7;
+  --color-info-300: #9cc4f4;
+  --color-info-400: #7db3f0;
+  --color-info-500: #4e89cc;
+  --color-info-600: #1e5fa8;
+  --color-info-700: #1b4c83;
+  --color-info-800: #173a61;
+  --color-info-900: #132840;
+  --color-info-950: #141f2d;
+  /* warm = neutral de Nuxt UI (app.config: neutral -> warm). Nuxt UI lit --color-old-neutral-* pour "neutral", d'où l'alias. */
+  --color-warm-50: #ffffff;
+  --color-warm-100: #f1efe7;
+  --color-warm-200: #e5e1d6;
+  --color-warm-300: #c6c1c4;
+  --color-warm-400: #a7a2b3;
+  --color-warm-500: #8a8373;
+  --color-warm-600: #5e586b;
+  --color-warm-700: #453f56;
+  --color-warm-800: #2e2842;
+  --color-warm-900: #1a1330;
+  --color-warm-950: #110e1a;
+
+  /* Polices */
+  --font-display: var(--cp-font-display);
+  --font-sans: var(--cp-font-sans);
+  --font-mono: var(--cp-font-mono);
+
+  /* Échelle typographique (Titres : display ; Texte / Données : sans ; code : mono) */
+  --text-display: 40px;
+  --text-display--line-height: 48px;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 700;
+  --text-display--font-family: var(--font-display);
+  --text-heading-1: 28px;
+  --text-heading-1--line-height: 36px;
+  --text-heading-1--letter-spacing: -0.01em;
+  --text-heading-1--font-weight: 700;
+  --text-heading-1--font-family: var(--font-display);
+  --text-heading-2: 22px;
+  --text-heading-2--line-height: 30px;
+  --text-heading-2--font-weight: 600;
+  --text-heading-2--font-family: var(--font-display);
+  --text-heading-3: 18px;
+  --text-heading-3--line-height: 26px;
+  --text-heading-3--font-weight: 600;
+  --text-heading-3--font-family: var(--font-display);
+  --text-body-lg: 17px;
+  --text-body-lg--line-height: 26px;
+  --text-body-lg--font-weight: 400;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+  --text-body--font-weight: 400;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+  --text-body-sm--font-weight: 400;
+  --text-label: 14px;
+  --text-label--line-height: 20px;
+  --text-label--font-weight: 500;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--letter-spacing: 0.01em;
+  --text-caption--font-weight: 500;
+  --text-kpi: 32px;
+  --text-kpi--line-height: 40px;
+  --text-kpi--letter-spacing: -0.01em;
+  --text-kpi--font-weight: 600;
+  --text-kpi--font-family: var(--font-sans);
+  --text-code: 13px;
+  --text-code--line-height: 20px;
+  --text-code--font-weight: 400;
+  --text-code--font-family: var(--font-mono);
+  --text-code-sm: 12px;
+  --text-code-sm--line-height: 18px;
+  --text-code-sm--font-weight: 400;
+  --text-code-sm--font-family: var(--font-mono);
+
+  /* Espacement : grille de 4px (p-1 = 4px, p-4 = 16px...) */
+  --spacing: 4px;
+
+  /* Rayons */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* Ombres (dynamiques clair / sombre) */
+  --shadow-sm: var(--cp-shadow-sm);
+  --shadow-md: var(--cp-shadow-md);
+  --shadow-lg: var(--cp-shadow-lg);
+
+  /* Points de rupture */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* Z-index */
+  --z-sticky: 30;
+  --z-drawer: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+
+  /* Largeurs */
+  --width-sidebar: 256px;
+  --width-content-max: 1200px;
+  --width-reading-max: 720px;
+  --max-width-content-max: 1200px;
+  --max-width-reading-max: 720px;
+}
+
+/* Tailwind v4 : --z-* enregistre des valeurs numériques, pas des noms. */
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-drawer {
+  z-index: var(--z-drawer);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+@utility z-toast {
+  z-index: var(--z-toast);
+}
+
+/*
+ * Pont Nuxt UI -> design system : Nuxt UI prend primary-500 en clair, or le
+ * design system fixe primary = primary-600 (clair) / primary-400 (sombre).
+ * Les variables --ui-* sont donc branchées directement sur les jetons --cp-*.
+ */
+:root {
+  --ui-radius: var(--radius-md);
+  --ui-primary: var(--cp-primary);
+  --ui-secondary: var(--cp-accent);
+  --ui-success: var(--cp-success);
+  --ui-warning: var(--cp-warning);
+  --ui-error: var(--cp-danger);
+  --ui-info: var(--cp-info);
+  --ui-bg: var(--cp-canvas);
+  --ui-bg-muted: var(--cp-surface-sunken);
+  --ui-bg-elevated: var(--cp-surface-raised);
+  --ui-bg-accented: var(--cp-surface-sunken);
+  --ui-bg-inverted: var(--cp-ink);
+  --ui-border: var(--cp-line);
+  --ui-border-muted: var(--cp-line);
+  --ui-border-accented: var(--cp-line-strong);
+  --ui-border-inverted: var(--cp-ink);
+  --ui-text-dimmed: var(--cp-ink-disabled);
+  --ui-text-muted: var(--cp-ink-muted);
+  --ui-text-toned: var(--cp-ink-muted);
+  --ui-text: var(--cp-ink);
+  --ui-text-highlighted: var(--cp-ink);
+  --ui-text-inverted: var(--cp-canvas);
+}
+
+/* Styles globaux */
+*:focus-visible {
+  outline: 2px solid var(--cp-focus-ring);
+  outline-offset: 2px;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+body {
+  background-color: var(--cp-canvas);
+  color: var(--cp-ink);
+}
+
+/* Graphiques : aucune animation si l'utilisateur la refuse (D36/D38). */
+@media (prefers-reduced-motion: reduce) {
+  [data-cp-chart],
+  [data-cp-chart] * {
+    animation: none;
+    transition: none;
+  }
+}

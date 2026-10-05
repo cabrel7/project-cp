@@ -3,7 +3,7 @@ name: tester
 description: >
   Spécialiste des tests project-cp. PROACTIVEMENT après toute implémentation : Vitest
   (unitaires, services, composables), Testcontainers (Postgres réel + RLS), MSW (HTTP
-  externe, LiteLLM), tests SQL, @nuxt/test-utils. N'écrit JAMAIS de code de production.
+  externe, LiteLLM), tests SQL, @nuxt/test-utils (apps) / @vue/test-utils + happy-dom (packages/ui, D55). N'écrit JAMAIS de code de production.
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 effort: high
