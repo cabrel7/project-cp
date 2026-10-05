@@ -26,11 +26,13 @@ Updated: 2026-09-30 | Session: P1 — Design system en code
 
 - **P1.3 — AppShell + navigations définitives** (`packages/ui`) : AppShell refactorisé (skip link, tiroir animé 250ms, scrim, inert, matchMedia resize, tabs mobile), AdminShell (nav compacte sm, arrêt d'urgence, timer, 2FA, tiroir), SidebarNav réutilisable (groupes, badges, liens externes safeHref, tailles md/sm), OrgSelector, useClientNav (19 items Simple/Technique, docsUrl), useAdminNav (19 items). i18n fr/en (~80 clés cp.nav.*, cp.adminNav.*, cp.admin.*). Thème : @utility z-sticky/z-drawer/z-modal/z-toast, --max-width-*. 497 tests (40 fichiers). Reviewer 8/10 (5 MAJOR corrigés : safeHref, noopener noreferrer, invisible drawer, 2FA sr-only, computed import). UX reviewer : C1 z-index corrigé, M1/M2/M6/M7 corrigés. Branche `claude/jolly-johnson-qbhlwb`.
 
+- **P1.4 — Gabarits G1-G8** (`packages/ui`) : 8 composants CpLayout* de présentation pure (LayoutList, LayoutDetail, LayoutWizard, LayoutDashboard, LayoutSettings, LayoutConversation, LayoutEditor, LayoutAuth). 11 clés i18n `cp.layout.*` (fr/en). UTextarea stub ajouté. 572 tests (48 fichiers). Reviewer 8.5/10 (3 MAJOR corrigés : `<main>` imbriqué → `<div>`/`<section>`, slot default dupliqué, import CpPageHeader manquant). UX 7.0/10 (2 CRITICAL corrigés : G6 role="log" + z-sticky + aria-label textarea, G8 min-h-dvh + shadow-sm). Branche `claude/jolly-johnson-qbhlwb`.
+
 ## 🔄 Active
 - Aucun lot en cours.
 
 ## 📋 Queue
-7. **P1 — Design system en code** (P1.1 ✅, P1.2 ✅, P1.3 ✅, prochains lots P1.4+) — en parallèle de P2.
+7. **P1 — Design system en code** (P1.1 ✅, P1.2 ✅, P1.3 ✅, P1.4 ✅, prochains lots P1.5+) — en parallèle de P2.
 8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
@@ -42,6 +44,7 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 - D27 : Nuxt UI ✅ validée — responsive mobile-first vérifié P1.1 (grilles 2→4→6 colonnes, min-h-11 tactile).
 - P1.1 : i18n FR/EN non encore appliqué sur la page de démo (texte français en dur — DETTE, lot ultérieur). Contraste pastilles chart décoratifs limité à 2.0:1 (couleur = information, label secondaire).
 - P1.2 — UX MAJOR restants (non bloquants) : ApprovalCard « Refuser » devrait être secondary ; ChatMessage disclaimer par défaut activé ; Alert devrait lire useCpMode au lieu de prop ; DataTable manque mobile cards, alignement montants, colonnes technicalOnly ; ConfirmDialog saisie confirmation ; Chart reduced-motion, formats localisés, > 6 séries ; PlanGate aperçu grisé + slot ; TextField/Select role="alert" sur erreur, props form ; persistance useCpMode via API.
+- P1.4 — UX MAJOR/MINOR restants (non bloquants) : G7 palette/propriétés hidden sous lg (tiroir ou vue liste forcée) ; G1/G2/G4 pas de prop error/empty (états délégués à l'appelant) ; G1 double rendu desktop/mobile-cards ; G3 sticky footer sans safe-area-inset-bottom, boutons < 48px mobile, pas d'indicateur brouillon, details open non contrôlé ; G5 sections v-show pas v-if, danger non trié en dernier ; G2 tabs sans tabpanel/aria-controls, aside sans aria-label ; G6 Enter sans isComposing (IME), h2 sans h1, pas de défilement auto ; G4 pas de slot filtres de période ; G8 min-h-dvh dans slot AppShell (OK hors shell).
 - P1.3 — UX MINOR/deferred : SidebarNav en `<button>` sans `<ul>/<li>` (pas de NuxtLink ni regroupement ARIA) ; OrgSelector sans `aria-haspopup` ni workspace ; topbar admin peut déborder à 360px (minuteur à masquer sous sm) ; topbar client serrée à 360px ; tabbar hors inert derrière tiroir, pas de safe-area-inset-bottom, badge text-[10px] → text-caption ; badges sans plafond 99+ ; skip link sans tabindex="-1" (Safari) ; pas de transition hover/active 150ms sur items nav ; piège focus incomplet (input/select/textarea) ; logique tiroir dupliquée → extraire useDrawer ; « AI Access/Functions » → minuscule en EN ; icône admin compliance book-copy → scroll-text ; CpNavItem manque champ `locked` pour PlanGate ; pas de maquette mobile navigation (trou design).
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
