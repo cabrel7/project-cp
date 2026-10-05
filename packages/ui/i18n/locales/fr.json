@@ -1,0 +1,259 @@
+{
+  "cp": {
+    "status": {
+      "active": "Actif",
+      "online": "En ligne",
+      "success": "Réussi",
+      "paused": "En pause",
+      "warning": "Attention",
+      "pending": "À valider",
+      "error": "Erreur",
+      "failed": "Échec",
+      "revoked": "Révoqué",
+      "draft": "Brouillon",
+      "archived": "Archivé",
+      "running": "En cours",
+      "validating": "En validation"
+    },
+    "risk": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "critical": "Critique"
+    },
+    "alert": {
+      "close": "Fermer",
+      "copy": "Copier",
+      "copied": "Copié",
+      "errorCode": "Code : {code}",
+      "requestId": "Requête : {id}"
+    },
+    "toast": {
+      "close": "Fermer",
+      "undo": "Annuler"
+    },
+    "loading": "Chargement…",
+    "skeleton": {
+      "loading": "Chargement en cours"
+    },
+    "dialog": {
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "confirmDanger": "Supprimer"
+    },
+    "table": {
+      "empty": "Aucun résultat",
+      "loading": "Chargement des données…",
+      "sort": {
+        "none": "Non trié",
+        "ascending": "Tri croissant",
+        "descending": "Tri décroissant"
+      }
+    },
+    "empty": {
+      "title": "Rien ici pour l'instant",
+      "description": "Commencez par créer votre premier élément."
+    },
+    "filter": {
+      "search": "Rechercher…",
+      "clear": "Effacer les filtres"
+    },
+    "credits": {
+      "used": "{used} / {total} crédits",
+      "percent": "{percent} %",
+      "exhausted": "Crédits épuisés"
+    },
+    "secret": {
+      "show": "Afficher",
+      "hide": "Masquer",
+      "copy": "Copier",
+      "copied": "Copié",
+      "warning": "Vous ne pourrez plus la voir après avoir quitté cette page."
+    },
+    "code": {
+      "copy": "Copier le code",
+      "copied": "Copié"
+    },
+    "stepper": {
+      "step": "Étape {current} sur {total}",
+      "completed": "Terminée"
+    },
+    "stat": {
+      "up": "En hausse",
+      "down": "En baisse",
+      "flat": "Stable"
+    },
+    "pageHeader": {
+      "breadcrumb": "Fil d'Ariane"
+    },
+    "shell": {
+      "logo": "project-cp",
+      "workspace": "Espace de travail",
+      "switchWorkspace": "Changer d'espace de travail",
+      "switchOrg": "Changer d'organisation",
+      "nav": "Navigation principale",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "search": "Rechercher",
+      "notifications": "Notifications",
+      "profile": "Profil",
+      "credits": "Crédits",
+      "tabs": "Navigation rapide",
+      "skipLink": "Aller au contenu",
+      "env": "Environnement",
+      "tab": {
+        "home": "Accueil",
+        "chat": "Discuter",
+        "approvals": "À valider",
+        "credits": "Crédits"
+      }
+    },
+    "mode": {
+      "label": "Mode d'affichage",
+      "simple": "Simple",
+      "technique": "Technique"
+    },
+    "nav": {
+      "locked": "Non inclus dans votre plan",
+      "home": "Accueil",
+      "chat": "Discuter",
+      "approvals": {
+        "simple": "À valider",
+        "technical": "Approbations"
+      },
+      "group": {
+        "build": "Construire",
+        "track": "Suivre",
+        "developers": "Développeurs",
+        "organization": "Organisation"
+      },
+      "mcpServers": {
+        "simple": "Accès IA",
+        "technical": "Serveurs MCP"
+      },
+      "connectors": {
+        "simple": "Systèmes connectés",
+        "technical": "Connecteurs"
+      },
+      "agents": {
+        "simple": "Assistants",
+        "technical": "Agents"
+      },
+      "capabilities": {
+        "simple": "Fonctions IA",
+        "technical": "Capacités"
+      },
+      "marketplace": "Marketplace",
+      "activity": {
+        "simple": "Activité",
+        "technical": "Exécutions"
+      },
+      "usage": {
+        "simple": "Utilisation et coûts",
+        "technical": "Utilisation"
+      },
+      "apiKeys": {
+        "simple": "Clés d'accès",
+        "technical": "Clés d'API"
+      },
+      "webhooks": "Webhooks",
+      "environments": {
+        "simple": "Mode test",
+        "technical": "Environnements"
+      },
+      "documentation": "Documentation",
+      "team": {
+        "simple": "Équipe et rôles",
+        "technical": "Membres et rôles"
+      },
+      "billing": "Crédits et facturation",
+      "budgets": "Budgets",
+      "security": {
+        "simple": "Sécurité et audit",
+        "technical": "Politiques et audit"
+      },
+      "settings": "Réglages"
+    },
+    "admin": {
+      "badge": "Admin",
+      "nav": "Navigation de l'administration",
+      "emergencyStop": "Arrêt d'urgence",
+      "sessionRemaining": "Session : {time}",
+      "profile": "Profil administrateur",
+      "twoFactor": "Authentification à deux facteurs active"
+    },
+    "adminNav": {
+      "dashboard": "Pilotage",
+      "group": {
+        "revenue": "Clients et revenus",
+        "ai": "IA",
+        "product": "Produit",
+        "trust": "Confiance",
+        "operations": "Exploitation"
+      },
+      "clients": "Clients",
+      "finance": "Finance",
+      "pricing": "Tarification et plans",
+      "providers": "Fournisseurs",
+      "gateway": "Gateway et routage",
+      "platformAi": "IA de la plateforme",
+      "apiKeys": "API et clés",
+      "mcp": "MCP et connecteurs",
+      "agents": "Agents",
+      "marketplace": "Marketplace",
+      "security": "Sécurité et abus",
+      "compliance": "Conformité",
+      "support": "Support",
+      "system": "Système et incidents",
+      "flags": "Déploiement progressif",
+      "content": "Contenu et traductions",
+      "internalTeam": "Équipe interne et audit",
+      "parameters": "Paramètres"
+    },
+    "chat": {
+      "aiLabel": "Assistant IA",
+      "you": "Vous",
+      "disclaimer": "Généré par l'IA — vérifiez les informations importantes",
+      "toolCalls": "Sources consultées ({count})",
+      "typing": "L'assistant écrit…",
+      "error": "Le message n'a pas pu être affiché."
+    },
+    "chart": {
+      "viewData": "Voir les données",
+      "viewChart": "Voir le graphique",
+      "noData": "Aucune donnée à afficher pour cette période",
+      "category": "Période",
+      "chartLabel": "Graphique"
+    },
+    "approval": {
+      "title": "À valider",
+      "approve": "Approuver",
+      "modify": "Modifier",
+      "reject": "Refuser",
+      "deadline": "Délai restant : {time}",
+      "expired": "Délai dépassé",
+      "minutes": "{n} min",
+      "hours": "{n} h",
+      "days": "{n} j",
+      "items": "Éléments concernés",
+      "parameters": "Paramètres exacts"
+    },
+    "planGate": {
+      "locked": "Inclus dans le plan {plan}",
+      "viewPlans": "Voir les plans"
+    },
+    "layout": {
+      "back": "Retour",
+      "next": "Continuer",
+      "advancedOptions": "Options avancées",
+      "todoSection": "Actions en attente",
+      "settingsNav": "Navigation des réglages",
+      "chatPlaceholder": "Écrivez votre message…",
+      "send": "Envoyer",
+      "canvasView": "Vue canevas",
+      "listView": "Vue liste",
+      "allow": "Autoriser",
+      "deny": "Refuser"
+    }
+  }
+}

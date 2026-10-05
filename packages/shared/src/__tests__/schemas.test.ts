@@ -67,7 +67,7 @@ describe('publicIdSchema', () => {
 })
 
 describe('paginationSchema', () => {
-  it('doit appliquer limit=20 et laisser cursor absent quand l’entrée est vide', () => {
+  it("doit appliquer limit=20 et laisser cursor absent quand l'entrée est vide", () => {
     const result = paginationSchema.parse({})
     expect(result).toEqual({ limit: 20 })
     expect(result.cursor).toBeUndefined()
@@ -135,14 +135,13 @@ describe('errorResponseSchema', () => {
     error: { code: 'PLATFORM_VALIDATION_ERROR', message: 'Données invalides', request_id: 'req_1' },
   }
 
-  it('doit valider une réponse d’erreur complète', () => {
+  it("doit valider une réponse d'erreur complète", () => {
     const full = {
       error: {
         code: 'MCP_TOOL_INPUT_INVALID',
         message: 'Paramètres non conformes au schéma',
         request_id: 'req_01HZX',
         details: { field: 'amount', nested: { a: 1 } },
-        hint: 'Vérifiez le champ amount',
         documentation_url: 'https://docs.example.com/errors/mcp_tool_input_invalid',
       },
     }
@@ -180,7 +179,6 @@ describe('errorResponseSchema', () => {
     ['details textuel', { details: 'x' }],
     ['details tableau', { details: [1, 2] }],
     ['documentation_url invalide', { documentation_url: 'pas-une-url' }],
-    ['hint numérique', { hint: 1 }],
   ])('doit rejeter un type invalide (%s)', (_label, override) => {
     expect(
       errorResponseSchema.safeParse({ error: { ...minimal.error, ...override } }).success,
@@ -203,70 +201,48 @@ describe('errorResponseSchema', () => {
 describe('paginatedSchema', () => {
   const schema = paginatedSchema(z.string())
 
-  it('doit valider une page d’éléments simples avec curseur suivant', () => {
-    const page = { data: ['a', 'b'], pagination: { next_cursor: 'c2', has_more: true } }
+  it("doit valider une page d'éléments simples avec curseur suivant", () => {
+    const page = { data: ['a', 'b'], next_cursor: 'c2' }
     expect(schema.parse(page)).toEqual(page)
   })
 
   it('doit accepter next_cursor null (dernière page)', () => {
-    const page = { data: ['a'], pagination: { next_cursor: null, has_more: false } }
-    expect(schema.parse(page).pagination.next_cursor).toBeNull()
+    const page = { data: ['a'], next_cursor: null }
+    expect(schema.parse(page).next_cursor).toBeNull()
   })
 
   it('doit accepter une page vide', () => {
-    expect(
-      schema.safeParse({ data: [], pagination: { next_cursor: null, has_more: false } }).success,
-    ).toBe(true)
+    expect(schema.safeParse({ data: [], next_cursor: null }).success).toBe(true)
   })
 
   it('doit rejeter next_cursor absent (nullable mais pas optionnel)', () => {
-    expect(schema.safeParse({ data: [], pagination: { has_more: false } }).success).toBe(false)
-  })
-
-  it('doit rejeter next_cursor non textuel et non null', () => {
-    expect(
-      schema.safeParse({ data: [], pagination: { next_cursor: 5, has_more: false } }).success,
-    ).toBe(false)
-  })
-
-  it('doit rejeter has_more absent ou non booléen', () => {
-    expect(schema.safeParse({ data: [], pagination: { next_cursor: null } }).success).toBe(false)
-    expect(
-      schema.safeParse({ data: [], pagination: { next_cursor: null, has_more: 'true' } }).success,
-    ).toBe(false)
-  })
-
-  it('doit rejeter un élément qui ne respecte pas le schéma d’item', () => {
-    expect(
-      schema.safeParse({ data: ['a', 2], pagination: { next_cursor: null, has_more: false } })
-        .success,
-    ).toBe(false)
-  })
-
-  it('doit rejeter data absent ou non tableau', () => {
-    expect(schema.safeParse({ pagination: { next_cursor: null, has_more: false } }).success).toBe(
-      false,
-    )
-    expect(
-      schema.safeParse({ data: 'a', pagination: { next_cursor: null, has_more: false } }).success,
-    ).toBe(false)
-  })
-
-  it('doit rejeter une page sans bloc pagination', () => {
     expect(schema.safeParse({ data: [] }).success).toBe(false)
   })
 
-  it('doit fonctionner avec un schéma d’objet (items publicId)', () => {
+  it('doit rejeter next_cursor non textuel et non null', () => {
+    expect(schema.safeParse({ data: [], next_cursor: 5 }).success).toBe(false)
+  })
+
+  it("doit rejeter un élément qui ne respecte pas le schéma d'item", () => {
+    expect(schema.safeParse({ data: ['a', 2], next_cursor: null }).success).toBe(false)
+  })
+
+  it('doit rejeter data absent ou non tableau', () => {
+    expect(schema.safeParse({ next_cursor: null }).success).toBe(false)
+    expect(schema.safeParse({ data: 'a', next_cursor: null }).success).toBe(false)
+  })
+
+  it("doit fonctionner avec un schéma d'objet (items publicId)", () => {
     const itemSchema = z.object({ id: publicIdSchema, name: z.string() })
     const page = {
       data: [{ id: UUID_V7_LOWER, name: 'x' }],
-      pagination: { next_cursor: null, has_more: false },
+      next_cursor: null,
     }
     expect(paginatedSchema(itemSchema).parse(page)).toEqual(page)
     expect(
       paginatedSchema(itemSchema).safeParse({
         data: [{ id: 'bad', name: 'x' }],
-        pagination: { next_cursor: null, has_more: false },
+        next_cursor: null,
       }).success,
     ).toBe(false)
   })

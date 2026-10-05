@@ -1,0 +1,259 @@
+{
+  "cp": {
+    "status": {
+      "active": "Active",
+      "online": "Online",
+      "success": "Succeeded",
+      "paused": "Paused",
+      "warning": "Warning",
+      "pending": "To review",
+      "error": "Error",
+      "failed": "Failed",
+      "revoked": "Revoked",
+      "draft": "Draft",
+      "archived": "Archived",
+      "running": "Running",
+      "validating": "Validating"
+    },
+    "risk": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "alert": {
+      "close": "Close",
+      "copy": "Copy",
+      "copied": "Copied",
+      "errorCode": "Code: {code}",
+      "requestId": "Request: {id}"
+    },
+    "toast": {
+      "close": "Close",
+      "undo": "Undo"
+    },
+    "loading": "Loading…",
+    "skeleton": {
+      "loading": "Loading"
+    },
+    "dialog": {
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "confirmDanger": "Delete"
+    },
+    "table": {
+      "empty": "No results",
+      "loading": "Loading data…",
+      "sort": {
+        "none": "Not sorted",
+        "ascending": "Sorted ascending",
+        "descending": "Sorted descending"
+      }
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "description": "Start by creating your first item."
+    },
+    "filter": {
+      "search": "Search…",
+      "clear": "Clear filters"
+    },
+    "credits": {
+      "used": "{used} / {total} credits",
+      "percent": "{percent}%",
+      "exhausted": "Credits used up"
+    },
+    "secret": {
+      "show": "Show",
+      "hide": "Hide",
+      "copy": "Copy",
+      "copied": "Copied",
+      "warning": "You will not be able to see it again after leaving this page."
+    },
+    "code": {
+      "copy": "Copy code",
+      "copied": "Copied"
+    },
+    "stepper": {
+      "step": "Step {current} of {total}",
+      "completed": "Completed"
+    },
+    "stat": {
+      "up": "Up",
+      "down": "Down",
+      "flat": "Stable"
+    },
+    "pageHeader": {
+      "breadcrumb": "Breadcrumb"
+    },
+    "shell": {
+      "logo": "project-cp",
+      "workspace": "Workspace",
+      "switchWorkspace": "Switch workspace",
+      "switchOrg": "Switch organization",
+      "nav": "Main navigation",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "search": "Search",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "credits": "Credits",
+      "tabs": "Quick navigation",
+      "skipLink": "Skip to content",
+      "env": "Environment",
+      "tab": {
+        "home": "Home",
+        "chat": "Chat",
+        "approvals": "To review",
+        "credits": "Credits"
+      }
+    },
+    "mode": {
+      "label": "Display mode",
+      "simple": "Simple",
+      "technique": "Technical"
+    },
+    "nav": {
+      "locked": "Not included in your plan",
+      "home": "Home",
+      "chat": "Chat",
+      "approvals": {
+        "simple": "To review",
+        "technical": "Approvals"
+      },
+      "group": {
+        "build": "Build",
+        "track": "Track",
+        "developers": "Developers",
+        "organization": "Organization"
+      },
+      "mcpServers": {
+        "simple": "AI Access",
+        "technical": "MCP Servers"
+      },
+      "connectors": {
+        "simple": "Connected systems",
+        "technical": "Connectors"
+      },
+      "agents": {
+        "simple": "Assistants",
+        "technical": "Agents"
+      },
+      "capabilities": {
+        "simple": "AI Functions",
+        "technical": "Capabilities"
+      },
+      "marketplace": "Marketplace",
+      "activity": {
+        "simple": "Activity",
+        "technical": "Runs"
+      },
+      "usage": {
+        "simple": "Usage and costs",
+        "technical": "Usage"
+      },
+      "apiKeys": {
+        "simple": "Access keys",
+        "technical": "API keys"
+      },
+      "webhooks": "Webhooks",
+      "environments": {
+        "simple": "Test mode",
+        "technical": "Environments"
+      },
+      "documentation": "Documentation",
+      "team": {
+        "simple": "Team and roles",
+        "technical": "Members and roles"
+      },
+      "billing": "Credits and billing",
+      "budgets": "Budgets",
+      "security": {
+        "simple": "Security and audit",
+        "technical": "Policies and audit"
+      },
+      "settings": "Settings"
+    },
+    "admin": {
+      "badge": "Admin",
+      "nav": "Administration navigation",
+      "emergencyStop": "Emergency stop",
+      "sessionRemaining": "Session: {time}",
+      "profile": "Administrator profile",
+      "twoFactor": "Two-factor authentication enabled"
+    },
+    "adminNav": {
+      "dashboard": "Dashboard",
+      "group": {
+        "revenue": "Clients and revenue",
+        "ai": "AI",
+        "product": "Product",
+        "trust": "Trust",
+        "operations": "Operations"
+      },
+      "clients": "Clients",
+      "finance": "Finance",
+      "pricing": "Pricing and plans",
+      "providers": "Providers",
+      "gateway": "Gateway and routing",
+      "platformAi": "Platform AI",
+      "apiKeys": "API and keys",
+      "mcp": "MCP and connectors",
+      "agents": "Agents",
+      "marketplace": "Marketplace",
+      "security": "Security and abuse",
+      "compliance": "Compliance",
+      "support": "Support",
+      "system": "System and incidents",
+      "flags": "Feature flags",
+      "content": "Content and translations",
+      "internalTeam": "Internal team and audit",
+      "parameters": "Settings"
+    },
+    "chat": {
+      "aiLabel": "AI assistant",
+      "you": "You",
+      "disclaimer": "Generated by AI — check important information",
+      "toolCalls": "Sources consulted ({count})",
+      "typing": "The assistant is writing…",
+      "error": "The message could not be displayed."
+    },
+    "chart": {
+      "viewData": "View data",
+      "viewChart": "View chart",
+      "noData": "No data to display for this period",
+      "category": "Period",
+      "chartLabel": "Chart"
+    },
+    "approval": {
+      "title": "To review",
+      "approve": "Approve",
+      "modify": "Modify",
+      "reject": "Reject",
+      "deadline": "Time left: {time}",
+      "expired": "Time expired",
+      "minutes": "{n} min",
+      "hours": "{n} h",
+      "days": "{n} d",
+      "items": "Items concerned",
+      "parameters": "Exact parameters"
+    },
+    "planGate": {
+      "locked": "Included in the {plan} plan",
+      "viewPlans": "View plans"
+    },
+    "layout": {
+      "back": "Back",
+      "next": "Continue",
+      "advancedOptions": "Advanced options",
+      "todoSection": "Pending actions",
+      "settingsNav": "Settings navigation",
+      "chatPlaceholder": "Type your message…",
+      "send": "Send",
+      "canvasView": "Canvas view",
+      "listView": "List view",
+      "allow": "Allow",
+      "deny": "Deny"
+    }
+  }
+}

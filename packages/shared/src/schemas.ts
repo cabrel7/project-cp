@@ -19,7 +19,6 @@ export const errorResponseSchema = z.object({
     message: z.string(),
     request_id: z.string(),
     details: z.record(z.string(), z.unknown()).optional(),
-    hint: z.string().optional(),
     documentation_url: z.string().url().optional(),
   }),
 })
@@ -29,17 +28,11 @@ export type ErrorResponse = z.infer<typeof errorResponseSchema>
 export function paginatedSchema<T extends z.ZodType>(itemSchema: T) {
   return z.object({
     data: z.array(itemSchema),
-    pagination: z.object({
-      next_cursor: z.string().nullable(),
-      has_more: z.boolean(),
-    }),
+    next_cursor: z.string().nullable(),
   })
 }
 
 export type Paginated<T> = {
   data: T[]
-  pagination: {
-    next_cursor: string | null
-    has_more: boolean
-  }
+  next_cursor: string | null
 }

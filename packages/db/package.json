@@ -6,7 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./schema": "./src/schema/index.ts",
-    "./client": "./src/client.ts",
+    "./admin": "./src/admin.ts",
     "./context": "./src/context.ts",
     "./public-id": "./src/public-id.ts"
   },
@@ -24,6 +24,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@vitest/coverage-v8": "5.0.2",
     "drizzle-kit": "catalog:",
     "tsup": "catalog:",

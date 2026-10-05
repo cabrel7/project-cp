@@ -8,12 +8,30 @@
     "build": "nuxt prepare",
     "typecheck": "nuxt typecheck",
     "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
+    "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots",
     "postinstall": "nuxt prepare"
   },
+  "dependencies": {
+    "@fontsource/geist": "catalog:",
+    "@fontsource/geist-mono": "catalog:",
+    "@fontsource/plus-jakarta-sans": "catalog:",
+    "@iconify-json/lucide": "catalog:",
+    "@nuxt/ui": "catalog:",
+    "@nuxtjs/i18n": "catalog:",
+    "echarts": "catalog:",
+    "vue-echarts": "catalog:"
+  },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
+    "@playwright/test": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:",
     "nuxt": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
+    "vue": "catalog:",
     "vue-tsc": "catalog:"
   }
 }
