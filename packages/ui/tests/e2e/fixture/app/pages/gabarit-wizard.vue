@@ -34,7 +34,7 @@ const { t } = useI18n()
     </header>
 
     <main class="flex flex-1 flex-col items-center px-4 py-8 md:px-8">
-      <CpLayoutWizard :steps="steps" :current-step="currentStep" hide-back-on-first @next="next" @back="back">
+      <CpLayoutWizard :steps="steps" :current-step="currentStep" hide-back-on-first stepper-in-header @next="next" @back="back">
         <CpTextField v-if="currentStep === 0" v-model="name" label="Nom de l'assistant" help="Visible par votre équipe." />
         <CpSelect
           v-else-if="currentStep === 1"

@@ -81,12 +81,14 @@ test.describe('AppShell — desktop', () => {
     await expect(shell.main.getByRole('heading')).toHaveText('Page : agents')
   })
 
-  test('hauteur des items : 36px desktop, 44px mobile (densité nav)', async ({ page }) => {
+  test('hauteur des items : 32px desktop (maquette 42 : 19 entrées tiennent en 1000 px), 44px mobile', async ({
+    page,
+  }) => {
     const shell = new AppShellPage(page)
     await shell.goto()
     const box = await shell.navItem('Accueil').boundingBox()
-    expect(box?.height).toBeGreaterThanOrEqual(36)
-    expect(box?.height).toBeLessThanOrEqual(40)
+    expect(box?.height).toBeGreaterThanOrEqual(32)
+    expect(box?.height).toBeLessThanOrEqual(36)
   })
 
   test("barre du haut : crédits, notifications (3), recherche, profil, sélecteur d'organisation", async ({
