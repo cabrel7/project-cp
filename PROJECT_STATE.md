@@ -1,5 +1,5 @@
 # STATE — project-cp
-Updated: 2026-10-05 | Session: P1 — Design system en code
+Updated: 2026-10-05 | Session: fin P1 — passage dev → main
 
 ## ✅ Done
 - Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D57, UI/UX).
@@ -30,12 +30,15 @@ Updated: 2026-10-05 | Session: P1 — Design system en code
 
 - **P1.5 — Catalogue vivant + régression visuelle Playwright** (`packages/ui`) : fixture Nuxt minimale (`tests/e2e/fixture/`), 10 pages de démo (catalog, 8 gabarits G1-G8, app shell), Playwright 4 projets (desktop/mobile × clair/sombre). Specs : `catalog.spec.ts` (1 fullPage + 7 sections), `gabarits.spec.ts` (8 fullPage G1-G8), `app-shell.spec.ts` (fonctionnel + visuel + a11y), `admin-shell.spec.ts` (fonctionnel + visuel + a11y). Helpers : `gotoHydrated` (data-cp-hydrated marker), `prepareFullPage` (neutralise fixed/sticky avant fullPage). Correctifs composants : shrink-0 boutons icônes, transition split tiroir (focus), CpModeToggle hidden mobile (overflow). WCAG : title + lang dans fixture. 142 e2e passés, 572 unit tests, 0 échecs. Reviewer 7/10 (4 MAJOR corrigés). Branche `claude/jolly-johnson-qbhlwb`.
 
+- **Revue 05/10** : PR #10 (5 BLOQUANTS + 5 MAJEURS corrigés : partitions Drizzle, BYPASSRLS, `@cp/db/admin`, `withOrgContext`, RLS en CI, pagination, erreurs, SidebarNav NuxtLink + `locked`, ApprovalCard secondary, Chart reduced-motion) ; PR #11 (D27, D53-D57) ; PR #12 fidélité UI (`<UApp :locale>`, mode Simple/Technique fourni à la racine des apps, nav client/admin via `useClientNav`/`useAdminNav`, densité nav 32 px desktop, G3 plein écran, planche `docs/review/fidelite-1.png` validée par Dylan le 2026-10-05).
+
 ## 🔄 Active
-- **Revue 05/10** (`fix/review-1005`) : 5 BLOQUANTS + 5 MAJEURS avant fusion dev → main. PR en cours.
+- Passage `dev` → `main` (fin P0 + P1), puis recréer `dev` depuis `main`.
 
 ## 📋 Queue
-7. **P1 — Design system en code** (P1.1 ✅, P1.2 ✅, P1.3 ✅, P1.4 ✅, P1.5 ✅, prochains lots P1.6+) — en parallèle de P2.
-8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
+7. **P1 — Design system en code** ✅ (P1.0 à P1.5 + revue fidélité). Écarts mineurs restants en Known issues.
+8. **P2 — Identité** : à lancer **après validation de Dylan** (lots et critères dans 08).
+9. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## 🏗️ Decisions
@@ -44,12 +47,16 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## ⚠️ Known issues
 - D26 : serveur OAuth 2.1 via `oidc-provider` = POC à valider.
-- D27 : Nuxt UI ✅ validée — responsive mobile-first vérifié P1.1 (grilles 2→4→6 colonnes, min-h-11 tactile).
 - P1.1 : i18n FR/EN non encore appliqué sur la page de démo (texte français en dur — DETTE, lot ultérieur). Contraste pastilles chart décoratifs limité à 2.0:1 (couleur = information, label secondaire).
-- P1.2 — UX MAJOR restants (non bloquants) : ApprovalCard « Refuser » devrait être secondary ; ChatMessage disclaimer par défaut activé ; Alert devrait lire useCpMode au lieu de prop ; DataTable manque mobile cards, alignement montants, colonnes technicalOnly ; ConfirmDialog saisie confirmation ; Chart reduced-motion, formats localisés, > 6 séries ; PlanGate aperçu grisé + slot ; TextField/Select role="alert" sur erreur, props form ; persistance useCpMode via API.
+- P1.2 — UX MAJOR restants (non bloquants) : ChatMessage disclaimer par défaut activé ; Alert devrait lire useCpMode au lieu de prop ; DataTable manque mobile cards, alignement montants, colonnes technicalOnly ; ConfirmDialog saisie confirmation ; Chart formats localisés, > 6 séries ; PlanGate aperçu grisé + slot ; TextField/Select role="alert" sur erreur, props form ; persistance useCpMode via API.
 - P1.4 — UX MAJOR/MINOR restants (non bloquants) : G7 palette/propriétés hidden sous lg (tiroir ou vue liste forcée) ; G1/G2/G4 pas de prop error/empty (états délégués à l'appelant) ; G1 double rendu desktop/mobile-cards ; G3 sticky footer sans safe-area-inset-bottom, boutons < 48px mobile, pas d'indicateur brouillon, details open non contrôlé ; G5 sections v-show pas v-if, danger non trié en dernier ; G2 tabs sans tabpanel/aria-controls, aside sans aria-label ; G6 Enter sans isComposing (IME), h2 sans h1, pas de défilement auto ; G4 pas de slot filtres de période ; G8 min-h-dvh dans slot AppShell (OK hors shell).
-- P1.3 — UX MINOR/deferred : SidebarNav en `<button>` sans `<ul>/<li>` (pas de NuxtLink ni regroupement ARIA) ; OrgSelector sans `aria-haspopup` ni workspace ; topbar admin peut déborder à 360px (minuteur à masquer sous sm) ; topbar client serrée à 360px ; tabbar hors inert derrière tiroir, pas de safe-area-inset-bottom, badge text-[10px] → text-caption ; badges sans plafond 99+ ; skip link sans tabindex="-1" (Safari) ; pas de transition hover/active 150ms sur items nav ; piège focus incomplet (input/select/textarea) ; logique tiroir dupliquée → extraire useDrawer ; « AI Access/Functions » → minuscule en EN ; icône admin compliance book-copy → scroll-text ; CpNavItem manque champ `locked` pour PlanGate ; pas de maquette mobile navigation (trou design).
+- P1.3 — UX MINOR/deferred : SidebarNav sans `<ul>/<li>` (regroupement ARIA) ; OrgSelector sans `aria-haspopup` ni workspace ; topbar admin peut déborder à 360px (minuteur à masquer sous sm) ; topbar client serrée à 360px ; tabbar hors inert derrière tiroir, pas de safe-area-inset-bottom, badge text-[10px] → text-caption ; badges sans plafond 99+ ; skip link sans tabindex="-1" (Safari) ; pas de transition hover/active 150ms sur items nav ; piège focus incomplet (input/select/textarea) ; logique tiroir dupliquée → extraire useDrawer ; « AI Access/Functions » → minuscule en EN ; icône admin compliance book-copy → scroll-text ; pas de maquette mobile navigation (trou design).
 - P1.5 — MINOR restants (non bloquants) : couverture catalogue partielle (7/15 sections testées visuellement) ; a11y axe-core seulement desktop-light (4 projets à couvrir) ; launchOptions dupliqué dans config (projects + use global) ; 2 captures potentiellement instables (g7-editor desktop-dark, g8-auth mobile-light — contenu minimal). Règle guard suggérée : E2E doivent utiliser `gotoHydrated`, jamais `networkidle` ni `waitForTimeout`.
+- Fidélité UI (revue PR #12, MINEUR) : logo en tuile couleur ; badge « À valider » (couleur chaude, `pendingApprovals` dans la fixture) ; recherche en champ dans la barre du haut ; carte organisation/profil surélevée ; G3 « Brouillon enregistré » + barre d'actions collante desktop + alignement ; graphiques G4 ; test e2e du badge « Systèmes connectés » à rétablir.
+- CI : dérive Drizzle intermittente **corrigée** (2026-10-06) — `drizzle-kit pull` sortait les politiques RLS dans un ordre variable (et `using` sur la première seulement) ; `post-pull.sh` les retire (`strip-policies.mjs`) : la RLS est dans le SQL et couverte par les tests. Sortie identique vérifiée sur 2 bases neuves.
+- `bytea` typé `text` dans le schéma Drizzle : à corriger avant P2 (fichiers, secrets).
+- Override Biome `.vue` (noUnused désactivé) sans décision : à restreindre ou documenter.
+- Codes d'erreur : incohérences doc 02 à trancher (402 BILLING, IDEMPOTENCY 409 vs 422, VALIDATION_ERROR vs _FAILED).
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).

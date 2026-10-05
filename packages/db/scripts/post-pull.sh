@@ -45,8 +45,19 @@ fs.writeFileSync(f, src);
 "
 fi
 
-# 9. Remove generated migration artifacts (we use dbmate) but keep hand-written files
+# 9. Drop RLS policies from the generated schema.
+# drizzle-kit pull lists policies in an unspecified order and only emits `using` on the first
+# one of a table, so the output changes from one database to another (flaky CI drift check).
+# Drizzle is read-only here (invariant 3): RLS lives in the SQL migrations and is covered by the
+# SQL tests (T1-T22) and the RLS integration tests of this package.
+node "$(dirname "${BASH_SOURCE[0]}")/strip-policies.mjs" "$SCHEMA_DIR/schema.ts"
+if grep -q 'pgPolicy' "$SCHEMA_DIR/schema.ts"; then
+  echo "post-pull: ERROR pgPolicy still present in schema.ts" >&2
+  exit 1
+fi
+
+# 10. Remove generated migration artifacts (we use dbmate) but keep hand-written files
 rm -f "$SCHEMA_DIR"/*.sql
 rm -rf "$SCHEMA_DIR/meta"
 
-echo "post-pull: @ts-nocheck added, bigint enforced, unknown→text, bytea/citext/tstzrange marked, partition nulls fixed, dupes cleaned, artifacts cleaned"
+echo "post-pull: @ts-nocheck added, bigint enforced, unknown→text, bytea/citext/tstzrange marked, partition nulls fixed, dupes cleaned, RLS policies dropped (SQL is the source), artifacts cleaned"

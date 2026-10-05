@@ -1,5 +1,5 @@
 // @ts-nocheck — generated circular FK refs
-import { pgTable, pgSchema, unique, check, bigint, text, jsonb, boolean, timestamp, uuid, cidr, index, foreignKey, inet, integer, char, smallint, uniqueIndex, numeric, date, type AnyPgColumn, pgPolicy, vector, primaryKey } from "drizzle-orm/pg-core"
+import { pgTable, pgSchema, unique, check, bigint, text, jsonb, boolean, timestamp, uuid, cidr, index, foreignKey, inet, integer, char, smallint, uniqueIndex, numeric, date, type AnyPgColumn, vector, primaryKey } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const ref = pgSchema("ref");
@@ -1718,10 +1718,6 @@ export const routingRulesInAi = ai.table("routing_rules", {
 			name: "routing_rules_profile_id_fkey"
 		}).onDelete("cascade"),
 	unique("routing_rules_public_id_key").on(table.publicId),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
-	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 ]);
 
 export const byokKeysInAi = ai.table("byok_keys", {
@@ -1779,7 +1775,6 @@ export const byokKeysInAi = ai.table("byok_keys", {
 		}).onDelete("cascade"),
 	unique("byok_keys_public_id_key").on(table.publicId),
 	unique("byok_keys_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("byok_keys_status_check", sql`status = ANY (ARRAY['active'::text, 'invalid'::text, 'revoked'::text])`),
 ]);
 
@@ -1823,7 +1818,6 @@ export const capabilitiesInAi = ai.table("capabilities", {
 		}).onDelete("cascade"),
 	unique("capabilities_public_id_key").on(table.publicId),
 	unique("capabilities_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("capabilities_key_check", sql`key ~ '^[a-z0-9_]+(\.[a-z0-9_]+)*$'::text`),
 	check("capabilities_status_check", sql`status = ANY (ARRAY['draft'::text, 'active'::text, 'archived'::text])`),
 	check("capabilities_visibility_check", sql`visibility = ANY (ARRAY['private'::text, 'organization'::text, 'public'::text])`),
@@ -1847,10 +1841,6 @@ export const rolesInIam = iam.table("roles", {
 			name: "roles_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("roles_public_id_key").on(table.publicId),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
-	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("roles_check", sql`is_system = (organization_id IS NULL)`),
 	check("roles_key_check", sql`key ~ '^[a-z0-9_]+$'::text`),
 	check("roles_name_check", sql`CHECK (util.is_i18n(name`),
@@ -1894,8 +1884,6 @@ export const membershipsInIam = iam.table("memberships", {
 	unique("memberships_public_id_key").on(table.publicId),
 	unique("memberships_organization_id_user_id_key").on(table.organizationId, table.userId),
 	unique("memberships_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
-	pgPolicy("membership_self_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("memberships_status_check", sql`status = ANY (ARRAY['active'::text, 'suspended'::text])`),
 ]);
 
@@ -1935,7 +1923,6 @@ export const invitationsInIam = iam.table("invitations", {
 		}),
 	unique("invitations_public_id_key").on(table.publicId),
 	unique("invitations_token_hash_key").on(table.tokenHash),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const teamsInIam = iam.table("teams", {
@@ -1956,7 +1943,6 @@ export const teamsInIam = iam.table("teams", {
 		}).onDelete("cascade"),
 	unique("teams_public_id_key").on(table.publicId),
 	unique("teams_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const workspacesInIam = iam.table("workspaces", {
@@ -2003,7 +1989,6 @@ export const workspacesInIam = iam.table("workspaces", {
 		}).onDelete("cascade"),
 	unique("workspaces_public_id_key").on(table.publicId),
 	unique("workspaces_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("workspaces_slug_check", sql`slug ~ '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$'::citext`),
 	check("workspaces_status_check", sql`status = ANY (ARRAY['active'::text, 'suspended'::text, 'archived'::text])`),
 ]);
@@ -2032,7 +2017,6 @@ export const environmentsInIam = iam.table("environments", {
 	unique("environments_public_id_key").on(table.publicId),
 	unique("environments_id_organization_id_key").on(table.id, table.organizationId),
 	unique("environments_id_workspace_id_key").on(table.id, table.workspaceId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("environments_key_check", sql`key ~ '^[a-z0-9_-]{1,32}$'::text`),
 	check("environments_kind_check", sql`kind = ANY (ARRAY['development'::text, 'staging'::text, 'production'::text, 'sandbox'::text, 'custom'::text])`),
 ]);
@@ -2059,7 +2043,6 @@ export const projectsInIam = iam.table("projects", {
 		}).onDelete("cascade"),
 	unique("projects_public_id_key").on(table.publicId),
 	unique("projects_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("projects_slug_check", sql`slug ~ '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$'::citext`),
 ]);
 
@@ -2120,7 +2103,6 @@ export const filesInStorage = storage.table("files", {
 	unique("files_public_id_key").on(table.publicId),
 	unique("files_backend_id_bucket_storage_key_key").on(table.backendId, table.bucket, table.storageKey),
 	unique("files_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("files_purpose_check", sql`purpose = ANY (ARRAY['avatar'::text, 'connector_source'::text, 'data_file'::text, 'chat_attachment'::text, 'agent_artifact'::text, 'invoice_pdf'::text, 'export'::text, 'marketplace_asset'::text, 'legal_document'::text, 'support_attachment'::text, 'eval_dataset'::text, 'other'::text])`),
 	check("files_scan_status_check", sql`scan_status = ANY (ARRAY['pending'::text, 'clean'::text, 'infected'::text, 'skipped'::text, 'failed'::text])`),
 	check("files_size_bytes_check", sql`size_bytes >= 0`),
@@ -2181,7 +2163,6 @@ export const subscriptionsInBilling = billing.table("subscriptions", {
 			name: "subscriptions_plan_price_id_fkey"
 		}),
 	unique("subscriptions_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("subscriptions_check", sql`current_period_end > current_period_start`),
 	check("subscriptions_llm_coefficient_override_check", sql`llm_coefficient_override >= (1)::numeric`),
 	check("subscriptions_status_check", sql`status = ANY (ARRAY['trialing'::text, 'active'::text, 'past_due'::text, 'grace'::text, 'cancelled'::text, 'expired'::text])`),
@@ -2223,7 +2204,6 @@ export const subscriptionEventsInBilling = billing.table("subscription_events", 
 			foreignColumns: [plansInBilling.id],
 			name: "subscription_events_to_plan_id_fkey"
 		}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("subscription_events_event_type_check", sql`event_type = ANY (ARRAY['created'::text, 'upgraded'::text, 'downgraded'::text, 'renewed'::text, 'payment_failed'::text, 'grace_started'::text, 'cancelled'::text, 'reactivated'::text, 'expired'::text, 'plan_price_changed'::text])`),
 ]);
 
@@ -2255,7 +2235,6 @@ export const creditWalletsInBilling = billing.table("credit_wallets", {
 		}).onDelete("cascade"),
 	unique("credit_wallets_public_id_key").on(table.publicId),
 	unique("credit_wallets_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("credit_wallets_check", sql`balance_micro >= (- overdraft_limit_micro)`),
 	check("credit_wallets_kind_check", sql`kind = ANY (ARRAY['llm'::text, 'infra'::text, 'test'::text])`),
 	check("credit_wallets_overdraft_limit_micro_check", sql`overdraft_limit_micro >= 0`),
@@ -2287,7 +2266,6 @@ export const creditGrantsInBilling = billing.table("credit_grants", {
 		}).onDelete("cascade"),
 	unique("credit_grants_public_id_key").on(table.publicId),
 	unique("credit_grants_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("credit_grants_amount_micro_check", sql`amount_micro > 0`),
 	check("credit_grants_check", sql`remaining_micro <= amount_micro`),
 	check("credit_grants_remaining_micro_check", sql`remaining_micro >= 0`),
@@ -2314,7 +2292,6 @@ export const creditReservationsInBilling = billing.table("credit_reservations", 
 			foreignColumns: [creditWalletsInBilling.id, creditWalletsInBilling.organizationId],
 			name: "credit_reservations_wallet_id_organization_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("credit_reservations_amount_micro_check", sql`amount_micro > 0`),
 	check("credit_reservations_status_check", sql`status = ANY (ARRAY['held'::text, 'settled'::text, 'released'::text, 'expired'::text])`),
 ]);
@@ -2355,7 +2332,6 @@ export const paymentMethodsInBilling = billing.table("payment_methods", {
 			name: "payment_methods_provider_id_fkey"
 		}),
 	unique("payment_methods_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("payment_methods_kind_check", sql`kind = ANY (ARRAY['mobile_money'::text, 'card'::text, 'bank_transfer'::text])`),
 	check("payment_methods_status_check", sql`status = ANY (ARRAY['active'::text, 'expired'::text, 'removed'::text])`),
 ]);
@@ -2417,7 +2393,6 @@ export const invoicesInBilling = billing.table("invoices", {
 		}).onDelete("set null"),
 	unique("invoices_public_id_key").on(table.publicId),
 	unique("invoices_number_key").on(table.number),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("invoices_check", sql`total_minor = ((subtotal_minor - discount_minor) + tax_minor)`),
 	check("invoices_kind_check", sql`kind = ANY (ARRAY['invoice'::text, 'credit_note'::text])`),
 	check("invoices_status_check", sql`status = ANY (ARRAY['draft'::text, 'open'::text, 'paid'::text, 'void'::text, 'uncollectible'::text])`),
@@ -2453,7 +2428,6 @@ export const invoiceLinesInBilling = billing.table("invoice_lines", {
 			foreignColumns: [taxRatesInRef.id],
 			name: "invoice_lines_tax_rate_id_fkey"
 		}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("invoice_lines_description_check", sql`CHECK (util.is_i18n(description`),
 	check("invoice_lines_line_type_check", sql`line_type = ANY (ARRAY['subscription'::text, 'credit_pack'::text, 'overage'::text, 'marketplace'::text, 'adjustment'::text, 'discount'::text])`),
 ]);
@@ -2524,7 +2498,6 @@ export const paymentsInBilling = billing.table("payments", {
 		}),
 	unique("payments_public_id_key").on(table.publicId),
 	unique("payments_idempotency_key_key").on(table.idempotencyKey),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("payments_amount_minor_check", sql`amount_minor > 0`),
 	check("payments_purpose_check", sql`purpose = ANY (ARRAY['subscription'::text, 'credit_pack'::text, 'marketplace'::text, 'invoice'::text, 'other'::text])`),
 	check("payments_status_check", sql`status = ANY (ARRAY['pending'::text, 'processing'::text, 'succeeded'::text, 'failed'::text, 'cancelled'::text, 'expired'::text, 'refunded'::text, 'partially_refunded'::text])`),
@@ -2556,7 +2529,6 @@ export const refundsInBilling = billing.table("refunds", {
 			name: "refunds_payment_id_fkey"
 		}),
 	unique("refunds_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("refunds_amount_minor_check", sql`amount_minor > 0`),
 	check("refunds_status_check", sql`status = ANY (ARRAY['pending'::text, 'succeeded'::text, 'failed'::text])`),
 ]);
@@ -2594,7 +2566,6 @@ export const budgetsInBilling = billing.table("budgets", {
 			name: "budgets_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("budgets_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("budgets_action_on_exceed_check", sql`action_on_exceed = ANY (ARRAY['alert_only'::text, 'block_new_runs'::text, 'block_all'::text])`),
 	check("budgets_amount_micro_check", sql`amount_micro > 0`),
 	check("budgets_check", sql`(period <> 'custom'::text) OR ((custom_start IS NOT NULL) AND (custom_end > custom_start))`),
@@ -2621,7 +2592,6 @@ export const budgetPeriodsInBilling = billing.table("budget_periods", {
 			name: "budget_periods_budget_id_fkey"
 		}).onDelete("cascade"),
 	unique("budget_periods_budget_id_period_start_key").on(table.budgetId, table.periodStart),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const couponRedemptionsInBilling = billing.table("coupon_redemptions", {
@@ -2663,7 +2633,6 @@ export const couponRedemptionsInBilling = billing.table("coupon_redemptions", {
 			foreignColumns: [usersInIam.id],
 			name: "coupon_redemptions_user_id_fkey"
 		}).onDelete("set null"),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const secretsInIam = iam.table("secrets", {
@@ -2712,7 +2681,6 @@ export const secretsInIam = iam.table("secrets", {
 	unique("secrets_public_id_key").on(table.publicId),
 	unique("secrets_vault_path_key").on(table.vaultPath),
 	unique("secrets_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("secrets_owner_type_check", sql`owner_type = ANY (ARRAY['connector_credential'::text, 'byok_key'::text, 'webhook_signing'::text, 'provider_account'::text, 'payment_provider'::text, 'oauth_token'::text, 'bridge'::text, 'service_account'::text, 'mcp_upstream'::text, 'other'::text])`),
 	check("secrets_status_check", sql`status = ANY (ARRAY['active'::text, 'rotating'::text, 'revoked'::text, 'expired'::text])`),
 ]);
@@ -2736,10 +2704,6 @@ export const routingProfilesInAi = ai.table("routing_profiles", {
 			name: "routing_profiles_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("routing_profiles_public_id_key").on(table.publicId),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
-	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("routing_profiles_check", sql`is_system = (organization_id IS NULL)`),
 	check("routing_profiles_key_check", sql`key ~ '^[a-z0-9_]+$'::text`),
 	check("routing_profiles_name_check", sql`CHECK (util.is_i18n(name`),
@@ -2795,7 +2759,6 @@ export const capabilityVersionsInAi = ai.table("capability_versions", {
 	unique("capability_versions_public_id_key").on(table.publicId),
 	unique("capability_versions_capability_id_version_key").on(table.capabilityId, table.version),
 	unique("capability_versions_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("capability_versions_model_fallback_check", sql`model_fallback = ANY (ARRAY['profile'::text, 'fail'::text])`),
 	check("capability_versions_version_check", sql`version > 0`),
 ]);
@@ -2840,7 +2803,6 @@ export const capabilityReleasesInAi = ai.table("capability_releases", {
 		}).onDelete("set null"),
 	unique("capability_releases_public_id_key").on(table.publicId),
 	unique("capability_releases_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const evalDatasetsInAi = ai.table("eval_datasets", {
@@ -2882,7 +2844,6 @@ export const evalDatasetsInAi = ai.table("eval_datasets", {
 		}).onDelete("cascade"),
 	unique("eval_datasets_public_id_key").on(table.publicId),
 	unique("eval_datasets_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const evalCasesInAi = ai.table("eval_cases", {
@@ -2902,7 +2863,6 @@ export const evalCasesInAi = ai.table("eval_cases", {
 			name: "eval_cases_dataset_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("eval_cases_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const evalRunsInAi = ai.table("eval_runs", {
@@ -2939,7 +2899,6 @@ export const evalRunsInAi = ai.table("eval_runs", {
 		}).onDelete("cascade"),
 	unique("eval_runs_public_id_key").on(table.publicId),
 	unique("eval_runs_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("eval_runs_status_check", sql`status = ANY (ARRAY['queued'::text, 'running'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])`),
 ]);
 
@@ -2987,7 +2946,6 @@ export const oauthConnectionsInMcp = mcp.table("oauth_connections", {
 		}),
 	unique("oauth_connections_public_id_key").on(table.publicId),
 	unique("oauth_connections_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("oauth_connections_status_check", sql`status = ANY (ARRAY['active'::text, 'expired'::text, 'revoked'::text, 'error'::text])`),
 ]);
 
@@ -3024,7 +2982,6 @@ export const bridgesInMcp = mcp.table("bridges", {
 	unique("bridges_public_id_key").on(table.publicId),
 	unique("bridges_token_hash_key").on(table.tokenHash),
 	unique("bridges_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("bridges_status_check", sql`status = ANY (ARRAY['pending'::text, 'online'::text, 'offline'::text, 'revoked'::text])`),
 ]);
 
@@ -3089,7 +3046,6 @@ export const connectorsInMcp = mcp.table("connectors", {
 		}).onDelete("cascade"),
 	unique("connectors_public_id_key").on(table.publicId),
 	unique("connectors_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("connectors_auth_type_check", sql`auth_type = ANY (ARRAY['none'::text, 'api_key'::text, 'bearer'::text, 'basic'::text, 'oauth2'::text, 'hmac'::text, 'mtls'::text, 'db_password'::text, 'bridge_token'::text])`),
 	check("connectors_check", sql`(kind <> 'database'::text) OR (db_engine IS NOT NULL)`),
 	check("connectors_check1", sql`(kind <> 'bridge'::text) OR (bridge_id IS NOT NULL)`),
@@ -3136,7 +3092,6 @@ export const connectorCredentialsInMcp = mcp.table("connector_credentials", {
 			foreignColumns: [secretsInIam.id, secretsInIam.organizationId],
 			name: "connector_credentials_secret_id_organization_id_fkey"
 		}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("connector_credentials_check", sql`(secret_id IS NOT NULL) OR (oauth_connection_id IS NOT NULL)`),
 	check("connector_credentials_status_check", sql`status = ANY (ARRAY['active'::text, 'invalid'::text, 'revoked'::text])`),
 ]);
@@ -3166,7 +3121,6 @@ export const connectorSourcesInMcp = mcp.table("connector_sources", {
 			foreignColumns: [filesInStorage.id],
 			name: "connector_sources_file_id_fkey"
 		}).onDelete("set null"),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("connector_sources_source_type_check", sql`source_type = ANY (ARRAY['openapi_upload'::text, 'openapi_url'::text, 'auto_discovery'::text, 'db_schema'::text, 'nl_description'::text, 'manual'::text, 'graphql_introspection'::text, 'mcp_discovery'::text, 'file_schema'::text])`),
 ]);
 
@@ -3197,7 +3151,6 @@ export const connectorActionsInMcp = mcp.table("connector_actions", {
 	unique("connector_actions_public_id_key").on(table.publicId),
 	unique("connector_actions_connector_id_key_key").on(table.connectorId, table.key),
 	unique("connector_actions_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("connector_actions_check", sql`(kind <> 'sql'::text) OR (effect <> 'delete'::text)`),
 	check("connector_actions_effect_check", sql`effect = ANY (ARRAY['read'::text, 'write'::text, 'delete'::text, 'financial'::text, 'external_message'::text])`),
 	check("connector_actions_generated_by_check", sql`generated_by = ANY (ARRAY['ai'::text, 'manual'::text, 'prebuilt'::text, 'discovery'::text])`),
@@ -3233,7 +3186,6 @@ export const fileDatasetsInMcp = mcp.table("file_datasets", {
 			name: "file_datasets_file_id_fkey"
 		}).onDelete("set null"),
 	unique("file_datasets_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("file_datasets_status_check", sql`status = ANY (ARRAY['processing'::text, 'ready'::text, 'error'::text])`),
 ]);
 
@@ -3289,7 +3241,6 @@ export const serversInMcp = mcp.table("servers", {
 		}).onDelete("cascade"),
 	unique("servers_public_id_key").on(table.publicId),
 	unique("servers_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("servers_auth_modes_check", sql`auth_modes <@ ARRAY['oauth'::text, 'static_token'::text, 'api_key'::text]`),
 	check("servers_slug_check", sql`slug ~ '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$'::citext`),
 	check("servers_status_check", sql`status = ANY (ARRAY['draft'::text, 'validating'::text, 'active'::text, 'failed'::text, 'deprecated'::text, 'suspended'::text, 'archived'::text])`),
@@ -3329,7 +3280,6 @@ export const serverVersionsInMcp = mcp.table("server_versions", {
 	unique("server_versions_server_id_version_seq_key").on(table.serverId, table.versionSeq),
 	unique("server_versions_server_id_semver_key").on(table.semver, table.serverId),
 	unique("server_versions_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("server_versions_semver_check", sql`semver ~ '^[0-9]+\.[0-9]+\.[0-9]+$'::text`),
 	check("server_versions_status_check", sql`status = ANY (ARRAY['validating'::text, 'published'::text, 'failed'::text, 'superseded'::text, 'rolled_back'::text])`),
 	check("server_versions_version_seq_check", sql`version_seq > 0`),
@@ -3377,7 +3327,6 @@ export const toolsInMcp = mcp.table("tools", {
 	unique("tools_public_id_key").on(table.publicId),
 	unique("tools_server_id_name_key").on(table.name, table.serverId),
 	unique("tools_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("tools_check", sql`(action_id IS NOT NULL) OR (composite_plan IS NOT NULL)`),
 	check("tools_check1", sql`(effect <> ALL (ARRAY['delete'::text, 'financial'::text])) OR requires_approval`),
 	check("tools_description_check", sql`length(description) >= 10`),
@@ -3406,7 +3355,6 @@ export const toolEmbeddingsInMcp = mcp.table("tool_embeddings", {
 			foreignColumns: [toolsInMcp.id],
 			name: "tool_embeddings_tool_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const resourcesInMcp = mcp.table("resources", {
@@ -3437,7 +3385,6 @@ export const resourcesInMcp = mcp.table("resources", {
 		}).onDelete("cascade"),
 	unique("resources_public_id_key").on(table.publicId),
 	unique("resources_server_id_uri_template_key").on(table.serverId, table.uriTemplate),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const promptsInMcp = mcp.table("prompts", {
@@ -3461,7 +3408,6 @@ export const promptsInMcp = mcp.table("prompts", {
 		}).onDelete("cascade"),
 	unique("prompts_public_id_key").on(table.publicId),
 	unique("prompts_server_id_name_key").on(table.name, table.serverId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("prompts_name_check", sql`name ~ '^[a-z][a-z0-9_]{0,63}$'::text`),
 ]);
 
@@ -3513,7 +3459,6 @@ export const accessTokensInMcp = mcp.table("access_tokens", {
 	unique("access_tokens_prefix_key").on(table.prefix),
 	unique("access_tokens_token_hash_key").on(table.tokenHash),
 	unique("access_tokens_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("access_tokens_scope_mode_check", sql`scope_mode = ANY (ARRAY['read_only'::text, 'read_write'::text, 'full'::text, 'custom'::text])`),
 ]);
 
@@ -3537,7 +3482,6 @@ export const healthChecksInMcp = mcp.table("health_checks", {
 			foreignColumns: [organizationsInIam.id],
 			name: "health_checks_organization_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("health_checks_check_type_check", sql`check_type = ANY (ARRAY['ping'::text, 'sanity_tool'::text, 'auth'::text, 'schema_drift'::text])`),
 	check("health_checks_status_check", sql`status = ANY (ARRAY['ok'::text, 'warning'::text, 'error'::text])`),
 	check("health_checks_target_type_check", sql`target_type = ANY (ARRAY['connector'::text, 'server'::text, 'bridge'::text, 'tool'::text])`),
@@ -3582,7 +3526,6 @@ export const oauthConsentsInIam = iam.table("oauth_consents", {
 			name: "oauth_consents_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("oauth_consents_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const oauthAuthorizationCodesInIam = iam.table("oauth_authorization_codes", {
@@ -3628,7 +3571,6 @@ export const oauthAuthorizationCodesInIam = iam.table("oauth_authorization_codes
 			name: "oauth_authorization_codes_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("oauth_authorization_codes_code_hash_key").on(table.codeHash),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("oauth_authorization_codes_code_challenge_method_check", sql`code_challenge_method = 'S256'::text`),
 ]);
 
@@ -3690,7 +3632,6 @@ export const oauthTokensInIam = iam.table("oauth_tokens", {
 			name: "oauth_tokens_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("oauth_tokens_token_hash_key").on(table.tokenHash),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("oauth_tokens_token_type_check", sql`token_type = ANY (ARRAY['access'::text, 'refresh'::text])`),
 ]);
 
@@ -3740,7 +3681,6 @@ export const agentsInAgent = agent.table("agents", {
 		}).onDelete("cascade"),
 	unique("agents_public_id_key").on(table.publicId),
 	unique("agents_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("agents_max_concurrency_check", sql`(max_concurrency >= 1) AND (max_concurrency <= 100)`),
 	check("agents_status_check", sql`status = ANY (ARRAY['draft'::text, 'active'::text, 'paused'::text, 'archived'::text])`),
 ]);
@@ -3808,7 +3748,6 @@ export const versionsInAgent = agent.table("versions", {
 	unique("versions_public_id_key").on(table.publicId),
 	unique("versions_agent_id_version_seq_key").on(table.agentId, table.versionSeq),
 	unique("versions_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("versions_budget_per_run_micro_check", sql`budget_per_run_micro > 0`),
 	check("versions_check", sql`(output_mode <> 'json'::text) OR (output_schema IS NOT NULL)`),
 	check("versions_max_iterations_check", sql`(max_iterations >= 1) AND (max_iterations <= 50)`),
@@ -3857,7 +3796,6 @@ export const toolGrantsInAgent = agent.table("tool_grants", {
 			foreignColumns: [toolsInMcp.id, toolsInMcp.organizationId],
 			name: "tool_grants_tool_id_organization_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("tool_grants_permission_check", sql`permission = ANY (ARRAY['allow'::text, 'require_approval'::text, 'deny'::text])`),
 ]);
 
@@ -3902,7 +3840,6 @@ export const triggersInAgent = agent.table("triggers", {
 		}).onDelete("cascade"),
 	unique("triggers_public_id_key").on(table.publicId),
 	unique("triggers_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("triggers_check", sql`(kind <> 'schedule'::text) OR (cron_expression IS NOT NULL)`),
 	check("triggers_check1", sql`(kind <> 'webhook'::text) OR (webhook_endpoint_id IS NOT NULL)`),
 	check("triggers_check2", sql`(kind <> 'threshold'::text) OR (threshold_config IS NOT NULL)`),
@@ -3965,7 +3902,6 @@ export const approvalsInAgent = agent.table("approvals", {
 			name: "approvals_workspace_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("approvals_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("approvals_risk_level_check", sql`risk_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])`),
 	check("approvals_status_check", sql`status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text, 'expired'::text, 'cancelled'::text])`),
 	check("approvals_summary_check", sql`CHECK (util.is_i18n(summary`),
@@ -4004,7 +3940,6 @@ export const memoriesInAgent = agent.table("memories", {
 			name: "memories_workspace_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("memories_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("memories_check", sql`(scope = 'agent'::text) = (agent_id IS NOT NULL)`),
 	check("memories_importance_check", sql`(importance >= 1) AND (importance <= 10)`),
 	check("memories_scope_check", sql`scope = ANY (ARRAY['agent'::text, 'workspace'::text])`),
@@ -4060,7 +3995,6 @@ export const conversationsInAgent = agent.table("conversations", {
 		}).onDelete("cascade"),
 	unique("conversations_public_id_key").on(table.publicId),
 	unique("conversations_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("conversations_status_check", sql`status = ANY (ARRAY['active'::text, 'archived'::text])`),
 ]);
 
@@ -4092,7 +4026,6 @@ export const messagesInAgent = agent.table("messages", {
 			name: "messages_conversation_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("messages_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("messages_feedback_check", sql`feedback = ANY (ARRAY['-1'::integer, 1])`),
 	check("messages_role_check", sql`role = ANY (ARRAY['user'::text, 'assistant'::text, 'tool'::text, 'system'::text])`),
 ]);
@@ -4150,7 +4083,6 @@ export const apiKeysInDev = dev.table("api_keys", {
 	unique("api_keys_prefix_key").on(table.prefix),
 	unique("api_keys_key_hash_key").on(table.keyHash),
 	unique("api_keys_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("api_keys_rate_limit_per_min_check", sql`rate_limit_per_min > 0`),
 ]);
 
@@ -4177,7 +4109,6 @@ export const endUsersInDev = dev.table("end_users", {
 	unique("end_users_public_id_key").on(table.publicId),
 	unique("end_users_workspace_id_external_ref_key").on(table.externalRef, table.workspaceId),
 	unique("end_users_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const webhookEndpointsInDev = dev.table("webhook_endpoints", {
@@ -4223,7 +4154,6 @@ export const webhookEndpointsInDev = dev.table("webhook_endpoints", {
 		}).onDelete("cascade"),
 	unique("webhook_endpoints_public_id_key").on(table.publicId),
 	unique("webhook_endpoints_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("webhook_endpoints_status_check", sql`status = ANY (ARRAY['active'::text, 'paused'::text, 'disabled'::text])`),
 ]);
 
@@ -4271,7 +4201,6 @@ export const webhookSubscriptionsInDev = dev.table("webhook_subscriptions", {
 		}).onDelete("cascade"),
 	unique("webhook_subscriptions_public_id_key").on(table.publicId),
 	unique("webhook_subscriptions_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("webhook_subscriptions_status_check", sql`status = ANY (ARRAY['active'::text, 'paused'::text, 'disabled'::text])`),
 	check("webhook_subscriptions_url_check", sql`url ~ '^https://'::text`),
 ]);
@@ -4293,7 +4222,6 @@ export const outboxEventsInDev = dev.table("outbox_events", {
 	index("outbox_events_published_idx").using("btree", table.publishedAt.asc().nullsLast().op("timestamptz_ops")).where(sql`(published_at IS NOT NULL)`),
 	index("outbox_events_unpublished_idx").using("btree", table.id.asc().nullsLast().op("int8_ops")).where(sql`(published_at IS NULL)`),
 	unique("outbox_events_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const idempotencyKeysInDev = dev.table("idempotency_keys", {
@@ -4324,7 +4252,6 @@ export const idempotencyKeysInDev = dev.table("idempotency_keys", {
 			name: "idempotency_keys_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("idempotency_keys_organization_id_key_key").on(table.key, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const deviceAuthorizationsInDev = dev.table("device_authorizations", {
@@ -4354,7 +4281,6 @@ export const deviceAuthorizationsInDev = dev.table("device_authorizations", {
 			name: "device_authorizations_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("device_authorizations_device_code_hash_key").on(table.deviceCodeHash),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("device_authorizations_status_check", sql`status = ANY (ARRAY['pending'::text, 'approved'::text, 'denied'::text, 'expired'::text, 'consumed'::text])`),
 ]);
 
@@ -4387,7 +4313,6 @@ export const dailyRollupsInUsage = usage.table("daily_rollups", {
 	index("daily_rollups_model_idx").using("btree", table.modelId.asc().nullsLast().op("date_ops"), table.day.desc().nullsFirst().op("date_ops")),
 	index("daily_rollups_org_day_idx").using("btree", table.organizationId.asc().nullsLast().op("int8_ops"), table.day.desc().nullsFirst().op("int8_ops")),
 	index("daily_rollups_ws_day_idx").using("btree", table.workspaceId.asc().nullsLast().op("int8_ops"), table.day.desc().nullsFirst().op("date_ops")),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const publishersInMarket = market.table("publishers", {
@@ -4434,8 +4359,6 @@ export const publishersInMarket = market.table("publishers", {
 	unique("publishers_public_id_key").on(table.publicId),
 	unique("publishers_organization_id_key").on(table.organizationId),
 	unique("publishers_slug_key").on(table.slug),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
-	pgPolicy("publisher_public_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("publishers_level_check", sql`level = ANY (ARRAY['community'::text, 'verified'::text, 'premium_certified'::text, 'official'::text])`),
 	check("publishers_slug_check", sql`slug ~ '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$'::citext`),
 	check("publishers_status_check", sql`status = ANY (ARRAY['active'::text, 'suspended'::text, 'banned'::text])`),
@@ -4508,8 +4431,6 @@ export const listingsInMarket = market.table("listings", {
 		}),
 	unique("listings_public_id_key").on(table.publicId),
 	unique("listings_slug_key").on(table.slug),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
-	pgPolicy("listing_public_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("listings_check", sql`(trust_level <> 'community'::text) OR (source_code_url IS NOT NULL) OR (status = 'draft'::text)`),
 	check("listings_check1", sql`(pricing_model = 'free'::text) OR (trust_level = ANY (ARRAY['premium'::text, 'official'::text]))`),
 	check("listings_delivery_mode_check", sql`delivery_mode = ANY (ARRAY['sealed'::text, 'copy'::text])`),
@@ -4553,7 +4474,6 @@ export const entitlementsInMarket = market.table("entitlements", {
 			name: "entitlements_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("entitlements_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("entitlements_kind_check", sql`kind = ANY (ARRAY['free'::text, 'one_time'::text, 'subscription'::text, 'usage'::text])`),
 	check("entitlements_status_check", sql`status = ANY (ARRAY['active'::text, 'past_due'::text, 'cancelled'::text, 'expired'::text, 'refunded'::text])`),
 ]);
@@ -4604,7 +4524,6 @@ export const installationsInMarket = market.table("installations", {
 			name: "installations_workspace_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("installations_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("installations_status_check", sql`status = ANY (ARRAY['installing'::text, 'active'::text, 'needs_config'::text, 'uninstalled'::text, 'failed'::text])`),
 	check("installations_update_policy_check", sql`update_policy = ANY (ARRAY['manual'::text, 'notify'::text])`),
 ]);
@@ -4642,8 +4561,6 @@ export const reviewsInMarket = market.table("reviews", {
 		}).onDelete("set null"),
 	unique("reviews_public_id_key").on(table.publicId),
 	unique("reviews_listing_id_organization_id_key").on(table.listingId, table.organizationId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
-	pgPolicy("review_public_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("reviews_rating_check", sql`(rating >= 1) AND (rating <= 5)`),
 	check("reviews_status_check", sql`status = ANY (ARRAY['published'::text, 'hidden'::text, 'removed'::text])`),
 ]);
@@ -4675,8 +4592,6 @@ export const legalAcceptancesInCompliance = compliance.table("legal_acceptances"
 			name: "legal_acceptances_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("legal_acceptances_user_id_document_id_organization_id_key").on(table.documentId, table.organizationId, table.userId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
-	pgPolicy("acceptance_self", { as: "permissive", for: "all", to: ["app_rw"] }),
 ]);
 
 export const dataSubjectRequestsInCompliance = compliance.table("data_subject_requests", {
@@ -4721,8 +4636,6 @@ export const dataSubjectRequestsInCompliance = compliance.table("data_subject_re
 			name: "data_subject_requests_user_id_fkey"
 		}).onDelete("set null"),
 	unique("data_subject_requests_public_id_key").on(table.publicId),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
-	pgPolicy("dsr_self", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("data_subject_requests_kind_check", sql`kind = ANY (ARRAY['access'::text, 'export'::text, 'rectification'::text, 'deletion'::text, 'objection'::text, 'portability'::text])`),
 	check("data_subject_requests_status_check", sql`status = ANY (ARRAY['received'::text, 'verifying'::text, 'in_progress'::text, 'completed'::text, 'rejected'::text])`),
 ]);
@@ -4748,10 +4661,6 @@ export const guardrailProfilesInAi = ai.table("guardrail_profiles", {
 		}).onDelete("cascade"),
 	unique("guardrail_profiles_public_id_key").on(table.publicId),
 	unique("guardrail_profiles_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
-	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("guardrail_profiles_check", sql`is_system = (organization_id IS NULL)`),
 	check("guardrail_profiles_key_check", sql`key ~ '^[a-z0-9_]+$'::text`),
 	check("guardrail_profiles_mode_check", sql`mode = ANY (ARRAY['enforce'::text, 'monitor'::text])`),
@@ -4792,10 +4701,6 @@ export const guardrailRulesInAi = ai.table("guardrail_rules", {
 			name: "guardrail_rules_profile_id_fkey"
 		}).onDelete("cascade"),
 	unique("guardrail_rules_profile_id_detector_id_position_key").on(table.detectorId, table.position, table.profileId),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
-	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("guardrail_rules_action_check", sql`action = ANY (ARRAY['block'::text, 'redact'::text, 'flag'::text, 'require_approval'::text, 'fallback_model'::text, 'retry'::text, 'escalate_judge'::text])`),
 	check("guardrail_rules_sample_rate_check", sql`(sample_rate > (0)::numeric) AND (sample_rate <= (1)::numeric)`),
 	check("guardrail_rules_threshold_check", sql`(threshold >= (0)::numeric) AND (threshold <= (1)::numeric)`),
@@ -4823,10 +4728,6 @@ export const guardrailBindingsInAi = ai.table("guardrail_bindings", {
 			foreignColumns: [guardrailProfilesInAi.id],
 			name: "guardrail_bindings_profile_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
-	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("guardrail_bindings_check", sql`(scope_type = 'global'::text) = (scope_id IS NULL)`),
 	check("guardrail_bindings_check1", sql`(scope_type = ANY (ARRAY['global'::text, 'plan'::text])) OR (organization_id IS NOT NULL)`),
 	check("guardrail_bindings_scope_type_check", sql`scope_type = ANY (ARRAY['global'::text, 'plan'::text, 'organization'::text, 'workspace'::text, 'environment'::text, 'capability'::text, 'agent'::text, 'mcp_server'::text])`),
@@ -4902,9 +4803,6 @@ export const organizationsInIam = iam.table("organizations", {
 			name: "organizations_default_routing_profile_id_fkey"
 		}),
 	unique("organizations_public_id_key").on(table.publicId),
-	pgPolicy("org_current", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(id = util.current_org_id())`, withCheck: sql`(id = util.current_org_id())`  }),
-	pgPolicy("org_member_read", { as: "permissive", for: "select", to: ["app_rw"] }),
-	pgPolicy("org_create", { as: "permissive", for: "insert", to: ["app_rw"] }),
 	check("organizations_kind_check", sql`kind = ANY (ARRAY['individual'::text, 'company'::text])`),
 	check("organizations_slug_check", sql`slug ~ '^[a-z0-9]([a-z0-9-]{1,61}[a-z0-9])?$'::citext`),
 	check("organizations_status_check", sql`status = ANY (ARRAY['active'::text, 'suspended'::text, 'pending_deletion'::text, 'deleted'::text])`),
@@ -4939,10 +4837,6 @@ export const listingVersionsInMarket = market.table("listing_versions", {
 		}).onDelete("set null"),
 	unique("listing_versions_public_id_key").on(table.publicId),
 	unique("listing_versions_listing_id_semver_key").on(table.listingId, table.semver),
-	pgPolicy("listing_version_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`(EXISTS ( SELECT 1
-   FROM market.listings l
-  WHERE ((l.id = listing_versions.listing_id) AND ((l.status = 'published'::text) OR (l.organization_id = util.current_org_id())))))` }),
-	pgPolicy("listing_version_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("listing_versions_review_status_check", sql`review_status = ANY (ARRAY['not_required'::text, 'pending'::text, 'approved'::text, 'changes_requested'::text, 'rejected'::text])`),
 	check("listing_versions_scan_status_check", sql`scan_status = ANY (ARRAY['pending'::text, 'passed'::text, 'failed'::text])`),
 	check("listing_versions_semver_check", sql`semver ~ '^[0-9]+\.[0-9]+\.[0-9]+$'::text`),
@@ -4969,8 +4863,6 @@ export const listingPricesInMarket = market.table("listing_prices", {
 			foreignColumns: [listingsInMarket.id],
 			name: "listing_prices_listing_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("listing_prices_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`true` }),
-	pgPolicy("listing_prices_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("listing_prices_amount_minor_check", sql`amount_minor >= 0`),
 	check("listing_prices_check", sql`(amount_minor IS NOT NULL) OR (usage_pct IS NOT NULL)`),
 	check("listing_prices_usage_pct_check", sql`(usage_pct > (0)::numeric) AND (usage_pct < (1)::numeric)`),
@@ -5013,7 +4905,6 @@ export const userPreferencesInUx = ux.table("user_preferences", {
 			foreignColumns: [usersInIam.id],
 			name: "user_preferences_user_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("prefs_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(user_id = util.current_user_id())`, withCheck: sql`(user_id = util.current_user_id())`  }),
 	check("user_preferences_density_check", sql`density = ANY (ARRAY['compact'::text, 'comfortable'::text])`),
 	check("user_preferences_theme_check", sql`theme = ANY (ARRAY['light'::text, 'dark'::text, 'system'::text])`),
 ]);
@@ -5038,7 +4929,6 @@ export const uiStatesInUx = ux.table("ui_states", {
 			foreignColumns: [usersInIam.id],
 			name: "ui_states_user_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("ui_states_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`((user_id = util.current_user_id()) AND ((organization_id IS NULL) OR (organization_id = util.current_org_id())))`, withCheck: sql`((user_id = util.current_user_id()) AND ((organization_id IS NULL) OR (organization_id = util.current_org_id())))`  }),
 	check("ui_states_key_check", sql`length(key) <= 200`),
 ]);
 
@@ -5068,7 +4958,6 @@ export const onboardingProgressInUx = ux.table("onboarding_progress", {
 			foreignColumns: [usersInIam.id],
 			name: "onboarding_progress_user_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("onboarding_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`((user_id = util.current_user_id()) AND ((organization_id IS NULL) OR (organization_id = util.current_org_id())))`, withCheck: sql`((user_id = util.current_user_id()) AND ((organization_id IS NULL) OR (organization_id = util.current_org_id())))`  }),
 	check("onboarding_progress_profile_check", sql`profile = ANY (ARRAY['activity'::text, 'builder'::text, 'enterprise'::text])`),
 ]);
 
@@ -5101,7 +4990,6 @@ export const draftsInUx = ux.table("drafts", {
 			name: "drafts_workspace_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("drafts_public_id_key").on(table.publicId),
-	pgPolicy("drafts_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`((user_id = util.current_user_id()) AND (organization_id = util.current_org_id()))`, withCheck: sql`((user_id = util.current_user_id()) AND (organization_id = util.current_org_id()))`  }),
 	check("drafts_resource_type_check", sql`resource_type = ANY (ARRAY['connector'::text, 'mcp_server'::text, 'agent'::text, 'capability'::text, 'listing'::text, 'budget'::text, 'policy'::text, 'other'::text])`),
 ]);
 
@@ -5134,8 +5022,6 @@ export const savedViewsInUx = ux.table("saved_views", {
 			name: "saved_views_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("saved_views_public_id_key").on(table.publicId),
-	pgPolicy("saved_views_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id = util.current_org_id()) AND ((user_id = util.current_user_id()) OR is_shared))` }),
-	pgPolicy("saved_views_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 ]);
 
 export const dashboardsInUx = ux.table("dashboards", {
@@ -5170,8 +5056,6 @@ export const dashboardsInUx = ux.table("dashboards", {
 			name: "dashboards_workspace_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("dashboards_public_id_key").on(table.publicId),
-	pgPolicy("dashboards_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id = util.current_org_id()) AND ((owner_user_id = util.current_user_id()) OR is_shared))` }),
-	pgPolicy("dashboards_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 ]);
 
 export const notificationsInNotif = notif.table("notifications", {
@@ -5206,7 +5090,6 @@ export const notificationsInNotif = notif.table("notifications", {
 			name: "notifications_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("notifications_public_id_key").on(table.publicId),
-	pgPolicy("notifications_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(user_id = util.current_user_id())`, withCheck: sql`(user_id = util.current_user_id())`  }),
 	check("notifications_category_check", sql`category = ANY (ARRAY['billing'::text, 'usage'::text, 'agents'::text, 'mcp'::text, 'security'::text, 'marketplace'::text, 'team'::text, 'system'::text])`),
 	check("notifications_severity_check", sql`severity = ANY (ARRAY['info'::text, 'success'::text, 'warning'::text, 'critical'::text])`),
 ]);
@@ -5231,7 +5114,6 @@ export const preferencesInNotif = notif.table("preferences", {
 			foreignColumns: [usersInIam.id],
 			name: "preferences_user_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("notif_prefs_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(user_id = util.current_user_id())`, withCheck: sql`(user_id = util.current_user_id())`  }),
 	check("preferences_channel_check", sql`channel = ANY (ARRAY['in_app'::text, 'email'::text, 'sms'::text, 'whatsapp'::text, 'webhook'::text, 'push'::text])`),
 ]);
 
@@ -5270,7 +5152,6 @@ export const deliveriesInNotif = notif.table("deliveries", {
 			foreignColumns: [organizationsInIam.id],
 			name: "deliveries_organization_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("deliveries_org", { as: "permissive", for: "select", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())` }),
 	check("deliveries_channel_check", sql`channel = ANY (ARRAY['email'::text, 'sms'::text, 'whatsapp'::text, 'push'::text])`),
 	check("deliveries_status_check", sql`status = ANY (ARRAY['queued'::text, 'sent'::text, 'delivered'::text, 'bounced'::text, 'failed'::text])`),
 ]);
@@ -5317,7 +5198,6 @@ export const supportTicketsInPlatform = platform.table("support_tickets", {
 		}).onDelete("set null"),
 	unique("support_tickets_public_id_key").on(table.publicId),
 	unique("support_tickets_number_key").on(table.number),
-	pgPolicy("tickets_org", { as: "permissive", for: "all", to: ["app_rw"], using: sql`((organization_id = util.current_org_id()) OR (user_id = util.current_user_id()))`, withCheck: sql`((organization_id = util.current_org_id()) OR (user_id = util.current_user_id()))`  }),
 	check("support_tickets_category_check", sql`category = ANY (ARRAY['billing'::text, 'technical'::text, 'account'::text, 'mcp'::text, 'agents'::text, 'marketplace'::text, 'security'::text, 'other'::text])`),
 	check("support_tickets_channel_check", sql`channel = ANY (ARRAY['web'::text, 'email'::text, 'chat'::text, 'whatsapp'::text, 'phone'::text])`),
 	check("support_tickets_priority_check", sql`priority = ANY (ARRAY['low'::text, 'normal'::text, 'high'::text, 'urgent'::text])`),
@@ -5354,11 +5234,6 @@ export const supportMessagesInPlatform = platform.table("support_messages", {
 			foreignColumns: [usersInIam.id],
 			name: "support_messages_user_id_fkey"
 		}).onDelete("set null"),
-	pgPolicy("support_messages_org", { as: "permissive", for: "all", to: ["app_rw"], using: sql`((NOT is_internal) AND (EXISTS ( SELECT 1
-   FROM platform.support_tickets t
-  WHERE ((t.id = support_messages.ticket_id) AND ((t.organization_id = util.current_org_id()) OR (t.user_id = util.current_user_id()))))))`, withCheck: sql`((NOT is_internal) AND (author_type = 'user'::text) AND (EXISTS ( SELECT 1
-   FROM platform.support_tickets t
-  WHERE ((t.id = support_messages.ticket_id) AND ((t.organization_id = util.current_org_id()) OR (t.user_id = util.current_user_id()))))))`  }),
 	check("support_messages_author_type_check", sql`author_type = ANY (ARRAY['user'::text, 'staff'::text, 'system'::text])`),
 ]);
 
@@ -5399,7 +5274,6 @@ export const moderationReportsInPlatform = platform.table("moderation_reports", 
 			name: "moderation_reports_resolved_by_staff_id_fkey"
 		}).onDelete("set null"),
 	unique("moderation_reports_public_id_key").on(table.publicId),
-	pgPolicy("reports_insert", { as: "permissive", for: "insert", to: ["app_rw"], withCheck: sql`(reporter_user_id = util.current_user_id())`  }),
 	check("moderation_reports_reason_check", sql`reason = ANY (ARRAY['security'::text, 'misleading'::text, 'unexpected_behavior'::text, 'abuse'::text, 'copyright'::text, 'other'::text])`),
 	check("moderation_reports_severity_check", sql`severity = ANY (ARRAY['normal'::text, 'high'::text, 'security'::text])`),
 	check("moderation_reports_status_check", sql`status = ANY (ARRAY['open'::text, 'in_review'::text, 'resolved'::text, 'dismissed'::text])`),
@@ -5437,7 +5311,6 @@ export const abuseSignalsInPlatform = platform.table("abuse_signals", {
 			foreignColumns: [usersInIam.id],
 			name: "abuse_signals_user_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("abuse_insert", { as: "permissive", for: "insert", to: ["app_rw"], withCheck: sql`true`  }),
 	check("abuse_signals_kind_check", sql`kind = ANY (ARRAY['free_tier_multi_account'::text, 'payment_fraud'::text, 'content_flag'::text, 'rate_abuse'::text, 'prompt_injection'::text, 'credential_stuffing'::text, 'other'::text])`),
 	check("abuse_signals_status_check", sql`status = ANY (ARRAY['open'::text, 'confirmed'::text, 'false_positive'::text, 'actioned'::text])`),
 ]);
@@ -5459,7 +5332,6 @@ export const settingsInPlatform = platform.table("settings", {
 			foreignColumns: [staffUsersInPlatform.id],
 			name: "settings_updated_by_staff_id_fkey"
 		}).onDelete("set null"),
-	pgPolicy("settings_public", { as: "permissive", for: "select", to: ["app_rw"], using: sql`is_public` }),
 	check("settings_category_check", sql`category = ANY (ARRAY['brand'::text, 'signup'::text, 'localization'::text, 'payments'::text, 'communications'::text, 'security'::text, 'limits'::text, 'free_tier'::text, 'retention'::text, 'legal'::text, 'api'::text, 'ai'::text, 'mcp'::text, 'agents'::text, 'marketplace'::text, 'system'::text])`),
 	check("settings_key_check", sql`key ~ '^[a-z0-9_]+(\.[a-z0-9_]+)+$'::text`),
 ]);
@@ -5545,7 +5417,6 @@ export const accessTokenToolsInMcp = mcp.table("access_token_tools", {
 			name: "access_token_tools_tool_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.tokenId, table.toolId], name: "access_token_tools_pkey"}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const bundleItemsInMarket = market.table("bundle_items", {
@@ -5565,8 +5436,6 @@ export const bundleItemsInMarket = market.table("bundle_items", {
 			name: "bundle_items_item_listing_id_fkey"
 		}),
 	primaryKey({ columns: [table.bundleListingId, table.itemListingId], name: "bundle_items_pkey"}),
-	pgPolicy("bundle_items_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`true` }),
-	pgPolicy("bundle_items_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("bundle_items_check", sql`bundle_listing_id <> item_listing_id`),
 ]);
 
@@ -5587,7 +5456,6 @@ export const announcementDismissalsInPlatform = platform.table("announcement_dis
 			name: "announcement_dismissals_user_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.announcementId, table.userId], name: "announcement_dismissals_pkey"}),
-	pgPolicy("dismissals_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(user_id = util.current_user_id())`, withCheck: sql`(user_id = util.current_user_id())`  }),
 ]);
 
 export const staffUserRolesInPlatform = platform.table("staff_user_roles", {
@@ -5656,7 +5524,6 @@ export const teamMembersInIam = iam.table("team_members", {
 			name: "team_members_team_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.membershipId, table.teamId], name: "team_members_pkey"}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const capabilityReleaseVariantsInAi = ai.table("capability_release_variants", {
@@ -5678,7 +5545,6 @@ export const capabilityReleaseVariantsInAi = ai.table("capability_release_varian
 			name: "capability_release_variants_version_id_organization_id_fkey"
 		}),
 	primaryKey({ columns: [table.releaseId, table.versionId], name: "capability_release_variants_pkey"}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("capability_release_variants_weight_pct_check", sql`(weight_pct >= 0) AND (weight_pct <= 100)`),
 ]);
 
@@ -5701,7 +5567,6 @@ export const capabilityGrantsInAgent = agent.table("capability_grants", {
 			name: "capability_grants_capability_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.agentVersionId, table.capabilityId], name: "capability_grants_pkey"}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 	check("capability_grants_permission_check", sql`permission = ANY (ARRAY['allow'::text, 'require_approval'::text, 'deny'::text])`),
 ]);
 
@@ -5731,7 +5596,6 @@ export const workspaceMembersInIam = iam.table("workspace_members", {
 			name: "workspace_members_workspace_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.membershipId, table.workspaceId], name: "workspace_members_pkey"}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const featureFlagOverridesInPlatform = platform.table("feature_flag_overrides", {
@@ -5802,7 +5666,6 @@ export const organizationFeatureOverridesInBilling = billing.table("organization
 			name: "organization_feature_overrides_organization_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.featureId, table.organizationId], name: "organization_feature_overrides_pkey"}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
 
 export const evalResultsInAi = ai.table("eval_results", {
@@ -5829,5 +5692,4 @@ export const evalResultsInAi = ai.table("eval_results", {
 			name: "eval_results_eval_run_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.caseId, table.evalRunId], name: "eval_results_pkey"}),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
 ]);
