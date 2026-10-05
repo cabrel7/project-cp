@@ -90,6 +90,7 @@
       "logo": "project-cp",
       "workspace": "Espace de travail",
       "switchWorkspace": "Changer d'espace de travail",
+      "switchOrg": "Changer d'organisation",
       "nav": "Navigation principale",
       "openMenu": "Ouvrir le menu",
       "closeMenu": "Fermer le menu",
@@ -98,6 +99,8 @@
       "profile": "Profil",
       "credits": "Crédits",
       "tabs": "Navigation rapide",
+      "skipLink": "Aller au contenu",
+      "env": "Environnement",
       "tab": {
         "home": "Accueil",
         "chat": "Discuter",
@@ -109,6 +112,101 @@
       "label": "Mode d'affichage",
       "simple": "Simple",
       "technique": "Technique"
+    },
+    "nav": {
+      "home": "Accueil",
+      "chat": "Discuter",
+      "approvals": {
+        "simple": "À valider",
+        "technical": "Approbations"
+      },
+      "group": {
+        "build": "Construire",
+        "track": "Suivre",
+        "developers": "Développeurs",
+        "organization": "Organisation"
+      },
+      "mcpServers": {
+        "simple": "Accès IA",
+        "technical": "Serveurs MCP"
+      },
+      "connectors": {
+        "simple": "Systèmes connectés",
+        "technical": "Connecteurs"
+      },
+      "agents": {
+        "simple": "Assistants",
+        "technical": "Agents"
+      },
+      "capabilities": {
+        "simple": "Fonctions IA",
+        "technical": "Capacités"
+      },
+      "marketplace": "Marketplace",
+      "activity": {
+        "simple": "Activité",
+        "technical": "Exécutions"
+      },
+      "usage": {
+        "simple": "Utilisation et coûts",
+        "technical": "Utilisation"
+      },
+      "apiKeys": {
+        "simple": "Clés d'accès",
+        "technical": "Clés d'API"
+      },
+      "webhooks": "Webhooks",
+      "environments": {
+        "simple": "Mode test",
+        "technical": "Environnements"
+      },
+      "documentation": "Documentation",
+      "team": {
+        "simple": "Équipe et rôles",
+        "technical": "Membres et rôles"
+      },
+      "billing": "Crédits et facturation",
+      "budgets": "Budgets",
+      "security": {
+        "simple": "Sécurité et audit",
+        "technical": "Politiques et audit"
+      },
+      "settings": "Réglages"
+    },
+    "admin": {
+      "badge": "Admin",
+      "nav": "Navigation de l'administration",
+      "emergencyStop": "Arrêt d'urgence",
+      "sessionRemaining": "Session : {time}",
+      "profile": "Profil administrateur"
+    },
+    "adminNav": {
+      "dashboard": "Pilotage",
+      "group": {
+        "revenue": "Clients et revenus",
+        "ai": "IA",
+        "product": "Produit",
+        "trust": "Confiance",
+        "operations": "Exploitation"
+      },
+      "clients": "Clients",
+      "finance": "Finance",
+      "pricing": "Tarification et plans",
+      "providers": "Fournisseurs",
+      "gateway": "Gateway et routage",
+      "platformAi": "IA de la plateforme",
+      "apiKeys": "API et clés",
+      "mcp": "MCP et connecteurs",
+      "agents": "Agents",
+      "marketplace": "Marketplace",
+      "security": "Sécurité et abus",
+      "compliance": "Conformité",
+      "support": "Support",
+      "system": "Système et incidents",
+      "flags": "Déploiement progressif",
+      "content": "Contenu et traductions",
+      "internalTeam": "Équipe interne et audit",
+      "parameters": "Paramètres"
     },
     "chat": {
       "aiLabel": "Assistant IA",

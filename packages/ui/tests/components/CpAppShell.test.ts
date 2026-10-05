@@ -17,7 +17,7 @@ const navItems = [
   { label: 'Activité', icon: 'i-lucide-play', value: 'activity', group: 'Suivre' },
 ]
 
-const props = { navItems, currentNav: 'agents', workspaceName: 'Boutique Awa' }
+const props = { navItems, currentNav: 'agents' }
 
 const mount = (extra: Record<string, unknown> = {}, slots?: Record<string, () => unknown>) =>
   mountWithMode(AppShell, { ...props, ...extra }, { slots }).wrapper
@@ -49,10 +49,9 @@ describe('CpAppShell', () => {
     expect(wrapper.get('[data-cp-nav-badge]').text()).toBe('2')
   })
 
-  it('barre latérale surface-sunken avec le nom de l espace de travail', () => {
+  it('barre latérale surface-sunken', () => {
     const wrapper = mount()
     expect(wrapper.get('[data-cp-sidebar]').classes()).toContain('bg-cp-surface-sunken')
-    expect(wrapper.get('[data-cp-workspace]').text()).toBe('Boutique Awa')
   })
 
   it('émet navigate avec la valeur de l entrée', async () => {
@@ -61,14 +60,13 @@ describe('CpAppShell', () => {
     expect(wrapper.findComponent(AppShell).emitted('navigate')).toEqual([['activity']])
   })
 
-  it('émet switch-workspace, search, notifications et profile', async () => {
+  it('émet search, notifications et profile', async () => {
     const wrapper = mount()
-    await wrapper.get('[data-cp-workspace]').trigger('click')
     await wrapper.get('[data-cp-search]').trigger('click')
     await wrapper.get('[data-cp-notifications]').trigger('click')
     await wrapper.get('[data-cp-profile]').trigger('click')
     const shell = wrapper.findComponent(AppShell)
-    for (const event of ['switch-workspace', 'search', 'notifications', 'profile']) {
+    for (const event of ['search', 'notifications', 'profile']) {
       expect(shell.emitted(event)).toHaveLength(1)
     }
   })
@@ -122,29 +120,31 @@ describe('CpAppShell', () => {
   it('mobile : le tiroir s ouvre, se ferme (bouton, fond, Échap, navigation)', async () => {
     const wrapper = mount()
     const sidebar = () => wrapper.get('[data-cp-sidebar]')
+    const scrim = () => wrapper.get('[data-cp-scrim]')
     expect(sidebar().attributes('role')).toBeUndefined()
-    expect(wrapper.find('[data-cp-scrim]').exists()).toBe(false)
+    expect(scrim().classes()).toContain('pointer-events-none')
 
     await wrapper.get('[data-cp-drawer-open]').trigger('click')
     expect(sidebar().attributes('role')).toBe('dialog')
     expect(sidebar().attributes('aria-modal')).toBe('true')
     expect(wrapper.find('[data-cp-drawer-mode]').exists()).toBe(true)
+    expect(scrim().classes()).not.toContain('pointer-events-none')
 
     await wrapper.get('[data-cp-drawer-close]').trigger('click')
-    expect(wrapper.find('[data-cp-scrim]').exists()).toBe(false)
+    expect(scrim().classes()).toContain('pointer-events-none')
 
     await wrapper.get('[data-cp-drawer-open]').trigger('click')
-    await wrapper.get('[data-cp-scrim]').trigger('click')
-    expect(wrapper.find('[data-cp-scrim]').exists()).toBe(false)
+    await scrim().trigger('click')
+    expect(scrim().classes()).toContain('pointer-events-none')
 
     await wrapper.get('[data-cp-drawer-open]').trigger('click')
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('[data-cp-scrim]').exists()).toBe(false)
+    expect(scrim().classes()).toContain('pointer-events-none')
 
     await wrapper.get('[data-cp-drawer-open]').trigger('click')
     await wrapper.get('[data-cp-sidebar] [data-nav="home"]').trigger('click')
-    expect(wrapper.find('[data-cp-scrim]').exists()).toBe(false)
+    expect(scrim().classes()).toContain('pointer-events-none')
   })
 
   it('le mode Technique est fourni aux pages même sans fournisseur en racine', async () => {

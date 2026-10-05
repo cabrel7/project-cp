@@ -90,6 +90,7 @@
       "logo": "project-cp",
       "workspace": "Workspace",
       "switchWorkspace": "Switch workspace",
+      "switchOrg": "Switch organization",
       "nav": "Main navigation",
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
@@ -98,6 +99,8 @@
       "profile": "Profile",
       "credits": "Credits",
       "tabs": "Quick navigation",
+      "skipLink": "Skip to content",
+      "env": "Environment",
       "tab": {
         "home": "Home",
         "chat": "Chat",
@@ -109,6 +112,101 @@
       "label": "Display mode",
       "simple": "Simple",
       "technique": "Technical"
+    },
+    "nav": {
+      "home": "Home",
+      "chat": "Chat",
+      "approvals": {
+        "simple": "To review",
+        "technical": "Approvals"
+      },
+      "group": {
+        "build": "Build",
+        "track": "Track",
+        "developers": "Developers",
+        "organization": "Organization"
+      },
+      "mcpServers": {
+        "simple": "AI Access",
+        "technical": "MCP Servers"
+      },
+      "connectors": {
+        "simple": "Connected systems",
+        "technical": "Connectors"
+      },
+      "agents": {
+        "simple": "Assistants",
+        "technical": "Agents"
+      },
+      "capabilities": {
+        "simple": "AI Functions",
+        "technical": "Capabilities"
+      },
+      "marketplace": "Marketplace",
+      "activity": {
+        "simple": "Activity",
+        "technical": "Runs"
+      },
+      "usage": {
+        "simple": "Usage and costs",
+        "technical": "Usage"
+      },
+      "apiKeys": {
+        "simple": "Access keys",
+        "technical": "API keys"
+      },
+      "webhooks": "Webhooks",
+      "environments": {
+        "simple": "Test mode",
+        "technical": "Environments"
+      },
+      "documentation": "Documentation",
+      "team": {
+        "simple": "Team and roles",
+        "technical": "Members and roles"
+      },
+      "billing": "Credits and billing",
+      "budgets": "Budgets",
+      "security": {
+        "simple": "Security and audit",
+        "technical": "Policies and audit"
+      },
+      "settings": "Settings"
+    },
+    "admin": {
+      "badge": "Admin",
+      "nav": "Administration navigation",
+      "emergencyStop": "Emergency stop",
+      "sessionRemaining": "Session: {time}",
+      "profile": "Administrator profile"
+    },
+    "adminNav": {
+      "dashboard": "Dashboard",
+      "group": {
+        "revenue": "Clients and revenue",
+        "ai": "AI",
+        "product": "Product",
+        "trust": "Trust",
+        "operations": "Operations"
+      },
+      "clients": "Clients",
+      "finance": "Finance",
+      "pricing": "Pricing and plans",
+      "providers": "Providers",
+      "gateway": "Gateway and routing",
+      "platformAi": "Platform AI",
+      "apiKeys": "API and keys",
+      "mcp": "MCP and connectors",
+      "agents": "Agents",
+      "marketplace": "Marketplace",
+      "security": "Security and abuse",
+      "compliance": "Compliance",
+      "support": "Support",
+      "system": "System and incidents",
+      "flags": "Feature flags",
+      "content": "Content and translations",
+      "internalTeam": "Internal team and audit",
+      "parameters": "Settings"
     },
     "chat": {
       "aiLabel": "AI assistant",
