@@ -275,7 +275,24 @@ export const VChart = defineComponent({
   },
 })
 
+export const UTextarea = defineComponent({
+  name: 'UTextarea',
+  props: { modelValue: String, placeholder: String, disabled: Boolean },
+  emits: ['update:modelValue'],
+  setup(props, { emit }) {
+    return () =>
+      h('textarea', {
+        value: props.modelValue,
+        placeholder: props.placeholder,
+        disabled: props.disabled,
+        onInput: (event: Event) =>
+          emit('update:modelValue', (event.target as HTMLTextAreaElement).value),
+      })
+  },
+})
+
 export const nuxtUiStubs: Record<string, Component> = {
+  UTextarea,
   UButton,
   UIcon,
   UFormField,

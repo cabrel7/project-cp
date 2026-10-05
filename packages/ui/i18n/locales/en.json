@@ -240,6 +240,19 @@
     "planGate": {
       "locked": "Included in the {plan} plan",
       "viewPlans": "View plans"
+    },
+    "layout": {
+      "back": "Back",
+      "next": "Continue",
+      "advancedOptions": "Advanced options",
+      "todoSection": "Pending actions",
+      "settingsNav": "Settings navigation",
+      "chatPlaceholder": "Type your message…",
+      "send": "Send",
+      "canvasView": "Canvas view",
+      "listView": "List view",
+      "allow": "Allow",
+      "deny": "Deny"
     }
   }
 }

@@ -240,6 +240,19 @@
     "planGate": {
       "locked": "Inclus dans le plan {plan}",
       "viewPlans": "Voir les plans"
+    },
+    "layout": {
+      "back": "Retour",
+      "next": "Continuer",
+      "advancedOptions": "Options avancées",
+      "todoSection": "Actions en attente",
+      "settingsNav": "Navigation des réglages",
+      "chatPlaceholder": "Écrivez votre message…",
+      "send": "Envoyer",
+      "canvasView": "Vue canevas",
+      "listView": "Vue liste",
+      "allow": "Autoriser",
+      "deny": "Refuser"
     }
   }
 }
