@@ -130,7 +130,7 @@ describe('apps/web et apps/admin — héritage du layer @cp/ui', () => {
   it.each(apps)(
     'doit envelopper l’application dans <UApp> (requis par Nuxt UI : toasts, tooltips, modales) ($name)',
     ({ path }) => {
-      expect(read(`${path}/app/app.vue`)).toMatch(/<UApp>[\s\S]*<\/UApp>/)
+      expect(read(`${path}/app/app.vue`)).toMatch(/<UApp[\s>][\s\S]*<\/UApp>/)
     },
   )
 })

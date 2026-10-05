@@ -1,18 +1,9 @@
 <script setup lang="ts">
+const { technicalMode, toggle } = provideCpMode()
+const items = useClientNav({ docsUrl: 'https://docs.example.com' })
 const current = ref('home')
 const log = ref<string[]>([])
-const items = [
-  { label: 'Accueil', icon: 'i-lucide-house', value: 'home' },
-  { label: 'Assistants', icon: 'i-lucide-bot', value: 'agents', group: 'Construire' },
-  {
-    label: 'Systèmes connectés',
-    icon: 'i-lucide-plug',
-    value: 'connectors',
-    group: 'Construire',
-    badge: 2,
-  },
-  { label: 'Activité', icon: 'i-lucide-play', value: 'activity', group: 'Suivre' },
-]
+
 function nav(v: string) {
   current.value = v
   log.value.push(`nav:${v}`)
@@ -34,6 +25,10 @@ function nav(v: string) {
     <template #sidebar-bottom>
       <CpOrgSelector org-name="Atelier Douala" org-initials="AD" plan-label="Formule Starter" @switch="log.push('switch-org')" />
     </template>
+    <div class="mb-4 flex items-center gap-2">
+      <USwitch v-model="technicalMode" data-testid="mode-toggle" />
+      <span class="text-body-sm text-cp-ink-muted">{{ technicalMode ? 'Technique' : 'Simple' }}</span>
+    </div>
     <h1 class="text-heading-1">Page : {{ current }}</h1>
     <p data-testid="log">{{ log.join(',') }}</p>
   </CpAppShell>

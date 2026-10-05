@@ -1,12 +1,8 @@
 <script setup lang="ts">
+const items = useAdminNav()
 const current = ref('dashboard')
 const log = ref<string[]>([])
-const items = [
-  { label: 'Pilotage', icon: 'i-lucide-layout-dashboard', value: 'dashboard' },
-  { label: 'Clients', icon: 'i-lucide-users', value: 'customers', group: 'Clients et revenus' },
-  { label: 'Capacités', icon: 'i-lucide-brain', value: 'capabilities', group: 'IA', badge: 1 },
-  { label: 'Audit', icon: 'i-lucide-scroll-text', value: 'audit', group: 'Confiance' },
-]
+
 function nav(v: string) {
   current.value = v
   log.value.push(`nav:${v}`)
