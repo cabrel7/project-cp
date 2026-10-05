@@ -11,6 +11,8 @@ const props = defineProps<{
   nextDisabled?: boolean
   nextLoading?: boolean
   hideBackOnFirst?: boolean
+  /** Étapes déjà affichées dans la barre du haut (plein écran, maquette 30) : le Stepper interne n'apparaît que sur mobile. */
+  stepperInHeader?: boolean
 }>()
 
 const emit = defineEmits<{ next: []; back: [] }>()
@@ -21,8 +23,8 @@ const showSummary = computed(() => props.currentStep >= props.steps.length - 1)
 </script>
 
 <template>
-  <div class="mx-auto flex max-w-reading-max flex-col gap-6" data-cp-layout-wizard>
-    <CpStepper :steps="steps" :current-step="currentStep" />
+  <div class="mx-auto flex w-full max-w-reading-max flex-col gap-6" data-cp-layout-wizard>
+    <CpStepper :steps="steps" :current-step="currentStep" :class="{ 'md:hidden': stepperInHeader }" data-cp-layout-wizard-stepper />
     <div class="flex flex-1 flex-col gap-6">
       <slot v-if="!$slots.summary || !showSummary" />
       <slot v-else name="summary" />

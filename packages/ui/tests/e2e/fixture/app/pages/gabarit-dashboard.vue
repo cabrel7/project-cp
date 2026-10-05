@@ -1,10 +1,10 @@
 <script setup lang="ts">
-const navItems = [{ label: 'Accueil', icon: 'i-lucide-house', value: 'home' }]
+const items = useClientNav()
 </script>
 
 <template>
-  <CpAppShell :nav-items="navItems" current-nav="home" user-name="Awa" data-page="gabarit-dashboard">
-    <CpLayoutDashboard title="Bonjour Awa" description="Voici ce qui s’est passé aujourd’hui.">
+  <CpAppShell :nav-items="items" current-nav="home" credits-label="12 480 crédits" user-name="Awa" data-page="gabarit-dashboard">
+    <CpLayoutDashboard title="Bonjour Awa" description="Voici ce qui s'est passé aujourd'hui.">
       <template #stats>
         <CpStatTile label="Tâches terminées" value="248" trend="up" trend-value="+8 %" />
         <CpStatTile label="Temps gagné" value="12 h" trend="up" trend-value="+2 h" />
@@ -28,7 +28,7 @@ const navItems = [{ label: 'Accueil', icon: 'i-lucide-house', value: 'home' }]
       </template>
       <template #todo>
         <ul class="flex flex-col gap-2 rounded-lg border border-cp-line bg-cp-surface p-4 text-body text-cp-ink">
-          <li>Valider l’envoi de 12 relances</li>
+          <li>Valider l'envoi de 12 relances</li>
           <li>Renouveler la clé du système de facturation</li>
         </ul>
       </template>

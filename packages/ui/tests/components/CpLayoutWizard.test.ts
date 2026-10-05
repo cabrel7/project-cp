@@ -12,6 +12,13 @@ describe('CpLayoutWizard', () => {
     expect(wrapper.findAll('li')).toHaveLength(3)
   })
 
+  it('stepperInHeader : le Stepper interne est masqué à partir de md (étapes dans la barre du haut)', () => {
+    const { wrapper } = mountWithMode(LayoutWizard, { ...base, stepperInHeader: true })
+    expect(wrapper.get('[data-cp-layout-wizard-stepper]').classes()).toContain('md:hidden')
+    const { wrapper: plain } = mountWithMode(LayoutWizard, base)
+    expect(plain.get('[data-cp-layout-wizard-stepper]').classes()).not.toContain('md:hidden')
+  })
+
   it('rend le slot default dans une colonne limitée à reading-max', () => {
     const { wrapper } = mountWithMode(LayoutWizard, base, {
       slots: { default: () => 'Contenu étape' },

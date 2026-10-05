@@ -1,9 +1,6 @@
 <script setup lang="ts">
+const items = useClientNav()
 const search = ref('')
-const navItems = [
-  { label: 'Accueil', icon: 'i-lucide-house', value: 'home' },
-  { label: 'Assistants', icon: 'i-lucide-bot', value: 'agents', group: 'Construire' },
-]
 const rows = [
   { name: 'Assistant facturation', status: 'Actif' },
   { name: 'Assistant relances', status: 'En pause' },
@@ -12,7 +9,7 @@ const rows = [
 </script>
 
 <template>
-  <CpAppShell :nav-items="navItems" current-nav="agents" user-name="Awa" data-page="gabarit-list">
+  <CpAppShell :nav-items="items" current-nav="agents" credits-label="12 480 crédits" user-name="Awa" data-page="gabarit-list">
     <CpLayoutList
       v-model:search="search"
       title="Assistants"

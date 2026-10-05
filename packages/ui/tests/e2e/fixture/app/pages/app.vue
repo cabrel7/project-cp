@@ -1,18 +1,8 @@
 <script setup lang="ts">
+const items = useClientNav({ docsUrl: 'https://docs.example.com' })
 const current = ref('home')
 const log = ref<string[]>([])
-const items = [
-  { label: 'Accueil', icon: 'i-lucide-house', value: 'home' },
-  { label: 'Assistants', icon: 'i-lucide-bot', value: 'agents', group: 'Construire' },
-  {
-    label: 'Systèmes connectés',
-    icon: 'i-lucide-plug',
-    value: 'connectors',
-    group: 'Construire',
-    badge: 2,
-  },
-  { label: 'Activité', icon: 'i-lucide-play', value: 'activity', group: 'Suivre' },
-]
+
 function nav(v: string) {
   current.value = v
   log.value.push(`nav:${v}`)

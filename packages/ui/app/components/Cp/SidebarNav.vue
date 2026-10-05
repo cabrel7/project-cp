@@ -55,7 +55,7 @@ const entries = computed(() =>
 )
 
 const itemClass = computed(() =>
-  props.size === 'sm' ? 'min-h-8 text-body-sm' : 'min-h-11 text-label md:min-h-10',
+  props.size === 'sm' ? 'min-h-8 text-body-sm' : 'min-h-11 text-label md:min-h-8',
 )
 const iconClass = computed(() => (props.size === 'sm' ? 'size-4' : 'size-5'))
 
@@ -79,7 +79,7 @@ function onClick(event: MouseEvent, item: CpNavItem) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-1">
+  <div class="flex flex-col gap-1 md:gap-0.5">
     <template v-for="entry in entries" :key="entry.item.value">
       <p v-if="entry.heading" class="mt-3 px-3 text-caption text-cp-ink-muted" data-cp-nav-group>
         {{ entry.heading }}

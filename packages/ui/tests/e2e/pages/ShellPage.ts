@@ -37,8 +37,8 @@ abstract class ShellPage {
     return this.page.getByRole('dialog', { name: this.navLabel })
   }
 
-  navItem(name: string): Locator {
-    return this.nav.getByRole('button', { name })
+  navItem(name: string | RegExp): Locator {
+    return this.nav.getByRole('link', { name })
   }
 
   async openDrawer(): Promise<void> {

@@ -1,18 +1,15 @@
 <script setup lang="ts">
+const items = useClientNav()
 const tab = ref('overview')
-const navItems = [
-  { label: 'Accueil', icon: 'i-lucide-house', value: 'home' },
-  { label: 'Assistants', icon: 'i-lucide-bot', value: 'agents', group: 'Construire' },
-]
 const tabs = [
-  { label: 'Vue d’ensemble', value: 'overview' },
+  { label: "Vue d'ensemble", value: 'overview' },
   { label: 'Activité', value: 'activity' },
   { label: 'Réglages', value: 'settings' },
 ]
 </script>
 
 <template>
-  <CpAppShell :nav-items="navItems" current-nav="agents" user-name="Awa" data-page="gabarit-detail">
+  <CpAppShell :nav-items="items" current-nav="agents" credits-label="12 480 crédits" user-name="Awa" data-page="gabarit-detail">
     <CpLayoutDetail
       v-model:tab="tab"
       title="Assistant facturation"
@@ -31,7 +28,7 @@ const tabs = [
         <CpStatTile label="Taux de réussite" value="97 %" trend="flat" trend-value="stable" />
       </template>
       <section class="rounded-lg border border-cp-line bg-cp-surface p-6 text-body text-cp-ink">
-        Contenu de l’onglet « {{ tab }} ».
+        Contenu de l'onglet « {{ tab }} ».
       </section>
       <template #aside>
         <section class="rounded-lg border border-cp-line bg-cp-surface p-4 text-body-sm text-cp-ink-muted">
