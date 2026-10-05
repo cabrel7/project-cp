@@ -42,7 +42,10 @@ test.describe('AdminShell — thèmes', () => {
 })
 
 test.describe('AdminShell — desktop', () => {
-  test.beforeEach((_fixtures, info) => test.skip(isMobile(info.project.name), 'desktop uniquement'))
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright requires destructured fixtures arg
+  test.beforeEach(({}, testInfo) =>
+    test.skip(isMobile(testInfo.project.name), 'desktop uniquement'),
+  )
 
   test('navigation compacte (32px), badge Admin, aria-current, groupes', async ({ page }) => {
     const shell = new AdminShellPage(page)
@@ -98,7 +101,10 @@ test.describe('AdminShell — desktop', () => {
 })
 
 test.describe('AdminShell — mobile 375×667', () => {
-  test.beforeEach((_fixtures, info) => test.skip(!isMobile(info.project.name), 'mobile uniquement'))
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright requires destructured fixtures arg
+  test.beforeEach(({}, testInfo) =>
+    test.skip(!isMobile(testInfo.project.name), 'mobile uniquement'),
+  )
 
   test('tiroir : ouverture, focus, fermeture Échap / scrim, profil visible dans le tiroir', async ({
     page,

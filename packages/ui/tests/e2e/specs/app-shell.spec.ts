@@ -51,7 +51,10 @@ test.describe('AppShell — thèmes', () => {
 })
 
 test.describe('AppShell — desktop', () => {
-  test.beforeEach((_fixtures, info) => test.skip(isMobile(info.project.name), 'desktop uniquement'))
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright requires destructured fixtures arg
+  test.beforeEach(({}, testInfo) =>
+    test.skip(isMobile(testInfo.project.name), 'desktop uniquement'),
+  )
 
   test('sidebar visible, élément courant en aria-current, onglets mobiles et bouton menu masqués', async ({
     page,
@@ -138,7 +141,10 @@ test.describe('AppShell — desktop', () => {
 })
 
 test.describe('AppShell — mobile 375×667', () => {
-  test.beforeEach((_fixtures, info) => test.skip(!isMobile(info.project.name), 'mobile uniquement'))
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright requires destructured fixtures arg
+  test.beforeEach(({}, testInfo) =>
+    test.skip(!isMobile(testInfo.project.name), 'mobile uniquement'),
+  )
 
   test('tiroir fermé : sidebar masquée, onglets visibles, bouton menu replié', async ({ page }) => {
     const shell = new AppShellPage(page)

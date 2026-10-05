@@ -18,8 +18,9 @@ const PAGES: ReadonlyArray<{ name: string; path: string }> = [
 ]
 
 test.describe('Accessibilité WCAG 2.0 AA', () => {
-  test.beforeEach((_fixtures, info) =>
-    test.skip(info.project.name !== 'desktop-light', 'a11y on desktop-light only'),
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright requires destructured fixtures arg
+  test.beforeEach(({}, testInfo) =>
+    test.skip(testInfo.project.name !== 'desktop-light', 'a11y on desktop-light only'),
   )
 
   for (const { name, path } of PAGES) {
