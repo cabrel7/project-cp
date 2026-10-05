@@ -16,7 +16,6 @@ import { sql } from 'drizzle-orm'
 import {
   bigint,
   boolean,
-  customType,
   inet,
   integer,
   jsonb,
@@ -28,17 +27,13 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core'
+import { bytea } from './custom-types.js'
 
 // Schémas locaux (non exportés) : `schema.ts` (généré) exporte déjà les objets pgSchema.
 const billing = pgSchema('billing')
 const dev = pgSchema('dev')
 const usage = pgSchema('usage')
 const audit = pgSchema('audit')
-
-/** `bytea` : pas de type natif dans drizzle-orm/pg-core. */
-const bytea = customType<{ data: Uint8Array; driverData: Uint8Array }>({
-  dataType: () => 'bytea',
-})
 
 const id = () => bigint('id', { mode: 'bigint' }).generatedAlwaysAsIdentity()
 const publicId = () => uuid('public_id').default(sql`uuidv7()`).notNull()

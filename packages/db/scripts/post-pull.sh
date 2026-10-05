@@ -31,10 +31,13 @@ sed -i "s|// TODO: failed to parse database type 'citext'|// customType: citext 
 # 6. Replace tstzrange TODO comments with clearer marker
 sed -i "s|// TODO: failed to parse database type 'tstzrange'|// customType: tstzrange (mapped to text; parse as [start, end] at app layer)|g" "$SCHEMA_DIR/schema.ts"
 
-# 7. Fix partition table generatedAlwaysAsIdentity with null params
+# 7. Replace bytea/citext/tstzrange text() calls with proper customType imports
+node "$(dirname "${BASH_SOURCE[0]}")/replace-custom-types.mjs" "$SCHEMA_DIR/schema.ts"
+
+# 8. Fix partition table generatedAlwaysAsIdentity with null params
 sed -i 's/\.generatedAlwaysAsIdentity({ name: "null", startWith: null, increment: null, minValue: null, maxValue: null })/.generatedAlwaysAsIdentity()/g' "$SCHEMA_DIR/schema.ts"
 
-# 8. Remove duplicate relation properties in relations.ts (generated code bug)
+# 9. Remove duplicate relation properties in relations.ts (generated code bug)
 if [ -f "$SCHEMA_DIR/relations.ts" ]; then
   node -e "
 const fs = require('fs');
@@ -45,7 +48,7 @@ fs.writeFileSync(f, src);
 "
 fi
 
-# 9. Drop RLS policies from the generated schema.
+# 10. Drop RLS policies from the generated schema.
 # drizzle-kit pull lists policies in an unspecified order and only emits `using` on the first
 # one of a table, so the output changes from one database to another (flaky CI drift check).
 # Drizzle is read-only here (invariant 3): RLS lives in the SQL migrations and is covered by the
@@ -56,8 +59,8 @@ if grep -q 'pgPolicy' "$SCHEMA_DIR/schema.ts"; then
   exit 1
 fi
 
-# 10. Remove generated migration artifacts (we use dbmate) but keep hand-written files
+# 11. Remove generated migration artifacts (we use dbmate) but keep hand-written files
 rm -f "$SCHEMA_DIR"/*.sql
 rm -rf "$SCHEMA_DIR/meta"
 
-echo "post-pull: @ts-nocheck added, bigint enforced, unknown→text, bytea/citext/tstzrange marked, partition nulls fixed, dupes cleaned, RLS policies dropped (SQL is the source), artifacts cleaned"
+echo "post-pull: @ts-nocheck added, bigint enforced, unknown→text, bytea/citext/tstzrange replaced with customType imports, partition nulls fixed, dupes cleaned, RLS policies dropped (SQL is the source), artifacts cleaned"
