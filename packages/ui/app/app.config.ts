@@ -15,7 +15,7 @@ export default defineAppConfig({
       },
       variants: {
         size: {
-          md: 'h-10 px-4 text-sm',
+          md: 'h-12 px-4 text-sm md:h-10',
           lg: 'h-12 px-5 text-base',
         },
       },
@@ -31,7 +31,7 @@ export default defineAppConfig({
     input: {
       variants: {
         size: {
-          md: 'h-10 px-3 text-sm',
+          md: 'h-12 px-3 text-sm md:h-10',
           lg: 'h-12 px-4 text-base',
         },
       },
@@ -39,7 +39,7 @@ export default defineAppConfig({
     select: {
       variants: {
         size: {
-          md: 'h-10 px-3 text-sm',
+          md: 'h-12 px-3 text-sm md:h-10',
           lg: 'h-12 px-4 text-base',
         },
       },

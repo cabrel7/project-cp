@@ -110,15 +110,39 @@ describe('CpSidebarNav', () => {
     expect(link.find('[data-icon="i-lucide-external-link"]').exists()).toBe(true)
   })
 
-  it('doit rendre un item non externe en bouton sans target, rel ni marqueur externe', () => {
-    const button = item(mountNav(), 'home')
-    expect(button.element.tagName).toBe('BUTTON')
-    expect(button.attributes('type')).toBe('button')
-    expect(button.attributes('target')).toBeUndefined()
-    expect(button.attributes('rel')).toBeUndefined()
-    expect(button.attributes('href')).toBeUndefined()
-    expect(button.attributes('data-cp-nav-external')).toBeUndefined()
-    expect(button.find('[data-icon="i-lucide-external-link"]').exists()).toBe(false)
+  it('doit rendre un item interne en NuxtLink (lien, sans target ni rel ni marqueur externe)', () => {
+    const link = item(mountNav(), 'home')
+    expect(link.element.tagName).toBe('A')
+    expect(link.attributes('target')).toBeUndefined()
+    expect(link.attributes('rel')).toBeUndefined()
+    expect(link.attributes('data-cp-nav-external')).toBeUndefined()
+    expect(link.find('[data-icon="i-lucide-external-link"]').exists()).toBe(false)
+  })
+
+  it('doit cibler la route `to` quand elle est fournie', () => {
+    const wrapper = mountNav({ items: [{ ...items[0], to: '/accueil' }] })
+    expect(item(wrapper, 'home').attributes('href')).toBe('/accueil')
+  })
+
+  it('doit désactiver un item locked : aria-disabled, hors tabulation, icône cadenas + mot', () => {
+    const wrapper = mountNav({ items: [{ ...items[1], locked: true, badge: 3 }] })
+    const locked = item(wrapper, 'agents')
+    expect(locked.attributes('aria-disabled')).toBe('true')
+    expect(locked.attributes('tabindex')).toBe('-1')
+    expect(locked.attributes('aria-current')).toBeUndefined()
+    expect(locked.attributes('data-cp-nav-locked')).toBeDefined()
+    expect(locked.classes()).toContain('text-cp-ink-disabled')
+    expect(locked.find('[data-icon="i-lucide-lock"]').exists()).toBe(true)
+    expect(locked.text()).toContain('Non inclus dans votre plan')
+    expect(locked.find('[data-cp-nav-badge]').exists()).toBe(false)
+  })
+
+  it('doit ne pas naviguer ni émettre navigate au clic sur un item locked', async () => {
+    const wrapper = mountNav({ items: [{ ...items[0], locked: true, to: '/accueil' }] })
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true })
+    item(wrapper, 'home').element.dispatchEvent(event)
+    expect(event.defaultPrevented).toBe(true)
+    expect(wrapper.emitted('navigate')).toBeUndefined()
   })
 
   it('doit appliquer la taille sm (min-h-8, text-body-sm)', () => {

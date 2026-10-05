@@ -141,7 +141,7 @@ describe('theme.css — pont --ui-* (Nuxt UI → jetons --cp-*)', () => {
       '--ui-error': 'var(--cp-danger)',
       '--ui-info': 'var(--cp-info)',
       '--ui-bg': 'var(--cp-canvas)',
-      '--ui-bg-elevated': 'var(--cp-surface)',
+      '--ui-bg-elevated': 'var(--cp-surface-raised)',
       '--ui-bg-muted': 'var(--cp-surface-sunken)',
       '--ui-bg-inverted': 'var(--cp-ink)',
       '--ui-border': 'var(--cp-line)',

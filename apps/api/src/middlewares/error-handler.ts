@@ -3,7 +3,7 @@ import { HTTPException } from 'hono/http-exception'
 import type { AppEnv } from '../context.js'
 import { AppError } from '../lib/errors.js'
 
-const DOC_BASE_URL = 'https://docs.project-cp.com/errors'
+const DOC_BASE_URL = 'https://docs.project-cp.com'
 
 function errorBody(
   code: string,
@@ -16,8 +16,8 @@ function errorBody(
       code,
       message,
       request_id: requestId,
-      ...(details && Object.keys(details).length > 0 ? { details } : {}),
-      documentation_url: `${DOC_BASE_URL}/${code}`,
+      details: details ?? {},
+      documentation_url: `${DOC_BASE_URL}/errors/${code.toLowerCase()}`,
     },
   }
 }
@@ -32,15 +32,38 @@ export const onError: ErrorHandler<AppEnv> = (err, c) => {
     } else {
       logger?.warn({ code: err.code, details: err.details, requestId }, err.code)
     }
-    // Never expose details on 5xx: they may carry internal context.
     const details = err.httpStatus >= 500 ? undefined : err.details
-    return c.json(errorBody(err.code, err.code, requestId, details), err.httpStatus as 400)
+    return c.json(errorBody(err.code, err.message, requestId, details), err.httpStatus as 400)
   }
 
-  // Hono framework errors (malformed JSON body, etc.): 4xx client error, not 500.
   if (err instanceof HTTPException && err.status >= 400 && err.status < 500) {
-    logger?.warn({ status: err.status, requestId }, 'PLATFORM_VALIDATION_ERROR')
-    return c.json(errorBody('PLATFORM_VALIDATION_ERROR', 'The request is invalid.', requestId), 422)
+    const status = err.status
+    logger?.warn({ status, requestId }, 'HTTP exception')
+
+    if (status === 401) {
+      return c.json(
+        errorBody('AUTH_TOKEN_INVALID', 'Invalid authentication token.', requestId),
+        401,
+      )
+    }
+    if (status === 404) {
+      return c.json(
+        errorBody(
+          'PLATFORM_RESOURCE_NOT_FOUND',
+          'The requested resource was not found.',
+          requestId,
+        ),
+        404,
+      )
+    }
+    if (status === 429) {
+      return c.json(errorBody('PLATFORM_RATE_LIMIT', 'Rate limit exceeded.', requestId), 429)
+    }
+
+    return c.json(
+      errorBody('PLATFORM_VALIDATION_ERROR', 'The request is invalid.', requestId),
+      status === 400 ? 400 : 422,
+    )
   }
 
   logger?.error({ err, requestId }, 'PLATFORM_INTERNAL_ERROR')

@@ -186,4 +186,13 @@ describe('buildChartOption', () => {
     expect(series[1]?.itemStyle.borderRadius).toEqual([4, 4, 0, 0])
     expect(series[0]?.itemStyle.borderColor).toBe('surface')
   })
+
+  it('désactive l’animation si prefers-reduced-motion: reduce, la garde sinon', () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('reduce') })) as never
+    expect(build({}).animation).toBe(false)
+    window.matchMedia = (() => ({ matches: false })) as never
+    expect(build({}).animation).toBe(true)
+    window.matchMedia = original
+  })
 })

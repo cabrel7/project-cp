@@ -31,17 +31,16 @@ function getAuth() {
   auth ??= build(requireDbUrl('DATABASE_URL_AUTH'), getDbEnv().DB_POOL_MAX_AUTH)
   return auth
 }
-function getAdmin() {
+/** Interne : consommé uniquement par ./admin.ts (point d'entrée restreint `@cp/db/admin`). */
+export function getAdminHandle(): { pool: Sql; db: Db } {
   admin ??= build(requireDbUrl('DATABASE_URL_ADMIN'), getDbEnv().DB_POOL_MAX_ADMIN)
   return admin
 }
 
 export const getDbRw = (): Db => getRw().db
 export const getDbAuth = (): Db => getAuth().db
-export const getDbAdmin = (): Db => getAdmin().db
 export const getPoolRw = (): Sql => getRw().pool
 export const getPoolAuth = (): Sql => getAuth().pool
-export const getPoolAdmin = (): Sql => getAdmin().pool
 
 export async function closeAllPools(): Promise<void> {
   logger.info('closing database pools')

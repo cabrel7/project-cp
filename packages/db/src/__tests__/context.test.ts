@@ -107,7 +107,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
   })
 
   it('doit utiliser un rôle applicatif soumis à la RLS (garde-fou : sinon les tests d isolation sont vides)', async () => {
-    const res = await ctx.withOrgContext(orgA, userA, (tx) =>
+    const res = await ctx.withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
       tx.execute(sql`SELECT rolbypassrls AS v, rolsuper AS s FROM pg_roles WHERE rolname = current_user`),
     )
 
@@ -117,7 +117,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
 
   describe('pose du contexte', () => {
     it('doit poser app.org_id et app.user_id dans la transaction', async () => {
-      const res = await ctx.withOrgContext(orgA, userA, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
         tx.execute(
           sql`SELECT current_setting('app.org_id', true) AS org, current_setting('app.user_id', true) AS usr`,
         ),
@@ -128,7 +128,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('doit exposer le contexte aux fonctions SQL util.current_org_id() / util.current_user_id()', async () => {
-      const res = await ctx.withOrgContext(orgB, userB, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: orgB, userId: userB }, (tx) =>
         tx.execute(
           sql`SELECT util.current_org_id()::text AS org, util.current_user_id()::text AS usr`,
         ),
@@ -139,14 +139,14 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('doit retourner la valeur de la fonction passée', async () => {
-      const value = await ctx.withOrgContext(orgA, userA, async () => 'résultat')
+      const value = await ctx.withOrgContext({ orgId: orgA, userId: userA }, async () => 'résultat')
 
       expect(value).toBe('résultat')
     })
 
     it('doit conserver exactement un identifiant bigint au-delà de 2^53', async () => {
       const big = 9007199254740993n // Number.MAX_SAFE_INTEGER + 2 : un Number l'arrondirait
-      const res = await ctx.withOrgContext(big, big, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: big, userId: big }, (tx) =>
         tx.execute(sql`SELECT util.current_org_id()::text AS v`),
       )
 
@@ -155,7 +155,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
 
     it('doit accepter la borne haute bigint PostgreSQL (2^63 - 1)', async () => {
       const max = 9223372036854775807n
-      const res = await ctx.withOrgContext(max, 1n, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: max, userId: 1n }, (tx) =>
         tx.execute(sql`SELECT util.current_org_id()::text AS v`),
       )
 
@@ -165,7 +165,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
 
   describe('portée transactionnelle', () => {
     it('ne doit plus exposer le contexte après la transaction (même connexion réutilisée)', async () => {
-      await ctx.withOrgContextOn(singleDb, orgA, userA, async () => undefined)
+      await ctx.withOrgContextOn(singleDb, { orgId: orgA, userId: userA }, async () => undefined)
 
       const res = await singleDb.execute(
         sql`SELECT current_setting('app.org_id', true) AS org, current_setting('app.user_id', true) AS usr,
@@ -178,9 +178,9 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('ne doit pas propager le contexte d une organisation à la transaction suivante (même connexion)', async () => {
-      await ctx.withOrgContextOn(singleDb, orgA, userA, async () => undefined)
+      await ctx.withOrgContextOn(singleDb, { orgId: orgA, userId: userA }, async () => undefined)
 
-      const res = await ctx.withOrgContextOn(singleDb, orgB, userB, (tx) =>
+      const res = await ctx.withOrgContextOn(singleDb, { orgId: orgB, userId: userB }, (tx) =>
         tx.execute(sql`SELECT util.current_org_id()::text AS org, util.current_user_id()::text AS usr`),
       )
 
@@ -199,7 +199,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
       const results = await Promise.all(
         Array.from({ length: 30 }, (_, i) => {
           const org = orgs[i % 2] as bigint
-          return ctx.withOrgContext(org, org + 1n, async (tx) => {
+          return ctx.withOrgContext({ orgId: org, userId: org + 1n }, async (tx) => {
             await tx.execute(sql`SELECT pg_sleep(0.01)`) // force l'entrelacement des transactions
             const res = await tx.execute(
               sql`SELECT util.current_org_id()::text AS org, util.current_user_id()::text AS usr`,
@@ -221,7 +221,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
       const slug = `rollback-${suffix}`
 
       await expect(
-        ctx.withOrgContext(orgA, userA, async (tx) => {
+        ctx.withOrgContext({ orgId: orgA, userId: userA }, async (tx) => {
           await tx.execute(
             sql`INSERT INTO iam.workspaces (organization_id, name, slug) VALUES (${orgA.toString()}::bigint, 'RB', ${slug})`,
           )
@@ -236,7 +236,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     it('doit valider les écritures quand la fonction réussit', async () => {
       const slug = `commit-${suffix}`
 
-      await ctx.withOrgContext(orgA, userA, (tx) =>
+      await ctx.withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
         tx.execute(
           sql`INSERT INTO iam.workspaces (organization_id, name, slug) VALUES (${orgA.toString()}::bigint, 'OK', ${slug})`,
         ),
@@ -248,7 +248,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
 
     it('doit remettre la connexion en état sain après une erreur (le contexte ne fuit pas)', async () => {
       await expect(
-        ctx.withOrgContextOn(singleDb, orgA, userA, async () => {
+        ctx.withOrgContextOn(singleDb, { orgId: orgA, userId: userA }, async () => {
           throw new Error('boom')
         }),
       ).rejects.toThrow('boom')
@@ -267,7 +267,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('ne doit montrer à l organisation A que ses propres workspaces', async () => {
-      const res = await ctx.withOrgContext(orgA, userA, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
         tx.execute(
           sql`SELECT id::text AS id, organization_id::text AS org FROM iam.workspaces
               WHERE slug LIKE ${`%-${suffix}`}`,
@@ -281,7 +281,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('ne doit montrer à l organisation B que ses propres workspaces (symétrie)', async () => {
-      const res = await ctx.withOrgContext(orgB, userB, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: orgB, userId: userB }, (tx) =>
         tx.execute(sql`SELECT id::text AS id FROM iam.workspaces WHERE slug LIKE ${`%-${suffix}`}`),
       )
 
@@ -291,7 +291,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('doit répondre comme si la ligne n existait pas quand A cible directement un id de B', async () => {
-      const res = await ctx.withOrgContext(orgA, userA, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
         tx.execute(sql`SELECT id FROM iam.workspaces WHERE id = ${wsB.toString()}::bigint`),
       )
 
@@ -299,7 +299,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('ne doit modifier aucune ligne de B depuis le contexte de A (UPDATE)', async () => {
-      const res = await ctx.withOrgContext(orgA, userA, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
         tx.execute(
           sql`UPDATE iam.workspaces SET name = 'piraté' WHERE id = ${wsB.toString()}::bigint RETURNING id`,
         ),
@@ -311,7 +311,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     })
 
     it('ne doit supprimer aucune ligne de B depuis le contexte de A (DELETE)', async () => {
-      const res = await ctx.withOrgContext(orgA, userA, (tx) =>
+      const res = await ctx.withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
         tx.execute(sql`DELETE FROM iam.workspaces WHERE id = ${wsB.toString()}::bigint RETURNING id`),
       )
 
@@ -322,7 +322,7 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
 
     it('doit refuser (42501) d insérer une ligne rattachée à B depuis le contexte de A', async () => {
       const error = await ctx
-        .withOrgContext(orgA, userA, (tx) =>
+        .withOrgContext({ orgId: orgA, userId: userA }, (tx) =>
           tx.execute(
             sql`INSERT INTO iam.workspaces (organization_id, name, slug)
                 VALUES (${orgB.toString()}::bigint, 'intrus', ${`intrus-${suffix}`})`,
@@ -346,14 +346,24 @@ describe.skipIf(!hasDb)('withOrgContext (integration, PostgreSQL réel)', () => 
     it('doit borner à la transaction toute réécriture locale de app.org_id', async () => {
       // Limite connue d'une RLS basée sur un GUC : le SQL libre pourrait réécrire le contexte. Le
       // garde-fou est l'absence de SQL libre côté client ; ici on vérifie que l'effet ne survit pas.
-      await ctx.withOrgContextOn(singleDb, orgA, userA, (tx) =>
+      await ctx.withOrgContextOn(singleDb, { orgId: orgA, userId: userA }, (tx) =>
         tx.execute(sql`SELECT set_config('app.org_id', ${orgB.toString()}, true)`),
       )
 
-      const res = await ctx.withOrgContextOn(singleDb, orgA, userA, (tx) =>
+      const res = await ctx.withOrgContextOn(singleDb, { orgId: orgA, userId: userA }, (tx) =>
         tx.execute(sql`SELECT util.current_org_id()::text AS v`),
       )
       expect(setting(res)).toBe(orgA.toString())
     })
+  })
+})
+
+describe('withOrgContext (garde, sans base)', () => {
+  it('doit refuser orgId 0n avant toute connexion', async () => {
+    const { withOrgContext } = await import('../context.js')
+
+    await expect(withOrgContext({ orgId: 0n, userId: 1n }, async () => 'x')).rejects.toThrow(
+      /orgId 0/,
+    )
   })
 })

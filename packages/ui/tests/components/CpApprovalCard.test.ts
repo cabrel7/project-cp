@@ -61,7 +61,8 @@ describe('CpApprovalCard', () => {
     ])
     expect(approve.attributes('data-color')).toBe('primary')
     expect(modify.attributes('data-variant')).toBe('outline')
-    expect(reject.attributes('data-color')).toBe('error')
+    expect(reject.attributes('data-color')).toBe('neutral')
+    expect(reject.attributes('data-variant')).toBe('outline')
   })
 
   it('émet approve, modify et reject', async () => {

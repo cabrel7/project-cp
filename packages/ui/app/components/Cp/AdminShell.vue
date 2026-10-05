@@ -62,7 +62,9 @@ watch(drawerOpen, (open) => {
 onMounted(() => {
   document.addEventListener('keydown', onKeydown)
   const mql = window.matchMedia('(min-width: 768px)')
-  const close = () => { drawerOpen.value = false }
+  const close = () => {
+    drawerOpen.value = false
+  }
   mql.addEventListener('change', close)
   onBeforeUnmount(() => {
     document.removeEventListener('keydown', onKeydown)

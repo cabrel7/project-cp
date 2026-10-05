@@ -190,13 +190,15 @@
   --text-kpi--line-height: 40px;
   --text-kpi--letter-spacing: -0.01em;
   --text-kpi--font-weight: 600;
-  --text-kpi--font-family: var(--font-display);
+  --text-kpi--font-family: var(--font-sans);
   --text-code: 13px;
   --text-code--line-height: 20px;
   --text-code--font-weight: 400;
+  --text-code--font-family: var(--font-mono);
   --text-code-sm: 12px;
   --text-code-sm--line-height: 18px;
   --text-code-sm--font-weight: 400;
+  --text-code-sm--font-family: var(--font-mono);
 
   /* Espacement : grille de 4px (p-1 = 4px, p-4 = 16px...) */
   --spacing: 4px;
@@ -262,7 +264,7 @@
   --ui-info: var(--cp-info);
   --ui-bg: var(--cp-canvas);
   --ui-bg-muted: var(--cp-surface-sunken);
-  --ui-bg-elevated: var(--cp-surface);
+  --ui-bg-elevated: var(--cp-surface-raised);
   --ui-bg-accented: var(--cp-surface-sunken);
   --ui-bg-inverted: var(--cp-ink);
   --ui-border: var(--cp-line);
@@ -295,4 +297,13 @@ html {
 body {
   background-color: var(--cp-canvas);
   color: var(--cp-ink);
+}
+
+/* Graphiques : aucune animation si l'utilisateur la refuse (D36/D38). */
+@media (prefers-reduced-motion: reduce) {
+  [data-cp-chart],
+  [data-cp-chart] * {
+    animation: none;
+    transition: none;
+  }
 }

@@ -19,3 +19,4 @@
 */packages/shared/*.ts,*/apps/api/*/schemas/*.ts	*.test.ts	z\.bigint\(	API: bigint jamais exposé → identifiant public_id (UUIDv7, z.uuid()), montants en string ou number d'affichage
 */apps/*.resource.ts,*/apps/*.routes.ts,*/apps/*/resources/*.ts	*.test.ts,*.spec.ts	[^a-zA-Z_]id:[[:space:]]*[A-Za-z_]+\.id([^A-Za-z_]|$)	INVARIANT 1: id interne bigint exposé → id: row.publicId
 */connectors/*sql*.ts,*/packages/connectors/*.ts	*.test.ts,*.spec.ts	['\"\`][[:space:]]*(DELETE|DROP|TRUNCATE|ALTER)[[:space:]]	MCP SQL: jamais de DELETE/DDL dans un connecteur base de données (règle 02 §4.5)
+*/apps/*.ts,*/packages/*.ts	*/packages/db/*,*node_modules*,*.test.ts,*.spec.ts,*/test/*,*/tests/*,*/apps/worker/*,*/apps/admin/*	(getDbAdmin|getPoolAdmin|@cp/db/admin)	RLS: admin pool restricted to @cp/db/admin — use app_rw + withOrgContext

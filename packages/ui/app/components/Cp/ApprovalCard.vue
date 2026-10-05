@@ -120,7 +120,7 @@ const showParameters = computed(() => technicalMode.value && props.parameters !=
 
     <footer class="flex flex-col gap-2 md:flex-row md:justify-end">
       <CpButton
-        variant="danger"
+        variant="secondary"
         icon="i-lucide-x"
         :label="t('cp.approval.reject')"
         :disabled="loading || expired"

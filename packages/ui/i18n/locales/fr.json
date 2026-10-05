@@ -114,6 +114,7 @@
       "technique": "Technique"
     },
     "nav": {
+      "locked": "Non inclus dans votre plan",
       "home": "Accueil",
       "chat": "Discuter",
       "approvals": {

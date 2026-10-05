@@ -59,6 +59,14 @@ export function seriesColor(tokens: CpChartTokens, index: number): string | unde
   return token(tokens.series[index] ?? '')
 }
 
+/** Mouvement réduit demandé par l'utilisateur (côté navigateur seulement). */
+export function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  )
+}
+
 export function buildChartOption({ type, series, categories, unit, tokens }: CpChartInput) {
   const withUnit = (value: unknown): string => (unit ? `${String(value)} ${unit}` : String(value))
   const axisText = { color: token(tokens.inkMuted), fontSize: 12 }
@@ -71,7 +79,7 @@ export function buildChartOption({ type, series, categories, unit, tokens }: CpC
 
   return {
     color: palette.length === colors.length ? palette : undefined,
-    animation: true,
+    animation: !prefersReducedMotion(),
     aria: { enabled: true },
     textStyle: { color: token(tokens.ink) },
     grid: { left: 8, right: 16, top: series.length >= 2 ? 40 : 16, bottom: 8, containLabel: true },

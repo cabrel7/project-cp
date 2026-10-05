@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { relations } from "drizzle-orm/relations";
-import { staffUsersInPlatform, staffSessionsInPlatform, staffApiKeysInPlatform, organizationsInIam, impersonationSessionsInPlatform, usersInIam, supportTicketsInPlatform, staffNotesInPlatform, settingsHistoryInPlatform, secretsInIam, serviceAccountsInPlatform, moderationReportsInPlatform, moderationActionsInPlatform, currenciesInRef, countriesInRef, dataRegionsInRef, languagesInRef, fxRatesInRef, taxRatesInRef, userIdentitiesInIam, userMfaFactorsInIam, verificationTokensInIam, paymentsInBilling, paymentEventsInBilling, paymentProvidersInBilling, referralsInBilling, creditGrantsInBilling, payoutsInMarket, paymentMethodsInBilling, publishersInMarket, earningsInMarket, invoiceLinesInBilling, listingsInMarket, cookieConsentsInCompliance, plansInBilling, planPricesInBilling, creditPackPricesInBilling, creditPacksInBilling, infraMetersInBilling, infraMeterRatesInBilling, modelsInAi, modelDeploymentsInAi, providerAccountsInAi, providersInAi, modelPricesInAi, filesInStorage, connectorDefinitionsInMcp, categoriesInMarket, legalDocumentsInCompliance, couponsInBilling, guardrailDetectorsInAi, providerAccountSnapshotsInAi, dataBreachesInCompliance, transferAuthorizationsInCompliance, backendsInStorage, backendMigrationsInStorage, featureFlagsInPlatform, messageTemplatesInPlatform, announcementsInPlatform, incidentsInPlatform, incidentUpdatesInPlatform, maintenanceWindowsInPlatform, rateLimitPoliciesInPlatform, emergencyStopsInPlatform, userSessionsInIam, blocklistEntriesInPlatform, routingRulesInAi, routingProfilesInAi, byokKeysInAi, environmentsInIam, workspacesInIam, capabilitiesInAi, rolesInIam, membershipsInIam, invitationsInIam, teamsInIam, projectsInIam, subscriptionsInBilling, subscriptionEventsInBilling, creditWalletsInBilling, creditReservationsInBilling, invoicesInBilling, refundsInBilling, budgetsInBilling, budgetPeriodsInBilling, couponRedemptionsInBilling, capabilityVersionsInAi, capabilityReleasesInAi, evalRunsInAi, evalDatasetsInAi, evalCasesInAi, oauthConnectionsInMcp, bridgesInMcp, connectorsInMcp, connectorCredentialsInMcp, connectorSourcesInMcp, connectorActionsInMcp, fileDatasetsInMcp, serverVersionsInMcp, serversInMcp, toolsInMcp, toolEmbeddingsInMcp, resourcesInMcp, promptsInMcp, accessTokensInMcp, healthChecksInMcp, oauthClientsInIam, oauthConsentsInIam, oauthAuthorizationCodesInIam, oauthTokensInIam, agentsInAgent, versionsInAgent, toolGrantsInAgent, triggersInAgent, webhookEndpointsInDev, approvalsInAgent, memoriesInAgent, conversationsInAgent, endUsersInDev, messagesInAgent, apiKeysInDev, webhookSubscriptionsInDev, idempotencyKeysInDev, deviceAuthorizationsInDev, listingVersionsInMarket, entitlementsInMarket, installationsInMarket, reviewsInMarket, legalAcceptancesInCompliance, dataSubjectRequestsInCompliance, guardrailProfilesInAi, guardrailRulesInAi, guardrailBindingsInAi, listingPricesInMarket, userPreferencesInUx, uiStatesInUx, onboardingProgressInUx, draftsInUx, savedViewsInUx, dashboardsInUx, notificationsInNotif, preferencesInNotif, deliveriesInNotif, supportMessagesInPlatform, abuseSignalsInPlatform, settingsInPlatform, staffPermissionsInPlatform, staffRolePermissionsInPlatform, staffRolesInPlatform, permissionsInIam, rolePermissionsInIam, featuresInBilling, planFeaturesInBilling, accessTokenToolsInMcp, bundleItemsInMarket, announcementDismissalsInPlatform, staffUserRolesInPlatform, routingRuleTargetsInAi, teamMembersInIam, capabilityReleaseVariantsInAi, capabilityGrantsInAgent, workspaceMembersInIam, featureFlagOverridesInPlatform, translationsInPlatform, organizationFeatureOverridesInBilling, evalResultsInAi, creditLedgerDefaultInBilling, creditLedgerP202609InBilling, creditLedgerP202610InBilling, creditLedgerP202611InBilling, creditLedgerP202612InBilling } from "./schema";
+import { staffUsersInPlatform, staffSessionsInPlatform, staffApiKeysInPlatform, organizationsInIam, impersonationSessionsInPlatform, usersInIam, supportTicketsInPlatform, staffNotesInPlatform, settingsHistoryInPlatform, secretsInIam, serviceAccountsInPlatform, moderationReportsInPlatform, moderationActionsInPlatform, currenciesInRef, countriesInRef, dataRegionsInRef, languagesInRef, fxRatesInRef, taxRatesInRef, userIdentitiesInIam, userMfaFactorsInIam, verificationTokensInIam, paymentsInBilling, paymentEventsInBilling, paymentProvidersInBilling, referralsInBilling, creditGrantsInBilling, payoutsInMarket, paymentMethodsInBilling, publishersInMarket, earningsInMarket, invoiceLinesInBilling, listingsInMarket, cookieConsentsInCompliance, plansInBilling, planPricesInBilling, creditPackPricesInBilling, creditPacksInBilling, infraMetersInBilling, infraMeterRatesInBilling, modelsInAi, modelDeploymentsInAi, providerAccountsInAi, providersInAi, modelPricesInAi, filesInStorage, connectorDefinitionsInMcp, categoriesInMarket, legalDocumentsInCompliance, couponsInBilling, guardrailDetectorsInAi, providerAccountSnapshotsInAi, dataBreachesInCompliance, transferAuthorizationsInCompliance, backendsInStorage, backendMigrationsInStorage, featureFlagsInPlatform, messageTemplatesInPlatform, announcementsInPlatform, incidentsInPlatform, incidentUpdatesInPlatform, maintenanceWindowsInPlatform, rateLimitPoliciesInPlatform, emergencyStopsInPlatform, userSessionsInIam, blocklistEntriesInPlatform, routingRulesInAi, routingProfilesInAi, byokKeysInAi, environmentsInIam, workspacesInIam, capabilitiesInAi, rolesInIam, membershipsInIam, invitationsInIam, teamsInIam, projectsInIam, subscriptionsInBilling, subscriptionEventsInBilling, creditWalletsInBilling, creditReservationsInBilling, invoicesInBilling, refundsInBilling, budgetsInBilling, budgetPeriodsInBilling, couponRedemptionsInBilling, capabilityVersionsInAi, capabilityReleasesInAi, evalRunsInAi, evalDatasetsInAi, evalCasesInAi, oauthConnectionsInMcp, bridgesInMcp, connectorsInMcp, connectorCredentialsInMcp, connectorSourcesInMcp, connectorActionsInMcp, fileDatasetsInMcp, serverVersionsInMcp, serversInMcp, toolsInMcp, toolEmbeddingsInMcp, resourcesInMcp, promptsInMcp, accessTokensInMcp, healthChecksInMcp, oauthClientsInIam, oauthConsentsInIam, oauthAuthorizationCodesInIam, oauthTokensInIam, agentsInAgent, versionsInAgent, toolGrantsInAgent, triggersInAgent, webhookEndpointsInDev, approvalsInAgent, memoriesInAgent, conversationsInAgent, endUsersInDev, messagesInAgent, apiKeysInDev, webhookSubscriptionsInDev, idempotencyKeysInDev, deviceAuthorizationsInDev, listingVersionsInMarket, entitlementsInMarket, installationsInMarket, reviewsInMarket, legalAcceptancesInCompliance, dataSubjectRequestsInCompliance, guardrailProfilesInAi, guardrailRulesInAi, guardrailBindingsInAi, listingPricesInMarket, userPreferencesInUx, uiStatesInUx, onboardingProgressInUx, draftsInUx, savedViewsInUx, dashboardsInUx, notificationsInNotif, preferencesInNotif, deliveriesInNotif, supportMessagesInPlatform, abuseSignalsInPlatform, settingsInPlatform, staffPermissionsInPlatform, staffRolePermissionsInPlatform, staffRolesInPlatform, permissionsInIam, rolePermissionsInIam, featuresInBilling, planFeaturesInBilling, accessTokenToolsInMcp, bundleItemsInMarket, announcementDismissalsInPlatform, staffUserRolesInPlatform, routingRuleTargetsInAi, teamMembersInIam, capabilityReleaseVariantsInAi, capabilityGrantsInAgent, workspaceMembersInIam, featureFlagOverridesInPlatform, translationsInPlatform, organizationFeatureOverridesInBilling, evalResultsInAi } from "./schema";
 
 export const staffSessionsInPlatformRelations = relations(staffSessionsInPlatform, ({one}) => ({
 	staffUsersInPlatform: one(staffUsersInPlatform, {
@@ -1273,11 +1273,6 @@ export const creditWalletsInBillingRelations = relations(creditWalletsInBilling,
 	}),
 	creditGrantsInBillings: many(creditGrantsInBilling),
 	creditReservationsInBillings: many(creditReservationsInBilling),
-	creditLedgerDefaultInBillings: many(creditLedgerDefaultInBilling),
-	creditLedgerP202609InBillings: many(creditLedgerP202609InBilling),
-	creditLedgerP202610InBillings: many(creditLedgerP202610InBilling),
-	creditLedgerP202611InBillings: many(creditLedgerP202611InBilling),
-	creditLedgerP202612InBillings: many(creditLedgerP202612InBilling),
 }));
 
 export const creditReservationsInBillingRelations = relations(creditReservationsInBilling, ({one}) => ({
@@ -1470,6 +1465,11 @@ export const oauthConnectionsInMcpRelations = relations(oauthConnectionsInMcp, (
 	organizationsInIam: one(organizationsInIam, {
 		fields: [oauthConnectionsInMcp.organizationId],
 		references: [organizationsInIam.id]
+	}),
+	secretsInIam_organizationId: one(secretsInIam, {
+		fields: [oauthConnectionsInMcp.organizationId],
+		references: [secretsInIam.id],
+		relationName: "oauthConnectionsInMcp_organizationId_secretsInIam_id"
 	}),
 	connectorCredentialsInMcps: many(connectorCredentialsInMcp),
 }));
@@ -1748,7 +1748,7 @@ export const oauthTokensInIamRelations = relations(oauthTokensInIam, ({one, many
 		references: [oauthTokensInIam.id],
 		relationName: "oauthTokensInIam_parentTokenId_oauthTokensInIam_id"
 	}),
-	oauthTokensInIam_children: many(oauthTokensInIam, {
+	oauthTokensInIam_parentTokenId: many(oauthTokensInIam, {
 		relationName: "oauthTokensInIam_parentTokenId_oauthTokensInIam_id"
 	}),
 	usersInIam: one(usersInIam, {
@@ -2511,40 +2511,5 @@ export const evalResultsInAiRelations = relations(evalResultsInAi, ({one}) => ({
 	evalRunsInAi: one(evalRunsInAi, {
 		fields: [evalResultsInAi.evalRunId],
 		references: [evalRunsInAi.id]
-	}),
-}));
-
-export const creditLedgerDefaultInBillingRelations = relations(creditLedgerDefaultInBilling, ({one}) => ({
-	creditWalletsInBilling: one(creditWalletsInBilling, {
-		fields: [creditLedgerDefaultInBilling.organizationId],
-		references: [creditWalletsInBilling.id]
-	}),
-}));
-
-export const creditLedgerP202609InBillingRelations = relations(creditLedgerP202609InBilling, ({one}) => ({
-	creditWalletsInBilling: one(creditWalletsInBilling, {
-		fields: [creditLedgerP202609InBilling.organizationId],
-		references: [creditWalletsInBilling.id]
-	}),
-}));
-
-export const creditLedgerP202610InBillingRelations = relations(creditLedgerP202610InBilling, ({one}) => ({
-	creditWalletsInBilling: one(creditWalletsInBilling, {
-		fields: [creditLedgerP202610InBilling.organizationId],
-		references: [creditWalletsInBilling.id]
-	}),
-}));
-
-export const creditLedgerP202611InBillingRelations = relations(creditLedgerP202611InBilling, ({one}) => ({
-	creditWalletsInBilling: one(creditWalletsInBilling, {
-		fields: [creditLedgerP202611InBilling.organizationId],
-		references: [creditWalletsInBilling.id]
-	}),
-}));
-
-export const creditLedgerP202612InBillingRelations = relations(creditLedgerP202612InBilling, ({one}) => ({
-	creditWalletsInBilling: one(creditWalletsInBilling, {
-		fields: [creditLedgerP202612InBilling.organizationId],
-		references: [creditWalletsInBilling.id]
 	}),
 }));
