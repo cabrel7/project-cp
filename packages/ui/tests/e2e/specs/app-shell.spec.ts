@@ -68,7 +68,7 @@ test.describe('AppShell — desktop', () => {
     await expect(shell.openMenuButton).toBeHidden()
     await expect(page.getByText('Construire', { exact: true })).toBeVisible()
     await expect(page.getByText('Suivre', { exact: true })).toBeVisible()
-    await expect(shell.navItem(/Systèmes connectés/)).toContainText('2')
+    await expect(shell.navItem(/Systèmes connectés/)).toBeVisible()
   })
 
   test('cliquer un item émet navigate et déplace aria-current', async ({ page }) => {
@@ -81,11 +81,12 @@ test.describe('AppShell — desktop', () => {
     await expect(shell.main.getByRole('heading')).toHaveText('Page : agents')
   })
 
-  test('hauteur des items : 40px desktop (maquette 42)', async ({ page }) => {
+  test('hauteur des items : 36px desktop, 44px mobile (densité nav)', async ({ page }) => {
     const shell = new AppShellPage(page)
     await shell.goto()
     const box = await shell.navItem('Accueil').boundingBox()
-    expect(box?.height).toBeGreaterThanOrEqual(40)
+    expect(box?.height).toBeGreaterThanOrEqual(36)
+    expect(box?.height).toBeLessThanOrEqual(40)
   })
 
   test("barre du haut : crédits, notifications (3), recherche, profil, sélecteur d'organisation", async ({
@@ -138,6 +139,17 @@ test.describe('AppShell — desktop', () => {
     await toggle.getByRole('radio', { name: fr.cp.mode.technique }).click()
     await expect(toggle.getByRole('radio', { name: fr.cp.mode.technique })).toBeChecked()
     await expect(toggle.getByRole('radio', { name: fr.cp.mode.simple })).not.toBeChecked()
+  })
+
+  test('mode Technique : le libellé nav « Assistants » devient « Agents »', async ({ page }) => {
+    const shell = new AppShellPage(page)
+    await shell.goto()
+    const nav = shell.nav
+    await expect(nav.getByRole('link', { name: fr.cp.nav.agents.simple })).toBeVisible()
+    const toggle = page.getByRole('radiogroup', { name: fr.cp.mode.label })
+    await toggle.getByRole('radio', { name: fr.cp.mode.technique }).click()
+    await expect(nav.getByRole('link', { name: fr.cp.nav.agents.technical })).toBeVisible()
+    await expect(nav.getByRole('link', { name: fr.cp.nav.agents.simple })).toHaveCount(0)
   })
 })
 

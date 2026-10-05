@@ -1,15 +1,12 @@
 <script setup lang="ts">
+const items = useClientNav()
 const blockName = ref('Envoyer un e-mail')
 const blockDelay = ref('5')
-const navItems = [
-  { label: 'Accueil', icon: 'i-lucide-house', value: 'home' },
-  { label: 'Assistants', icon: 'i-lucide-bot', value: 'agents', group: 'Construire' },
-]
 const palette = ['Lire une facture', 'Envoyer un e-mail', 'Demander un accord']
 </script>
 
 <template>
-  <CpAppShell :nav-items="navItems" current-nav="agents" user-name="Awa" data-page="gabarit-editor">
+  <CpAppShell :nav-items="items" current-nav="agents" credits-label="12 480 crédits" user-name="Awa" data-page="gabarit-editor">
     <div class="h-[70vh] overflow-hidden rounded-lg border border-cp-line">
       <CpLayoutEditor title="Enchaînement de relance">
         <template #toolbar>
@@ -29,7 +26,7 @@ const palette = ['Lire une facture', 'Envoyer un e-mail', 'Demander un accord']
         </template>
         <template #canvas>
           <div class="flex h-full items-center justify-center text-body text-cp-ink-muted">
-            Glissez des blocs ici pour construire l’enchaînement.
+            Glissez des blocs ici pour construire l'enchaînement.
           </div>
         </template>
         <template #properties>

@@ -55,7 +55,7 @@ const entries = computed(() =>
 )
 
 const itemClass = computed(() =>
-  props.size === 'sm' ? 'min-h-8 text-body-sm' : 'min-h-11 text-label md:min-h-10',
+  props.size === 'sm' ? 'min-h-8 text-body-sm' : 'min-h-11 text-label md:min-h-9',
 )
 const iconClass = computed(() => (props.size === 'sm' ? 'size-4' : 'size-5'))
 

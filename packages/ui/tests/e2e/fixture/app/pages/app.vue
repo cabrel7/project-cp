@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { technicalMode, toggle } = provideCpMode()
 const items = useClientNav({ docsUrl: 'https://docs.example.com' })
 const current = ref('home')
 const log = ref<string[]>([])
@@ -25,10 +24,6 @@ function nav(v: string) {
     <template #sidebar-bottom>
       <CpOrgSelector org-name="Atelier Douala" org-initials="AD" plan-label="Formule Starter" @switch="log.push('switch-org')" />
     </template>
-    <div class="mb-4 flex items-center gap-2">
-      <USwitch v-model="technicalMode" data-testid="mode-toggle" />
-      <span class="text-body-sm text-cp-ink-muted">{{ technicalMode ? 'Technique' : 'Simple' }}</span>
-    </div>
     <h1 class="text-heading-1">Page : {{ current }}</h1>
     <p data-testid="log">{{ log.join(',') }}</p>
   </CpAppShell>

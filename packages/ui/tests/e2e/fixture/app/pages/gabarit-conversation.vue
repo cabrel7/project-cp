@@ -1,9 +1,6 @@
 <script setup lang="ts">
+const items = useClientNav()
 const input = ref('')
-const navItems = [
-  { label: 'Accueil', icon: 'i-lucide-house', value: 'home' },
-  { label: 'Discussion', icon: 'i-lucide-message-circle', value: 'chat' },
-]
 const suggestions = [
   { label: 'Résumer mes factures du mois', value: 'summary' },
   { label: 'Relancer les impayés', value: 'reminders' },
@@ -12,7 +9,7 @@ const suggestions = [
 </script>
 
 <template>
-  <CpAppShell :nav-items="navItems" current-nav="chat" user-name="Awa" data-page="gabarit-conversation">
+  <CpAppShell :nav-items="items" current-nav="chat" credits-label="12 480 crédits" user-name="Awa" data-page="gabarit-conversation">
     <div class="h-[70vh]">
       <CpLayoutConversation v-model:input="input" title="Discussion" :suggestions="suggestions" show-suggestions>
         <CpChatMessage author="user" content="Peux-tu me dire combien de factures sont en retard ?" />

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+provideCpMode()
 const uiLocale = useCpLocale()
 </script>
 
