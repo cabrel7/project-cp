@@ -4,6 +4,8 @@ import { useCpMode } from './useCpMode'
 
 export interface UseClientNavOptions {
   pendingApprovals?: MaybeRef<number>
+  /** URL (http/https) de la documentation publique. */
+  docsUrl?: string
 }
 
 export function useClientNav(options?: UseClientNavOptions): ComputedRef<CpNavItem[]> {
@@ -89,6 +91,7 @@ export function useClientNav(options?: UseClientNavOptions): ComputedRef<CpNavIt
         label: t('cp.nav.documentation'),
         group: t('cp.nav.group.developers'),
         external: true,
+        href: options?.docsUrl,
       },
       {
         value: 'team',

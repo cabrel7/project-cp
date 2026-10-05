@@ -178,7 +178,8 @@
       "nav": "Navigation de l'administration",
       "emergencyStop": "Arrêt d'urgence",
       "sessionRemaining": "Session : {time}",
-      "profile": "Profil administrateur"
+      "profile": "Profil administrateur",
+      "twoFactor": "Authentification à deux facteurs active"
     },
     "adminNav": {
       "dashboard": "Pilotage",

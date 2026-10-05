@@ -19,6 +19,7 @@ const items: CpNavItem[] = [
     label: 'Documentation',
     group: 'Suivre',
     external: true,
+    href: 'https://docs.example.com',
   },
 ]
 
@@ -102,8 +103,8 @@ describe('CpSidebarNav', () => {
     const link = item(mountNav(), 'documentation')
     expect(link.element.tagName).toBe('A')
     expect(link.attributes('target')).toBe('_blank')
-    expect(link.attributes('rel')).toBe('noopener')
-    expect(link.attributes('href')).toBe('documentation')
+    expect(link.attributes('rel')).toBe('noopener noreferrer')
+    expect(link.attributes('href')).toBe('https://docs.example.com')
     expect(link.attributes('data-cp-nav-external')).toBeDefined()
     expect(link.attributes('type')).toBeUndefined()
     expect(link.find('[data-icon="i-lucide-external-link"]').exists()).toBe(true)

@@ -12,8 +12,15 @@ export interface CpNavItem {
   badge?: number
   /** En-tête de section affiché quand le groupe change. */
   group?: string
-  /** Lien externe : ouvert dans un nouvel onglet. */
+  /** Lien externe : ouvert dans un nouvel onglet (nécessite `href`). */
   external?: boolean
+  /** URL cible d'un lien externe (http/https uniquement). */
+  href?: string
+}
+
+const SAFE_URL = /^https?:\/\//i
+function safeHref(href?: string): string | undefined {
+  return href && SAFE_URL.test(href) ? href : undefined
 }
 
 const props = withDefaults(
@@ -58,9 +65,9 @@ function stateClass(value: string): string {
       <component
         :is="entry.item.external ? 'a' : 'button'"
         :type="entry.item.external ? undefined : 'button'"
-        :href="entry.item.external ? entry.item.value : undefined"
+        :href="entry.item.external ? safeHref(entry.item.href) : undefined"
         :target="entry.item.external ? '_blank' : undefined"
-        :rel="entry.item.external ? 'noopener' : undefined"
+        :rel="entry.item.external ? 'noopener noreferrer' : undefined"
         class="flex items-center gap-3 rounded-md px-3"
         :class="[itemClass, stateClass(entry.item.value)]"
         :aria-current="entry.item.value === currentNav ? 'page' : undefined"

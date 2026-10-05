@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import CpSidebarNav from './SidebarNav.vue'
 
 const props = defineProps<{
@@ -88,8 +88,8 @@ const ICON_BUTTON =
     <!-- Sidebar -->
     <aside
       ref="sidebar"
-      class="fixed inset-y-0 left-0 z-drawer flex w-sidebar shrink-0 flex-col gap-4 bg-cp-surface-sunken p-4 transition-transform duration-250 ease-out motion-reduce:transition-none md:sticky md:top-0 md:h-screen md:translate-x-0"
-      :class="drawerOpen ? 'translate-x-0' : '-translate-x-full'"
+      class="fixed inset-y-0 left-0 z-drawer flex w-sidebar shrink-0 flex-col gap-4 bg-cp-surface-sunken p-4 transition-[transform,visibility] duration-250 ease-out motion-reduce:transition-none md:sticky md:top-0 md:h-screen md:translate-x-0"
+      :class="drawerOpen ? 'translate-x-0' : '-translate-x-full max-md:invisible'"
       :role="drawerOpen ? 'dialog' : undefined"
       :aria-modal="drawerOpen ? 'true' : undefined"
       :aria-label="t('cp.admin.nav')"
@@ -133,7 +133,10 @@ const ICON_BUTTON =
           <span class="truncate text-label font-semibold text-cp-ink">{{ userName }}</span>
           <span class="flex items-center gap-1 text-caption text-cp-ink-muted">
             {{ userRole }}
-            <UIcon v-if="has2fa" name="i-lucide-shield-check" class="size-3" aria-hidden="true" />
+            <template v-if="has2fa">
+              <UIcon name="i-lucide-shield-check" class="size-3" aria-hidden="true" />
+              <span class="sr-only">{{ t('cp.admin.twoFactor') }}</span>
+            </template>
           </span>
         </span>
       </div>
