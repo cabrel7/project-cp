@@ -1,5 +1,5 @@
 # STATE — project-cp
-Updated: 2026-09-30 | Session: P1 — Design system en code
+Updated: 2026-10-05 | Session: P1 — Design system en code
 
 ## ✅ Done
 - Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D52, UI/UX).
@@ -28,11 +28,13 @@ Updated: 2026-09-30 | Session: P1 — Design system en code
 
 - **P1.4 — Gabarits G1-G8** (`packages/ui`) : 8 composants CpLayout* de présentation pure (LayoutList, LayoutDetail, LayoutWizard, LayoutDashboard, LayoutSettings, LayoutConversation, LayoutEditor, LayoutAuth). 11 clés i18n `cp.layout.*` (fr/en). UTextarea stub ajouté. 572 tests (48 fichiers). Reviewer 8.5/10 (3 MAJOR corrigés : `<main>` imbriqué → `<div>`/`<section>`, slot default dupliqué, import CpPageHeader manquant). UX 7.0/10 (2 CRITICAL corrigés : G6 role="log" + z-sticky + aria-label textarea, G8 min-h-dvh + shadow-sm). Branche `claude/jolly-johnson-qbhlwb`.
 
+- **P1.5 — Catalogue vivant + régression visuelle Playwright** (`packages/ui`) : fixture Nuxt minimale (`tests/e2e/fixture/`), 10 pages de démo (catalog, 8 gabarits G1-G8, app shell), Playwright 4 projets (desktop/mobile × clair/sombre). Specs : `catalog.spec.ts` (1 fullPage + 7 sections), `gabarits.spec.ts` (8 fullPage G1-G8), `app-shell.spec.ts` (fonctionnel + visuel + a11y), `admin-shell.spec.ts` (fonctionnel + visuel + a11y). Helpers : `gotoHydrated` (data-cp-hydrated marker), `prepareFullPage` (neutralise fixed/sticky avant fullPage). Correctifs composants : shrink-0 boutons icônes, transition split tiroir (focus), CpModeToggle hidden mobile (overflow). WCAG : title + lang dans fixture. 142 e2e passés, 572 unit tests, 0 échecs. Reviewer 7/10 (4 MAJOR corrigés). Branche `claude/jolly-johnson-qbhlwb`.
+
 ## 🔄 Active
 - Aucun lot en cours.
 
 ## 📋 Queue
-7. **P1 — Design system en code** (P1.1 ✅, P1.2 ✅, P1.3 ✅, P1.4 ✅, prochains lots P1.5+) — en parallèle de P2.
+7. **P1 — Design system en code** (P1.1 ✅, P1.2 ✅, P1.3 ✅, P1.4 ✅, P1.5 ✅, prochains lots P1.6+) — en parallèle de P2.
 8. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
@@ -46,6 +48,7 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 - P1.2 — UX MAJOR restants (non bloquants) : ApprovalCard « Refuser » devrait être secondary ; ChatMessage disclaimer par défaut activé ; Alert devrait lire useCpMode au lieu de prop ; DataTable manque mobile cards, alignement montants, colonnes technicalOnly ; ConfirmDialog saisie confirmation ; Chart reduced-motion, formats localisés, > 6 séries ; PlanGate aperçu grisé + slot ; TextField/Select role="alert" sur erreur, props form ; persistance useCpMode via API.
 - P1.4 — UX MAJOR/MINOR restants (non bloquants) : G7 palette/propriétés hidden sous lg (tiroir ou vue liste forcée) ; G1/G2/G4 pas de prop error/empty (états délégués à l'appelant) ; G1 double rendu desktop/mobile-cards ; G3 sticky footer sans safe-area-inset-bottom, boutons < 48px mobile, pas d'indicateur brouillon, details open non contrôlé ; G5 sections v-show pas v-if, danger non trié en dernier ; G2 tabs sans tabpanel/aria-controls, aside sans aria-label ; G6 Enter sans isComposing (IME), h2 sans h1, pas de défilement auto ; G4 pas de slot filtres de période ; G8 min-h-dvh dans slot AppShell (OK hors shell).
 - P1.3 — UX MINOR/deferred : SidebarNav en `<button>` sans `<ul>/<li>` (pas de NuxtLink ni regroupement ARIA) ; OrgSelector sans `aria-haspopup` ni workspace ; topbar admin peut déborder à 360px (minuteur à masquer sous sm) ; topbar client serrée à 360px ; tabbar hors inert derrière tiroir, pas de safe-area-inset-bottom, badge text-[10px] → text-caption ; badges sans plafond 99+ ; skip link sans tabindex="-1" (Safari) ; pas de transition hover/active 150ms sur items nav ; piège focus incomplet (input/select/textarea) ; logique tiroir dupliquée → extraire useDrawer ; « AI Access/Functions » → minuscule en EN ; icône admin compliance book-copy → scroll-text ; CpNavItem manque champ `locked` pour PlanGate ; pas de maquette mobile navigation (trou design).
+- P1.5 — MINOR restants (non bloquants) : couverture catalogue partielle (7/15 sections testées visuellement) ; a11y axe-core seulement desktop-light (4 projets à couvrir) ; launchOptions dupliqué dans config (projects + use global) ; 2 captures potentiellement instables (g7-editor desktop-dark, g8-auth mobile-light — contenu minimal). Règle guard suggérée : E2E doivent utiliser `gotoHydrated`, jamais `networkidle` ni `waitForTimeout`.
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).
