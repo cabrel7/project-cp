@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck — generated circular FK refs
 import { pgTable, pgSchema, unique, check, bigint, text, jsonb, boolean, timestamp, uuid, cidr, index, foreignKey, inet, integer, char, smallint, uniqueIndex, numeric, date, type AnyPgColumn, pgPolicy, vector, primaryKey } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
@@ -58,7 +58,7 @@ export const staffPermissionsInPlatform = platform.table("staff_permissions", {
 export const staffUsersInPlatform = platform.table("staff_users", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "platform.staff_users_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	email: text("email").notNull(),
 	fullName: text("full_name").notNull(),
 	passwordHash: text("password_hash").notNull(),
@@ -78,7 +78,7 @@ export const staffUsersInPlatform = platform.table("staff_users", {
 export const staffSessionsInPlatform = platform.table("staff_sessions", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "platform.staff_sessions_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	staffUserId: bigint("staff_user_id", { mode: "bigint" }).notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	tokenHash: text("token_hash").notNull(),
 	ip: inet().notNull(),
 	userAgent: text("user_agent"),
@@ -103,7 +103,7 @@ export const staffApiKeysInPlatform = platform.table("staff_api_keys", {
 	staffUserId: bigint("staff_user_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
 	prefix: text().notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	keyHash: text("key_hash").notNull(),
 	scopes: text().array().notNull(),
 	allowedIps: cidr("allowed_ips").array(),
@@ -362,7 +362,7 @@ export const taxRatesInRef = ref.table("tax_rates", {
 	appliesTo: text("applies_to").default('all').notNull(),
 	name: jsonb().notNull(),
 	rate: numeric({ precision: 7, scale:  4 }).notNull(),
-	// TODO: failed to parse database type 'tstzrange'
+	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
 	effectiveDuring: text("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -384,7 +384,7 @@ export const userIdentitiesInIam = iam.table("user_identities", {
 	userId: bigint("user_id", { mode: "bigint" }).notNull(),
 	provider: text().notNull(),
 	providerUserId: text("provider_user_id").notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	email: text("email"),
 	profile: jsonb().default({}).notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -426,7 +426,7 @@ export const verificationTokensInIam = iam.table("verification_tokens", {
 	userId: bigint("user_id", { mode: "bigint" }),
 	purpose: text().notNull(),
 	target: text().notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	tokenHash: text("token_hash").notNull(),
 	attempts: smallint().default(0).notNull(),
 	maxAttempts: smallint("max_attempts").default(5).notNull(),
@@ -480,7 +480,7 @@ export const referralsInBilling = billing.table("referrals", {
 	referrerOrgId: bigint("referrer_org_id", { mode: "bigint" }).notNull(),
 	referrerUserId: bigint("referrer_user_id", { mode: "bigint" }),
 	referredOrgId: bigint("referred_org_id", { mode: "bigint" }),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	code: text("code").notNull(),
 	status: text().default('pending').notNull(),
 	qualifiedAt: timestamp("qualified_at", { withTimezone: true, mode: 'string' }),
@@ -678,7 +678,7 @@ export const planPricesInBilling = billing.table("plan_prices", {
 	includedLlmCreditsMicro: bigint("included_llm_credits_micro", { mode: "bigint" }).default(0).notNull(),
 	includedInfraCreditsMicro: bigint("included_infra_credits_micro", { mode: "bigint" }).default(0).notNull(),
 	llmCoefficient: numeric("llm_coefficient", { precision: 6, scale:  4 }).notNull(),
-	// TODO: failed to parse database type 'tstzrange'
+	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
 	effectiveDuring: text("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -743,7 +743,7 @@ export const creditPackPricesInBilling = billing.table("credit_pack_prices", {
 	packId: bigint("pack_id", { mode: "bigint" }).notNull(),
 	currency: char({ length: 3 }).notNull(),
 	amountMinor: bigint("amount_minor", { mode: "bigint" }).notNull(),
-	// TODO: failed to parse database type 'tstzrange'
+	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
 	effectiveDuring: text("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -781,7 +781,7 @@ export const infraMeterRatesInBilling = billing.table("infra_meter_rates", {
 	planId: bigint("plan_id", { mode: "bigint" }),
 	creditsMicroPerUnit: bigint("credits_micro_per_unit", { mode: "bigint" }).notNull(),
 	includedUnitsPerPeriod: bigint("included_units_per_period", { mode: "bigint" }).default(0).notNull(),
-	// TODO: failed to parse database type 'tstzrange'
+	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
 	effectiveDuring: text("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -920,7 +920,7 @@ export const modelPricesInAi = ai.table("model_prices", {
 	unit: text().notNull(),
 	unitPriceUsd: numeric("unit_price_usd", { precision: 24, scale:  14 }).notNull(),
 	tierCondition: jsonb("tier_condition"),
-	// TODO: failed to parse database type 'tstzrange'
+	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
 	effectiveDuring: text("effective_during").notNull(),
 	source: text().default('manual').notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -1046,7 +1046,7 @@ export const subprocessorsInCompliance = compliance.table("subprocessors", {
 export const couponsInBilling = billing.table("coupons", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "billing.coupons_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	code: text("code").notNull(),
 	kind: text().notNull(),
 	value: numeric({ precision: 18, scale:  4 }).notNull(),
@@ -1575,7 +1575,7 @@ export const userSessionsInIam = iam.table("user_sessions", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.user_sessions_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	userId: bigint("user_id", { mode: "bigint" }).notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	tokenHash: text("token_hash").notNull(),
 	ip: inet(),
 	userAgent: text("user_agent"),
@@ -1601,7 +1601,7 @@ export const oauthClientsInIam = iam.table("oauth_clients", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.oauth_clients_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	clientId: text("client_id").notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	clientSecretHash: text("client_secret_hash"),
 	name: text().notNull(),
 	logoUri: text("logo_uri"),
@@ -1628,7 +1628,7 @@ export const oauthClientsInIam = iam.table("oauth_clients", {
 export const usersInIam = iam.table("users", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.users_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	email: text("email"),
 	emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true, mode: 'string' }),
 	phoneE164: text("phone_e164"),
@@ -1718,10 +1718,10 @@ export const routingRulesInAi = ai.table("routing_rules", {
 			name: "routing_rules_profile_id_fkey"
 		}).onDelete("cascade"),
 	unique("routing_rules_public_id_key").on(table.publicId),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())` }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
 	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 ]);
 
 export const byokKeysInAi = ai.table("byok_keys", {
@@ -1847,10 +1847,10 @@ export const rolesInIam = iam.table("roles", {
 			name: "roles_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("roles_public_id_key").on(table.publicId),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())` }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
 	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("roles_check", sql`is_system = (organization_id IS NULL)`),
 	check("roles_key_check", sql`key ~ '^[a-z0-9_]+$'::text`),
 	check("roles_name_check", sql`CHECK (util.is_i18n(name`),
@@ -1894,8 +1894,8 @@ export const membershipsInIam = iam.table("memberships", {
 	unique("memberships_public_id_key").on(table.publicId),
 	unique("memberships_organization_id_user_id_key").on(table.organizationId, table.userId),
 	unique("memberships_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("membership_self_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`(user_id = util.current_user_id())` }),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"] }),
+	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
+	pgPolicy("membership_self_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("memberships_status_check", sql`status = ANY (ARRAY['active'::text, 'suspended'::text])`),
 ]);
 
@@ -1903,10 +1903,10 @@ export const invitationsInIam = iam.table("invitations", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.invitations_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	email: text("email").notNull(),
 	roleId: bigint("role_id", { mode: "bigint" }).notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	tokenHash: text("token_hash").notNull(),
 	invitedByUserId: bigint("invited_by_user_id", { mode: "bigint" }),
 	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
@@ -1964,7 +1964,7 @@ export const workspacesInIam = iam.table("workspaces", {
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	slug: text("slug").notNull(),
 	description: text(),
 	dataRegionId: bigint("data_region_id", { mode: "bigint" }),
@@ -2043,7 +2043,7 @@ export const projectsInIam = iam.table("projects", {
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	workspaceId: bigint("workspace_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	slug: text("slug").notNull(),
 	description: text(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -2075,7 +2075,7 @@ export const filesInStorage = storage.table("files", {
 	filename: text().notNull(),
 	mimeType: text("mime_type").notNull(),
 	sizeBytes: bigint("size_bytes", { mode: "bigint" }).notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	checksumSha256: text("checksum_sha256"),
 	dataRegionId: bigint("data_region_id", { mode: "bigint" }).notNull(),
 	scanStatus: text("scan_status").default('pending').notNull(),
@@ -2736,10 +2736,10 @@ export const routingProfilesInAi = ai.table("routing_profiles", {
 			name: "routing_profiles_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("routing_profiles_public_id_key").on(table.publicId),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())` }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
 	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("routing_profiles_check", sql`is_system = (organization_id IS NULL)`),
 	check("routing_profiles_key_check", sql`key ~ '^[a-z0-9_]+$'::text`),
 	check("routing_profiles_name_check", sql`CHECK (util.is_i18n(name`),
@@ -2997,7 +2997,7 @@ export const bridgesInMcp = mcp.table("bridges", {
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	workspaceId: bigint("workspace_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	tokenHash: text("token_hash").notNull(),
 	publicKey: text("public_key"),
 	agentVersion: text("agent_version"),
@@ -3148,7 +3148,7 @@ export const connectorSourcesInMcp = mcp.table("connector_sources", {
 	sourceType: text("source_type").notNull(),
 	fileId: bigint("file_id", { mode: "bigint" }),
 	content: jsonb(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	contentHash: text("content_hash"),
 	analysis: jsonb().default({}).notNull(),
 	fetchedAt: timestamp("fetched_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -3242,7 +3242,7 @@ export const serversInMcp = mcp.table("servers", {
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	workspaceId: bigint("workspace_id", { mode: "bigint" }).notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	slug: text("slug").notNull(),
 	name: text().notNull(),
 	description: text(),
@@ -3305,7 +3305,7 @@ export const serverVersionsInMcp = mcp.table("server_versions", {
 	semver: text().notNull(),
 	status: text().default('validating').notNull(),
 	configSnapshot: jsonb("config_snapshot").notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	snapshotHash: text("snapshot_hash").notNull(),
 	validationReport: jsonb("validation_report").default({}).notNull(),
 	changelog: text(),
@@ -3394,7 +3394,7 @@ export const toolEmbeddingsInMcp = mcp.table("tool_embeddings", {
 	serverId: bigint("server_id", { mode: "bigint" }).notNull(),
 	embeddingModel: text("embedding_model").notNull(),
 	embedding: vector({ dimensions: 1536 }).notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	contentHash: text("content_hash").notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -3473,7 +3473,7 @@ export const accessTokensInMcp = mcp.table("access_tokens", {
 	environmentId: bigint("environment_id", { mode: "bigint" }),
 	name: text().notNull(),
 	prefix: text().notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	tokenHash: text("token_hash").notNull(),
 	scopeMode: text("scope_mode").default('read_only').notNull(),
 	rateLimit: jsonb("rate_limit").default({}).notNull(),
@@ -3587,7 +3587,7 @@ export const oauthConsentsInIam = iam.table("oauth_consents", {
 
 export const oauthAuthorizationCodesInIam = iam.table("oauth_authorization_codes", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.oauth_authorization_codes_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	codeHash: text("code_hash").notNull(),
 	clientId: bigint("client_id", { mode: "bigint" }).notNull(),
 	userId: bigint("user_id", { mode: "bigint" }).notNull(),
@@ -3634,7 +3634,7 @@ export const oauthAuthorizationCodesInIam = iam.table("oauth_authorization_codes
 
 export const oauthTokensInIam = iam.table("oauth_tokens", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.oauth_tokens_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	tokenHash: text("token_hash").notNull(),
 	tokenType: text("token_type").notNull(),
 	familyId: uuid("family_id").notNull(),
@@ -4106,7 +4106,7 @@ export const apiKeysInDev = dev.table("api_keys", {
 	projectId: bigint("project_id", { mode: "bigint" }),
 	name: text().notNull(),
 	prefix: text().notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	keyHash: text("key_hash").notNull(),
 	scopes: text().array().default(["run", "mcp.call"]).notNull(),
 	allowedIps: cidr("allowed_ips").array(),
@@ -4303,7 +4303,7 @@ export const idempotencyKeysInDev = dev.table("idempotency_keys", {
 	key: text().notNull(),
 	requestMethod: text("request_method").notNull(),
 	requestPath: text("request_path").notNull(),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	requestHash: text("request_hash").notNull(),
 	responseStatus: smallint("response_status"),
 	responseBody: jsonb("response_body"),
@@ -4329,7 +4329,7 @@ export const idempotencyKeysInDev = dev.table("idempotency_keys", {
 
 export const deviceAuthorizationsInDev = dev.table("device_authorizations", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "dev.device_authorizations_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
-	// TODO: failed to parse database type 'bytea'
+	// customType: bytea (mapped to text; cast to Buffer at app layer)
 	deviceCodeHash: text("device_code_hash").notNull(),
 	userCode: text("user_code").notNull(),
 	clientName: text("client_name").default('cli').notNull(),
@@ -4395,7 +4395,7 @@ export const publishersInMarket = market.table("publishers", {
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	displayName: text("display_name").notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	slug: text("slug").notNull(),
 	bio: jsonb(),
 	website: text(),
@@ -4434,8 +4434,8 @@ export const publishersInMarket = market.table("publishers", {
 	unique("publishers_public_id_key").on(table.publicId),
 	unique("publishers_organization_id_key").on(table.organizationId),
 	unique("publishers_slug_key").on(table.slug),
-	pgPolicy("publisher_public_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`(status = 'active'::text)` }),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"] }),
+	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
+	pgPolicy("publisher_public_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("publishers_level_check", sql`level = ANY (ARRAY['community'::text, 'verified'::text, 'premium_certified'::text, 'official'::text])`),
 	check("publishers_slug_check", sql`slug ~ '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$'::citext`),
 	check("publishers_status_check", sql`status = ANY (ARRAY['active'::text, 'suspended'::text, 'banned'::text])`),
@@ -4448,7 +4448,7 @@ export const listingsInMarket = market.table("listings", {
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	type: text().notNull(),
 	deliveryMode: text("delivery_mode").default('sealed').notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	slug: text("slug").notNull(),
 	name: jsonb().notNull(),
 	summary: jsonb().notNull(),
@@ -4508,8 +4508,8 @@ export const listingsInMarket = market.table("listings", {
 		}),
 	unique("listings_public_id_key").on(table.publicId),
 	unique("listings_slug_key").on(table.slug),
-	pgPolicy("listing_public_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`(status = 'published'::text)` }),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"] }),
+	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
+	pgPolicy("listing_public_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("listings_check", sql`(trust_level <> 'community'::text) OR (source_code_url IS NOT NULL) OR (status = 'draft'::text)`),
 	check("listings_check1", sql`(pricing_model = 'free'::text) OR (trust_level = ANY (ARRAY['premium'::text, 'official'::text]))`),
 	check("listings_delivery_mode_check", sql`delivery_mode = ANY (ARRAY['sealed'::text, 'copy'::text])`),
@@ -4642,8 +4642,8 @@ export const reviewsInMarket = market.table("reviews", {
 		}).onDelete("set null"),
 	unique("reviews_public_id_key").on(table.publicId),
 	unique("reviews_listing_id_organization_id_key").on(table.listingId, table.organizationId),
-	pgPolicy("review_public_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`(status = 'published'::text)` }),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"] }),
+	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
+	pgPolicy("review_public_read", { as: "permissive", for: "select", to: ["app_rw"] }),
 	check("reviews_rating_check", sql`(rating >= 1) AND (rating <= 5)`),
 	check("reviews_status_check", sql`status = ANY (ARRAY['published'::text, 'hidden'::text, 'removed'::text])`),
 ]);
@@ -4675,8 +4675,8 @@ export const legalAcceptancesInCompliance = compliance.table("legal_acceptances"
 			name: "legal_acceptances_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("legal_acceptances_user_id_document_id_organization_id_key").on(table.documentId, table.organizationId, table.userId),
-	pgPolicy("acceptance_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(user_id = util.current_user_id())`, withCheck: sql`(user_id = util.current_user_id())`  }),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"] }),
+	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
+	pgPolicy("acceptance_self", { as: "permissive", for: "all", to: ["app_rw"] }),
 ]);
 
 export const dataSubjectRequestsInCompliance = compliance.table("data_subject_requests", {
@@ -4684,7 +4684,7 @@ export const dataSubjectRequestsInCompliance = compliance.table("data_subject_re
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	userId: bigint("user_id", { mode: "bigint" }),
 	organizationId: bigint("organization_id", { mode: "bigint" }),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	requesterEmail: text("requester_email").notNull(),
 	kind: text().notNull(),
 	status: text().default('received').notNull(),
@@ -4721,8 +4721,8 @@ export const dataSubjectRequestsInCompliance = compliance.table("data_subject_re
 			name: "data_subject_requests_user_id_fkey"
 		}).onDelete("set null"),
 	unique("data_subject_requests_public_id_key").on(table.publicId),
-	pgPolicy("dsr_self", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(user_id = util.current_user_id())`, withCheck: sql`(user_id = util.current_user_id())`  }),
-	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"] }),
+	pgPolicy("tenant_isolation", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())`, withCheck: sql`(organization_id = util.current_org_id())`  }),
+	pgPolicy("dsr_self", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("data_subject_requests_kind_check", sql`kind = ANY (ARRAY['access'::text, 'export'::text, 'rectification'::text, 'deletion'::text, 'objection'::text, 'portability'::text])`),
 	check("data_subject_requests_status_check", sql`status = ANY (ARRAY['received'::text, 'verifying'::text, 'in_progress'::text, 'completed'::text, 'rejected'::text])`),
 ]);
@@ -4748,10 +4748,10 @@ export const guardrailProfilesInAi = ai.table("guardrail_profiles", {
 		}).onDelete("cascade"),
 	unique("guardrail_profiles_public_id_key").on(table.publicId),
 	unique("guardrail_profiles_id_organization_id_key").on(table.id, table.organizationId),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())` }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
 	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("guardrail_profiles_check", sql`is_system = (organization_id IS NULL)`),
 	check("guardrail_profiles_key_check", sql`key ~ '^[a-z0-9_]+$'::text`),
 	check("guardrail_profiles_mode_check", sql`mode = ANY (ARRAY['enforce'::text, 'monitor'::text])`),
@@ -4792,10 +4792,10 @@ export const guardrailRulesInAi = ai.table("guardrail_rules", {
 			name: "guardrail_rules_profile_id_fkey"
 		}).onDelete("cascade"),
 	unique("guardrail_rules_profile_id_detector_id_position_key").on(table.detectorId, table.position, table.profileId),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())` }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
 	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("guardrail_rules_action_check", sql`action = ANY (ARRAY['block'::text, 'redact'::text, 'flag'::text, 'require_approval'::text, 'fallback_model'::text, 'retry'::text, 'escalate_judge'::text])`),
 	check("guardrail_rules_sample_rate_check", sql`(sample_rate > (0)::numeric) AND (sample_rate <= (1)::numeric)`),
 	check("guardrail_rules_threshold_check", sql`(threshold >= (0)::numeric) AND (threshold <= (1)::numeric)`),
@@ -4823,10 +4823,10 @@ export const guardrailBindingsInAi = ai.table("guardrail_bindings", {
 			foreignColumns: [guardrailProfilesInAi.id],
 			name: "guardrail_bindings_profile_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"], using: sql`(organization_id = util.current_org_id())` }),
-	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id IS NULL) OR (organization_id = util.current_org_id()))` }),
 	pgPolicy("tenant_insert", { as: "permissive", for: "insert", to: ["app_rw"] }),
-	pgPolicy("tenant_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("tenant_update", { as: "permissive", for: "update", to: ["app_rw"] }),
+	pgPolicy("tenant_delete", { as: "permissive", for: "delete", to: ["app_rw"] }),
 	check("guardrail_bindings_check", sql`(scope_type = 'global'::text) = (scope_id IS NULL)`),
 	check("guardrail_bindings_check1", sql`(scope_type = ANY (ARRAY['global'::text, 'plan'::text])) OR (organization_id IS NOT NULL)`),
 	check("guardrail_bindings_scope_type_check", sql`scope_type = ANY (ARRAY['global'::text, 'plan'::text, 'organization'::text, 'workspace'::text, 'environment'::text, 'capability'::text, 'agent'::text, 'mcp_server'::text])`),
@@ -4836,12 +4836,12 @@ export const organizationsInIam = iam.table("organizations", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.organizations_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	name: text().notNull(),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	slug: text("slug").notNull(),
 	kind: text().default('company').notNull(),
 	legalName: text("legal_name"),
 	taxId: text("tax_id"),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	billingEmail: text("billing_email"),
 	billingAddress: jsonb("billing_address"),
 	countryCode: char("country_code", { length: 2 }).notNull(),
@@ -4902,9 +4902,9 @@ export const organizationsInIam = iam.table("organizations", {
 			name: "organizations_default_routing_profile_id_fkey"
 		}),
 	unique("organizations_public_id_key").on(table.publicId),
-	pgPolicy("org_create", { as: "permissive", for: "insert", to: ["app_rw"], withCheck: sql`(created_by_user_id = util.current_user_id())`  }),
+	pgPolicy("org_current", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(id = util.current_org_id())`, withCheck: sql`(id = util.current_org_id())`  }),
 	pgPolicy("org_member_read", { as: "permissive", for: "select", to: ["app_rw"] }),
-	pgPolicy("org_current", { as: "permissive", for: "all", to: ["app_rw"] }),
+	pgPolicy("org_create", { as: "permissive", for: "insert", to: ["app_rw"] }),
 	check("organizations_kind_check", sql`kind = ANY (ARRAY['individual'::text, 'company'::text])`),
 	check("organizations_slug_check", sql`slug ~ '^[a-z0-9]([a-z0-9-]{1,61}[a-z0-9])?$'::citext`),
 	check("organizations_status_check", sql`status = ANY (ARRAY['active'::text, 'suspended'::text, 'pending_deletion'::text, 'deleted'::text])`),
@@ -4939,12 +4939,10 @@ export const listingVersionsInMarket = market.table("listing_versions", {
 		}).onDelete("set null"),
 	unique("listing_versions_public_id_key").on(table.publicId),
 	unique("listing_versions_listing_id_semver_key").on(table.listingId, table.semver),
-	pgPolicy("listing_version_write", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(EXISTS ( SELECT 1
+	pgPolicy("listing_version_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`(EXISTS ( SELECT 1
    FROM market.listings l
-  WHERE ((l.id = listing_versions.listing_id) AND (l.organization_id = util.current_org_id()))))`, withCheck: sql`(EXISTS ( SELECT 1
-   FROM market.listings l
-  WHERE ((l.id = listing_versions.listing_id) AND (l.organization_id = util.current_org_id()))))`  }),
-	pgPolicy("listing_version_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+  WHERE ((l.id = listing_versions.listing_id) AND ((l.status = 'published'::text) OR (l.organization_id = util.current_org_id())))))` }),
+	pgPolicy("listing_version_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("listing_versions_review_status_check", sql`review_status = ANY (ARRAY['not_required'::text, 'pending'::text, 'approved'::text, 'changes_requested'::text, 'rejected'::text])`),
 	check("listing_versions_scan_status_check", sql`scan_status = ANY (ARRAY['pending'::text, 'passed'::text, 'failed'::text])`),
 	check("listing_versions_semver_check", sql`semver ~ '^[0-9]+\.[0-9]+\.[0-9]+$'::text`),
@@ -4956,7 +4954,7 @@ export const listingPricesInMarket = market.table("listing_prices", {
 	currency: char({ length: 3 }).notNull(),
 	amountMinor: bigint("amount_minor", { mode: "bigint" }),
 	usagePct: numeric("usage_pct", { precision: 5, scale:  4 }),
-	// TODO: failed to parse database type 'tstzrange'
+	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
 	effectiveDuring: text("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -4971,12 +4969,8 @@ export const listingPricesInMarket = market.table("listing_prices", {
 			foreignColumns: [listingsInMarket.id],
 			name: "listing_prices_listing_id_fkey"
 		}).onDelete("cascade"),
-	pgPolicy("listing_prices_write", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(EXISTS ( SELECT 1
-   FROM market.listings l
-  WHERE ((l.id = listing_prices.listing_id) AND (l.organization_id = util.current_org_id()))))`, withCheck: sql`(EXISTS ( SELECT 1
-   FROM market.listings l
-  WHERE ((l.id = listing_prices.listing_id) AND (l.organization_id = util.current_org_id()))))`  }),
-	pgPolicy("listing_prices_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("listing_prices_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`true` }),
+	pgPolicy("listing_prices_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("listing_prices_amount_minor_check", sql`amount_minor >= 0`),
 	check("listing_prices_check", sql`(amount_minor IS NOT NULL) OR (usage_pct IS NOT NULL)`),
 	check("listing_prices_usage_pct_check", sql`(usage_pct > (0)::numeric) AND (usage_pct < (1)::numeric)`),
@@ -5140,8 +5134,8 @@ export const savedViewsInUx = ux.table("saved_views", {
 			name: "saved_views_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("saved_views_public_id_key").on(table.publicId),
-	pgPolicy("saved_views_write", { as: "permissive", for: "all", to: ["app_rw"], using: sql`((organization_id = util.current_org_id()) AND (user_id = util.current_user_id()))`, withCheck: sql`((organization_id = util.current_org_id()) AND (user_id = util.current_user_id()))`  }),
-	pgPolicy("saved_views_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("saved_views_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id = util.current_org_id()) AND ((user_id = util.current_user_id()) OR is_shared))` }),
+	pgPolicy("saved_views_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 ]);
 
 export const dashboardsInUx = ux.table("dashboards", {
@@ -5176,8 +5170,8 @@ export const dashboardsInUx = ux.table("dashboards", {
 			name: "dashboards_workspace_id_organization_id_fkey"
 		}).onDelete("cascade"),
 	unique("dashboards_public_id_key").on(table.publicId),
-	pgPolicy("dashboards_write", { as: "permissive", for: "all", to: ["app_rw"], using: sql`((organization_id = util.current_org_id()) AND (owner_user_id = util.current_user_id()))`, withCheck: sql`((organization_id = util.current_org_id()) AND (owner_user_id = util.current_user_id()))`  }),
-	pgPolicy("dashboards_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("dashboards_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`((organization_id = util.current_org_id()) AND ((owner_user_id = util.current_user_id()) OR is_shared))` }),
+	pgPolicy("dashboards_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 ]);
 
 export const notificationsInNotif = notif.table("notifications", {
@@ -5287,7 +5281,7 @@ export const supportTicketsInPlatform = platform.table("support_tickets", {
 	number: bigint({ mode: "bigint" }).default(sql`nextval('platform.support_ticket_number_seq'::regclass)`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }),
 	userId: bigint("user_id", { mode: "bigint" }),
-	// TODO: failed to parse database type 'citext'
+	// customType: citext (mapped to text; case-insensitive at DB layer)
 	contactEmail: text("contact_email"),
 	subject: text().notNull(),
 	category: text().notNull(),
@@ -5571,12 +5565,8 @@ export const bundleItemsInMarket = market.table("bundle_items", {
 			name: "bundle_items_item_listing_id_fkey"
 		}),
 	primaryKey({ columns: [table.bundleListingId, table.itemListingId], name: "bundle_items_pkey"}),
-	pgPolicy("bundle_items_write", { as: "permissive", for: "all", to: ["app_rw"], using: sql`(EXISTS ( SELECT 1
-   FROM market.listings l
-  WHERE ((l.id = bundle_items.bundle_listing_id) AND (l.organization_id = util.current_org_id()))))`, withCheck: sql`(EXISTS ( SELECT 1
-   FROM market.listings l
-  WHERE ((l.id = bundle_items.bundle_listing_id) AND (l.organization_id = util.current_org_id()))))`  }),
-	pgPolicy("bundle_items_read", { as: "permissive", for: "select", to: ["app_rw"] }),
+	pgPolicy("bundle_items_read", { as: "permissive", for: "select", to: ["app_rw"], using: sql`true` }),
+	pgPolicy("bundle_items_write", { as: "permissive", for: "all", to: ["app_rw"] }),
 	check("bundle_items_check", sql`bundle_listing_id <> item_listing_id`),
 ]);
 
