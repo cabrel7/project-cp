@@ -2,7 +2,7 @@
 Updated: 2026-10-05 | Session: P1 — Design system en code
 
 ## ✅ Done
-- Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D55, UI/UX).
+- Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D57, UI/UX).
 - Schéma PostgreSQL v1.2 : `db/schema-v1.2/` — 183 tables, RLS, 23 contrôles passés sur base neuve (T1-T22).
 - Design system « project-cp » (tokens, 8 gabarits, 27 composants) : `docs/design-system/`.
 - Maquettes de validation (7 pages) : authentification, onboarding, tableau de bord, MCP Builder, studios, admin IA, navigation.
@@ -18,7 +18,7 @@ Updated: 2026-10-05 | Session: P1 — Design system en code
 - **P0.5 — `packages/shared`** : 62 codes d'erreur synchronisés avec les seeds SQL (950+960), schémas zod de base (publicId UUIDv7 strict, pagination, errorResponse, paginated `{ data, next_cursor }`), glossaire Simple/Technique (18 termes × fr/en). 282 tests passés. Reviewer : 0 CRITICAL, 0 MAJOR ouvert. PR #6 squash-merged dans dev.
 - **P0.6 — `apps/api` minimal** : env.ts (zod, invariant 8), pino logger (invariant 10), request-id UUIDv7, OTel conditionnel, `AppError` + format unique (doc 02 §8, details `{}` sur 5xx, HTTPException 401/404/429 mappés, 400→400, autre 4xx→422, documentation_url lowercase), `/health`, `/openapi.json` (D31), `/docs` (Scalar). 28 tests (5 fichiers). Reviewer 8/10, 0 CRITICAL/MAJOR ouvert. PR #7 squash-merged dans dev.
 - **P0.7 — CI GitHub Actions** : `.github/workflows/ci.yml` (5 jobs : lint Biome, typecheck, test, db avec PostgreSQL 18 service container + dbmate + 23 SQL tests + RLS integration tests + drizzle drift check + squawk, build). Branches PR : `main`, `dev`, `claude/**`, `p*/**`. Action composite `.github/actions/setup-pnpm/` (Node 22 + pnpm 10 + cache). Reviewer 8.5/10, 0 CRITICAL/MAJOR ouvert (3 corrigés). PR #8 squash-merged dans dev.
-- **P1.0 — Spike D27** : comparaison Nuxt UI vs shadcn-vue — 3 composants témoins (Button, DataTable, Stepper) en clair/sombre/mobile, captures Playwright, code Vue SFC comparatif. Verdict : **Nuxt UI** (6/8 vs 4/8). D27 ✅ validée. PR #9 squash-merged dans dev.
+- **P1.0 — Spike D27** : comparaison Nuxt UI vs shadcn-vue — 3 composants témoins (Button, DataTable, Stepper) en clair/sombre/mobile, captures Playwright, code Vue SFC comparatif. Verdict : **Nuxt UI** (6/8 vs 4/8). D27 ✅ validée par Dylan (2026-10-05). PR #9 squash-merged dans dev.
 
 - **P1.1 — Thème Nuxt UI** : `packages/ui` layer Nuxt (tokens.json → tokens.css → `@theme static` Tailwind v4 → app.config.ts Nuxt UI). 39 couleurs sémantiques, 7 échelles Nuxt UI (primary/secondary/success/warning/error/info/warm) interpolées OKLCH, typographie 12 styles (3 familles @fontsource : Plus Jakarta Sans, Geist, Geist Mono), ombres, espacement 4px, rayons, tailles de contrôle, z-index, points de rupture, focus-ring. Pont `--ui-*` pour Nuxt UI. Mode sombre `.dark` + `useColorMode`. Icônes Lucide embarquées localement. Page de démo (palette 31 pastilles, boutons, typographie, icônes, interrupteur sombre). 160 tests (7 fichiers) passés, 42/42 turbo tasks. Reviewer : 2 MAJOR corrigés (`@theme static`, alias `warm`). Branche `p1/01-theme-nuxt-ui`.
 
@@ -39,6 +39,7 @@ Updated: 2026-10-05 | Session: P1 — Design system en code
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## 🏗️ Decisions
+- 2026-10-05 : D27, D53, D54, D55 (portée `packages/ui`) validées ; D56 polices `@fontsource` ; D57 catalogue = pages Nuxt + Playwright (pas d'Histoire).
 - Source unique : `docs/reference/06-journal-decisions.md` (ne pas dupliquer ici).
 
 ## ⚠️ Known issues
