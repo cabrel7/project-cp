@@ -5,7 +5,7 @@ vi.mock('../../../env.js', () => ({
   getEnv: vi.fn(() => ({
     NODE_ENV: 'test',
     PORT: 4000,
-    LOG_LEVEL: 'silent',
+    LOG_LEVEL: 'error',
     APP_URL: 'https://app.example.com',
     SMTP_HOST: 'localhost',
     SMTP_PORT: 1025,
@@ -64,7 +64,7 @@ describe('auth routes — rate limit & IP', () => {
     vi.mocked(getEnv).mockReturnValue({
       NODE_ENV: 'test',
       PORT: 4000,
-      LOG_LEVEL: 'silent',
+      LOG_LEVEL: 'error',
       APP_URL: 'https://app.example.com',
       SMTP_HOST: 'localhost',
       SMTP_PORT: 1025,
@@ -104,7 +104,7 @@ describe('auth routes — rate limit & IP', () => {
     vi.mocked(getEnv).mockReturnValue({
       NODE_ENV: 'test',
       PORT: 4000,
-      LOG_LEVEL: 'silent',
+      LOG_LEVEL: 'error',
       APP_URL: 'https://app.example.com',
       SMTP_HOST: 'localhost',
       SMTP_PORT: 1025,

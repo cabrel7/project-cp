@@ -65,7 +65,7 @@ describe.skipIf(!hasDb)('Auth integration (PostgreSQL réel)', () => {
     return adminPool.begin(async (tx) => {
       await tx`SET LOCAL ROLE app_admin`
       return fn(tx as unknown as typeof adminPool)
-    })
+    }) as Promise<T>
   }
 
   afterAll(async () => {
