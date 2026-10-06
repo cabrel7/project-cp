@@ -18,6 +18,7 @@ vi.mock('../auth.repository.js', () => ({
   markEmailVerified: vi.fn(),
   updateLastLogin: vi.fn(),
   resetPasswordTx: vi.fn(),
+  getFreeTierRequiresPhoneOtp: vi.fn().mockResolvedValue(true),
 }))
 
 vi.mock('../auth.email.js', () => ({
@@ -56,6 +57,8 @@ function userRow(overrides: Record<string, unknown> = {}) {
     fullName: 'Alice',
     timezone: 'Europe/Paris',
     createdAt: '2025-12-01T00:00:00.000Z',
+    phoneE164: null as string | null,
+    phoneVerifiedAt: null as string | null,
     ...overrides,
   }
 }
@@ -594,6 +597,7 @@ describe('resendVerification', () => {
 
 describe('getMe', () => {
   it('doit renvoyer le profil mappé (id public uniquement)', async () => {
+    vi.mocked(repo.getFreeTierRequiresPhoneOtp).mockResolvedValue(true)
     vi.mocked(repo.findUserById).mockResolvedValue(
       userRow({ emailVerifiedAt: '2025-12-02T00:00:00.000Z' }) as never,
     )
@@ -608,6 +612,9 @@ describe('getMe', () => {
       locale: 'fr',
       timezone: 'Europe/Paris',
       created_at: '2025-12-01T00:00:00.000Z',
+      phone: null,
+      phone_verified: false,
+      free_tier_eligible: false,
     })
     expect(JSON.stringify(me)).not.toContain('"1"')
   })

@@ -19,6 +19,8 @@ describe('env.ts', () => {
 
   it('doit parser des valeurs personnalisées', async () => {
     vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('OTP_PEPPER', 'x'.repeat(32))
+    vi.stubEnv('SMS_PROVIDER', 'none')
     vi.stubEnv('PORT', '3000')
     vi.stubEnv('LOG_LEVEL', 'error')
     vi.stubEnv('OTEL_ENABLED', 'true')

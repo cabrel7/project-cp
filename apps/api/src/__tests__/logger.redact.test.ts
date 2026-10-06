@@ -28,7 +28,7 @@ const captured = vi.hoisted(() => ({ lines: [] as string[] }))
 
 vi.mock('pino', async (importOriginal) => {
   const actual = await importOriginal<typeof import('pino')>()
-  const real = actual.default
+  const real = (actual as unknown as { default: typeof actual }).default
   const stream = {
     write: (line: string) => {
       captured.lines.push(line)

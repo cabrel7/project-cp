@@ -99,7 +99,7 @@ describe('normalizePhone — refus structurés (CA-2, CA-3, CA-4)', () => {
     ['01 23 45 67 89', 'FR', 'fixe français'],
   ] as const)(
     'doit refuser NOT_MOBILE pour « %s » (%s) : un SMS ne peut pas atteindre un fixe',
-    async (input, country) => {
+    async (input, country, _label) => {
       const { normalizePhone } = await loadPhone()
       expect(normalizePhone(input, country)).toMatchObject({ ok: false, reason: 'NOT_MOBILE' })
     },

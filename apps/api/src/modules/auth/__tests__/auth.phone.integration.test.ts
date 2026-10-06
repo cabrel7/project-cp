@@ -914,9 +914,17 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       const ob = (await orgsOf(ub.id))[0] as Json
 
       await withOrgContext({ orgId: BigInt(oa.id), userId: BigInt(ua.id) }, async (tx) => {
-        const orgs = Array.from(await tx.execute(sql`SELECT id FROM iam.organizations`))
-        const ws = Array.from(await tx.execute(sql`SELECT organization_id FROM iam.workspaces`))
-        const envs = Array.from(await tx.execute(sql`SELECT organization_id FROM iam.environments`))
+        const orgs = Array.from(
+          (await tx.execute(sql`SELECT id FROM iam.organizations`)) as Iterable<unknown>,
+        )
+        const ws = Array.from(
+          (await tx.execute(sql`SELECT organization_id FROM iam.workspaces`)) as Iterable<unknown>,
+        )
+        const envs = Array.from(
+          (await tx.execute(
+            sql`SELECT organization_id FROM iam.environments`,
+          )) as Iterable<unknown>,
+        )
         expect(orgs.map((r) => String((r as Json).id))).toEqual([String(oa.id)])
         expect(ws.length).toBeGreaterThan(0)
         for (const r of [...ws, ...envs])
