@@ -84,7 +84,6 @@ export async function createUserWithOrg(params: {
   const pool = getPoolRw()
 
   return pool.begin(async (tx) => {
-    // 1. Insert user (iam.users has no RLS — no organization_id)
     const userRows = await tx`
       INSERT INTO iam.users (email, password_hash, full_name, locale, status)
       VALUES (${params.email}, ${params.passwordHash}, ${params.fullName}, ${params.locale}, 'pending')
@@ -96,62 +95,28 @@ export async function createUserWithOrg(params: {
     const userId = BigInt(userRow.id)
     const userPublicId = userRow.public_id as string
 
-    // 2. Set app.user_id for RLS (org_create policy: created_by_user_id = current_user_id())
     await tx`SELECT set_config('app.user_id', ${userId.toString()}, true)`
 
-    // 3. Resolve reference data
-    const regionRows =
-      await tx`SELECT id FROM ref.data_regions WHERE code = ${params.dataRegionCode}`
-    const region = regionRows[0]
-    if (!region) throw new Error(`data region '${params.dataRegionCode}' not found`)
-
-    // 4. Create individual organization
-    const orgSlug = `user-${userPublicId}`
     const orgRows = await tx`
-      INSERT INTO iam.organizations (name, slug, kind, country_code, default_currency, default_locale, data_region_id, created_by_user_id)
-      VALUES (${params.fullName ?? params.email}, ${orgSlug}, 'individual', ${params.countryCode}, ${params.defaultCurrency}, ${params.locale}, ${region.id}, ${userId.toString()})
-      RETURNING id, public_id
+      SELECT org_id, org_public_id FROM iam.create_personal_organization(
+        ${userId.toString()}::bigint,
+        ${userPublicId},
+        ${params.fullName ?? params.email},
+        ${params.countryCode}::char(2),
+        ${params.defaultCurrency}::char(3),
+        ${params.locale},
+        ${params.dataRegionCode}
+      )
     `
     const orgRow = orgRows[0]
-    if (!orgRow) throw new Error('failed to insert organization')
+    if (!orgRow) throw new Error('failed to create personal organization')
 
-    const orgId = BigInt(orgRow.id)
-    const orgPublicId = orgRow.public_id as string
-
-    // 5. Set app.org_id for tenant-scoped inserts
-    await tx`SELECT set_config('app.org_id', ${orgId.toString()}, true)`
-
-    // 6. Get system 'owner' role
-    const roleRows = await tx`
-      SELECT id FROM iam.roles WHERE key = 'owner' AND is_system = true AND organization_id IS NULL
-    `
-    const ownerRole = roleRows[0]
-    if (!ownerRole) throw new Error("system role 'owner' not found")
-
-    // 7. Create membership
-    await tx`
-      INSERT INTO iam.memberships (organization_id, user_id, role_id, status)
-      VALUES (${orgId.toString()}, ${userId.toString()}, ${ownerRole.id}, 'active')
-    `
-
-    // 8. Create default workspace
-    const wsRows = await tx`
-      INSERT INTO iam.workspaces (organization_id, name, slug, created_by_user_id)
-      VALUES (${orgId.toString()}, 'Default', 'default', ${userId.toString()})
-      RETURNING id
-    `
-    const wsRow = wsRows[0]
-    if (!wsRow) throw new Error('failed to insert workspace')
-
-    // 9. Create default environments (production + sandbox)
-    await tx`
-      INSERT INTO iam.environments (organization_id, workspace_id, key, name, kind, is_sandbox)
-      VALUES
-        (${orgId.toString()}, ${wsRow.id}, 'production', 'Production', 'production', false),
-        (${orgId.toString()}, ${wsRow.id}, 'sandbox', 'Sandbox', 'sandbox', true)
-    `
-
-    return { userId, userPublicId, orgId, orgPublicId }
+    return {
+      userId,
+      userPublicId,
+      orgId: BigInt(orgRow.org_id),
+      orgPublicId: orgRow.org_public_id as string,
+    }
   })
 }
 

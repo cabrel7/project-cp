@@ -21,6 +21,8 @@ const apiEnvSchema = z.object({
   SESSION_MAX_AGE_SECONDS: z.coerce.number().int().positive().default(86400),
   SESSION_REMEMBER_MAX_AGE_SECONDS: z.coerce.number().int().positive().default(604800),
 
+  TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).default(0),
+
   REDIS_URL: z.string().url().default('redis://localhost:6379'),
 
   OTEL_ENABLED: z

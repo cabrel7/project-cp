@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-vi.mock('../../env.js', () => ({
+vi.mock('../../../env.js', () => ({
   getEnv: () => ({
     APP_URL: 'https://app.example.com',
     SMTP_HOST: 'localhost',
@@ -11,6 +11,7 @@ vi.mock('../../env.js', () => ({
     SMTP_FROM: 'noreply@example.com',
     SESSION_MAX_AGE_SECONDS: 3600,
     SESSION_REMEMBER_MAX_AGE_SECONDS: 86400 * 30,
+    TRUSTED_PROXY_HOPS: 0,
     REDIS_URL: 'redis://localhost:6379',
   }),
   resetEnvCache: () => {},
@@ -60,27 +61,24 @@ describe.skipIf(!hasDb)('Auth integration (PostgreSQL réel)', () => {
     tokenMod = await import('../auth.token.js')
   })
 
+  async function asAdmin<T>(fn: (sql: typeof adminPool) => Promise<T>): Promise<T> {
+    return adminPool.begin(async (tx) => {
+      await tx`SET LOCAL ROLE app_admin`
+      return fn(tx as unknown as typeof adminPool)
+    })
+  }
+
   afterAll(async () => {
     const emails = [emailA, emailB]
-    await adminPool`DELETE FROM iam.user_sessions WHERE user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`.catch(
-      () => {},
-    )
-    await adminPool`DELETE FROM iam.verification_tokens WHERE user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`.catch(
-      () => {},
-    )
-    await adminPool`DELETE FROM iam.memberships WHERE user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`.catch(
-      () => {},
-    )
-    await adminPool`DELETE FROM iam.environments WHERE organization_id IN (SELECT id FROM iam.organizations WHERE created_by_user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails})))`.catch(
-      () => {},
-    )
-    await adminPool`DELETE FROM iam.workspaces WHERE organization_id IN (SELECT id FROM iam.organizations WHERE created_by_user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails})))`.catch(
-      () => {},
-    )
-    await adminPool`DELETE FROM iam.organizations WHERE created_by_user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`.catch(
-      () => {},
-    )
-    await adminPool`DELETE FROM iam.users WHERE email = ANY(${emails})`.catch(() => {})
+    await asAdmin(async (sql) => {
+      await sql`DELETE FROM iam.user_sessions WHERE user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`
+      await sql`DELETE FROM iam.verification_tokens WHERE user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`
+      await sql`DELETE FROM iam.memberships WHERE user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`
+      await sql`DELETE FROM iam.environments WHERE organization_id IN (SELECT id FROM iam.organizations WHERE created_by_user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails})))`
+      await sql`DELETE FROM iam.workspaces WHERE organization_id IN (SELECT id FROM iam.organizations WHERE created_by_user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails})))`
+      await sql`DELETE FROM iam.organizations WHERE created_by_user_id IN (SELECT id FROM iam.users WHERE email = ANY(${emails}))`
+      await sql`DELETE FROM iam.users WHERE email = ANY(${emails})`
+    }).catch(() => {})
   })
 
   it('register — crée un utilisateur et son organisation', async () => {
@@ -97,8 +95,10 @@ describe.skipIf(!hasDb)('Auth integration (PostgreSQL réel)', () => {
     expect(user?.status).toBe('pending')
     expect(user?.email).toBe(emailA)
 
-    const orgs =
-      await adminPool`SELECT slug FROM iam.organizations WHERE created_by_user_id = ${user?.id.toString()}`
+    const orgs = await asAdmin(
+      (sql) =>
+        sql`SELECT slug FROM iam.organizations WHERE created_by_user_id = ${String(user?.id)}`,
+    )
     expect(orgs).toHaveLength(1)
     expect(orgs[0]?.slug).toBe(`user-${user?.publicId}`)
   })
@@ -114,7 +114,7 @@ describe.skipIf(!hasDb)('Auth integration (PostgreSQL réel)', () => {
       }),
     ).resolves.toBeUndefined()
 
-    const users = await adminPool`SELECT id FROM iam.users WHERE email = ${emailA}`
+    const users = await asAdmin((sql) => sql`SELECT id FROM iam.users WHERE email = ${emailA}`)
     expect(users).toHaveLength(1)
   })
 
@@ -165,12 +165,17 @@ describe.skipIf(!hasDb)('Auth integration (PostgreSQL réel)', () => {
 
   it('verify-email — consomme le jeton et passe le statut à active', async () => {
     const user = await repo.findUserByEmail(emailA)
+    expect(user).not.toBeNull()
     expect(user?.status).toBe('pending')
 
+    const userId = String(user?.id)
     const rawToken = `verify-${suffix}`
     const hash = tokenMod.hashToken(rawToken)
     const hexHash = Buffer.from(hash).toString('hex')
-    await adminPool`INSERT INTO iam.verification_tokens (user_id, purpose, target, token_hash, expires_at) VALUES (${user?.id.toString()}, 'verify_email', ${emailA}, decode(${hexHash}, 'hex'), now() + interval '1 hour')`
+    await asAdmin(
+      (sql) =>
+        sql`INSERT INTO iam.verification_tokens (user_id, purpose, target, token_hash, expires_at) VALUES (${userId}, 'verify_email', ${emailA}, decode(${hexHash}, 'hex'), now() + interval '1 hour')`,
+    )
 
     await service.verifyEmail(rawToken)
 
@@ -186,10 +191,15 @@ describe.skipIf(!hasDb)('Auth integration (PostgreSQL réel)', () => {
 
   it('verify-email — jeton expiré : erreur', async () => {
     const user = await repo.findUserByEmail(emailA)
+    expect(user).not.toBeNull()
+    const userId = String(user?.id)
     const rawToken = `verify-expired-${suffix}`
     const hash = tokenMod.hashToken(rawToken)
     const hexHash = Buffer.from(hash).toString('hex')
-    await adminPool`INSERT INTO iam.verification_tokens (user_id, purpose, target, token_hash, expires_at) VALUES (${user?.id.toString()}, 'verify_email', ${emailA}, decode(${hexHash}, 'hex'), now() - interval '1 minute')`
+    await asAdmin(
+      (sql) =>
+        sql`INSERT INTO iam.verification_tokens (user_id, purpose, target, token_hash, expires_at) VALUES (${userId}, 'verify_email', ${emailA}, decode(${hexHash}, 'hex'), now() - interval '1 minute')`,
+    )
 
     await expect(service.verifyEmail(rawToken)).rejects.toThrow('AUTH_VERIFICATION_TOKEN_INVALID')
   })
@@ -208,7 +218,10 @@ describe.skipIf(!hasDb)('Auth integration (PostgreSQL réel)', () => {
     const rawToken = `reset-${suffix}`
     const hash = tokenMod.hashToken(rawToken)
     const hexHash = Buffer.from(hash).toString('hex')
-    await adminPool`INSERT INTO iam.verification_tokens (user_id, purpose, target, token_hash, expires_at) VALUES (${user?.id.toString()}, 'reset_password', ${emailA}, decode(${hexHash}, 'hex'), now() + interval '30 minutes')`
+    await asAdmin(
+      (sql) =>
+        sql`INSERT INTO iam.verification_tokens (user_id, purpose, target, token_hash, expires_at) VALUES (${String(user?.id)}, 'reset_password', ${emailA}, decode(${hexHash}, 'hex'), now() + interval '30 minutes')`,
+    )
 
     const newPassword = 'NewStr0ngP@ss!'
     await service.resetPassword({ token: rawToken, password: newPassword })
