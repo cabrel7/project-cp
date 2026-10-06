@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@cp/ui": "workspace:*",
+    "@playwright/test": "catalog:",
     "nuxt": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",

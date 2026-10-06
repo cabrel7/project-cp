@@ -7,6 +7,7 @@ import { createLogger } from './logger.js'
 import { notFound, onError } from './middlewares/error-handler.js'
 import { loggerMiddleware } from './middlewares/logger.js'
 import { requestId } from './middlewares/request-id.js'
+import { authRoutes } from './modules/auth/auth.routes.js'
 
 export function createApp() {
   const env = getEnv()
@@ -33,6 +34,8 @@ export function createApp() {
       environment: env.NODE_ENV,
     })
   })
+
+  app.route('/v1/auth', authRoutes)
 
   app.doc31('/openapi.json', {
     openapi: '3.1.0',

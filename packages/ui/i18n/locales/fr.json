@@ -254,6 +254,95 @@
       "listView": "Vue liste",
       "allow": "Autoriser",
       "deny": "Refuser"
+    },
+    "auth": {
+      "login": {
+        "title": "Se connecter",
+        "subtitle": "Pas encore de compte ?",
+        "createAccount": "Créer un compte",
+        "email": "Adresse e-mail",
+        "password": "Mot de passe",
+        "forgotPassword": "Mot de passe oublié ?",
+        "rememberMe": "Rester connecté sur cet appareil",
+        "submit": "Se connecter",
+        "or": "ou",
+        "passkey": "Utiliser une clé d'accès",
+        "legal": "En continuant, vous acceptez les {terms} et la {privacy}.",
+        "terms": "conditions d'utilisation",
+        "privacy": "politique de confidentialité",
+        "tabEmail": "E-mail",
+        "tabPhone": "Téléphone",
+        "invalidCredentials": "Identifiants invalides. Vérifiez votre e-mail et votre mot de passe.",
+        "tagline": "Toute l'IA dont votre activité a besoin, au même endroit.",
+        "taglineSub": "Intégrez l'IA dans vos applications, reliez vos outils et lancez des agents qui travaillent pour vous."
+      },
+      "register": {
+        "title": "Créer un compte",
+        "subtitle": "Déjà inscrit ?",
+        "signIn": "Se connecter",
+        "fullName": "Nom complet",
+        "email": "Adresse e-mail",
+        "password": "Mot de passe",
+        "terms": "J'accepte les {terms} et la {privacy}.",
+        "termsLink": "conditions d'utilisation",
+        "privacyLink": "politique de confidentialité",
+        "submit": "Créer mon compte",
+        "orWith": "ou s'inscrire avec",
+        "emailExists": "Cette adresse e-mail est déjà utilisée.",
+        "passwordWeak": "Le mot de passe est trop faible.",
+        "sent": "Vérifiez votre e-mail",
+        "sentDetail": "Si un compte n'existait pas déjà pour cette adresse, nous vous avons envoyé un e-mail de vérification. Pensez à regarder dans les indésirables.",
+        "goToLogin": "Se connecter",
+        "tagline": "Votre compte est prêt en deux minutes.",
+        "taglineSub": "Offre gratuite pour essayer, sans carte bancaire. Un assistant vous guide ensuite pas à pas."
+      },
+      "forgot": {
+        "title": "Mot de passe oublié",
+        "description": "Indiquez l'e-mail de votre compte. Nous envoyons un lien pour en choisir un nouveau.",
+        "email": "E-mail",
+        "submit": "Envoyer le lien",
+        "back": "Retour à la connexion",
+        "sent": "Lien envoyé",
+        "sentDetail": "Si un compte existe pour cette adresse, vous recevrez un e-mail dans quelques minutes. Pensez à regarder dans les indésirables.",
+        "resend": "Renvoyer le lien",
+        "openMail": "Ouvrir ma messagerie"
+      },
+      "reset": {
+        "title": "Choisissez un nouveau mot de passe",
+        "forAccount": "Pour le compte",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmez le mot de passe",
+        "revokeSessions": "Déconnecter mes autres appareils",
+        "submit": "Enregistrer",
+        "invalidToken": "Ce lien a expiré ou est invalide.",
+        "success": "Mot de passe modifié avec succès.",
+        "passwordMismatch": "Les mots de passe ne correspondent pas.",
+        "requestNewLink": "Demander un nouveau lien"
+      },
+      "verify": {
+        "title": "Vérification de l'e-mail",
+        "loading": "Vérification en cours…",
+        "success": "Votre adresse e-mail a été vérifiée.",
+        "error": "Ce lien de vérification est invalide ou a expiré.",
+        "goToLogin": "Aller à la connexion"
+      },
+      "password": {
+        "show": "Afficher",
+        "hide": "Masquer",
+        "weak": "Faible",
+        "medium": "Moyen",
+        "strong": "Solide",
+        "veryStrong": "Très solide",
+        "minChars": "{n} caractères minimum"
+      },
+      "language": "Langue",
+      "errorTitle": "Une erreur est survenue",
+      "genericError": "Une erreur est survenue. Réessayez dans un instant.",
+      "rateLimited": "Trop de tentatives. Patientez quelques minutes avant de réessayer.",
+      "accountSuspended": "Ce compte est suspendu. Contactez le support.",
+      "signupClosed": "Les inscriptions sont fermées pour le moment.",
+      "termsRequired": "Acceptez les conditions pour continuer.",
+      "comingSoon": "Bientôt disponible"
     }
   }
 }

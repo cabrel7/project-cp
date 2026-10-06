@@ -1,5 +1,5 @@
 # STATE — project-cp
-Updated: 2026-10-05 | Session: fin P1 — passage dev → main
+Updated: 2026-10-06 | Session: P2.1 auth e-mail
 
 ## ✅ Done
 - Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D57, UI/UX).
@@ -33,11 +33,11 @@ Updated: 2026-10-05 | Session: fin P1 — passage dev → main
 - **Revue 05/10** : PR #10 (5 BLOQUANTS + 5 MAJEURS corrigés : partitions Drizzle, BYPASSRLS, `@cp/db/admin`, `withOrgContext`, RLS en CI, pagination, erreurs, SidebarNav NuxtLink + `locked`, ApprovalCard secondary, Chart reduced-motion) ; PR #11 (D27, D53-D57) ; PR #12 fidélité UI (`<UApp :locale>`, mode Simple/Technique fourni à la racine des apps, nav client/admin via `useClientNav`/`useAdminNav`, densité nav 32 px desktop, G3 plein écran, planche `docs/review/fidelite-1.png` validée par Dylan le 2026-10-05).
 
 ## 🔄 Active
-- Passage `dev` → `main` (fin P0 + P1), puis recréer `dev` depuis `main`.
+- **P2.1 — Auth e-mail + mot de passe** : branche `p2/01-auth-email`, PR #15 → `dev`. Backend (11 routes, service, repository, middlewares, 113 tests + 10 intégration PG), frontend (5 pages auth, composables, i18n FR/EN, layout split-panel), migration 0002 (7 codes AUTH), security fixes (reviewer C1 + M1-M8 corrigés), UX fixes (autocomplete, a11y), E2E 148 tests (4 projets). CI verte. En attente de revue / merge.
 
 ## 📋 Queue
 7. **P1 — Design system en code** ✅ (P1.0 à P1.5 + revue fidélité). Écarts mineurs restants en Known issues.
-8. **P2 — Identité** : à lancer **après validation de Dylan** (lots et critères dans 08).
+8. **P2.2+** : téléphone + OTP, Google/Apple, 2FA TOTP, clés d'accès WebAuthn, clés d'API.
 9. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
@@ -54,7 +54,8 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 - P1.5 — MINOR restants (non bloquants) : couverture catalogue partielle (7/15 sections testées visuellement) ; a11y axe-core seulement desktop-light (4 projets à couvrir) ; launchOptions dupliqué dans config (projects + use global) ; 2 captures potentiellement instables (g7-editor desktop-dark, g8-auth mobile-light — contenu minimal). Règle guard suggérée : E2E doivent utiliser `gotoHydrated`, jamais `networkidle` ni `waitForTimeout`.
 - Fidélité UI (revue PR #12, MINEUR) : logo en tuile couleur ; badge « À valider » (couleur chaude, `pendingApprovals` dans la fixture) ; recherche en champ dans la barre du haut ; carte organisation/profil surélevée ; G3 « Brouillon enregistré » + barre d'actions collante desktop + alignement ; graphiques G4 ; test e2e du badge « Systèmes connectés » à rétablir.
 - CI : dérive Drizzle intermittente **corrigée** (2026-10-06) — `drizzle-kit pull` sortait les politiques RLS dans un ordre variable (et `using` sur la première seulement) ; `post-pull.sh` les retire (`strip-policies.mjs`) : la RLS est dans le SQL et couverte par les tests. Sortie identique vérifiée sur 2 bases neuves.
-- `bytea` typé `text` dans le schéma Drizzle : à corriger avant P2 (fichiers, secrets).
+- `bytea` typé `text` dans le schéma Drizzle : **corrigé** (commit 4701cb3, customType bytea + tests).
+- P2.1 — Auth e-mail (MINOR restants, non bloquants) : Proxy Nuxt `/v1/**` codé en dur sur `localhost:4000` — à dériver d'un env typé pour la production. Illustration login en `div` absolus (loin de la maquette 10 — SVG courbes) ; maquette 08 affiche l'e-mail masqué du compte, non implémenté (nécessite endpoint API). UX MAJOR restants : boutons submit disabled sans explication, password strength aide persistante manquante (12 vs 8 car), gabarit centré dupliqué (factoriser CpLayoutAuthCentered), cibles tactiles toggle mot de passe < 44px. MINOR corrigés (revue PR #15) : C1 slug org `user-{publicId}` + contrainte email spécifique, M1/M5 `getClientIp` partagé + rate limit Redis dual (IP 30/60s + email-hash 5/300s) avec fallback mémoire, M2 register non-discriminant (200 toujours), M3 `markEmailVerified` vérifie `status='pending'`, M4 `resetPasswordTx` transactionnel (consomme token + invalide fratrie + change mdp + révoque sessions), M6 10 tests intégration PG réel, M7 liens `/auth/verify-email` et `/auth/reset-password`, M8 8 screenshots régénérés.
 - Override Biome `.vue` (noUnused désactivé) sans décision : à restreindre ou documenter.
 - Codes d'erreur : incohérences doc 02 à trancher (402 BILLING, IDEMPOTENCY 409 vs 422, VALIDATION_ERROR vs _FAILED).
 - Nom définitif du produit non choisi (`brand.name` en paramètre).

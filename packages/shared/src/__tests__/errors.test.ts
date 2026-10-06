@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, expectTypeOf, it } from 'vitest'
@@ -28,12 +28,12 @@ const ALL_CODES = Object.keys(ERROR_CODES) as ErrorCode[]
 const ALL_DEFS = Object.values(ERROR_CODES) as ErrorCodeDef[]
 
 describe('ERROR_CODES', () => {
-  it('doit contenir exactement 62 codes (57 initiaux + 5 garde-fous)', () => {
-    expect(ALL_CODES).toHaveLength(62)
+  it('doit contenir exactement 69 codes (57 initiaux + 5 garde-fous + 7 auth P2.1)', () => {
+    expect(ALL_CODES).toHaveLength(69)
   })
 
   it('doit avoir des codes tous distincts', () => {
-    expect(new Set(ALL_DEFS.map((d) => d.code)).size).toBe(62)
+    expect(new Set(ALL_DEFS.map((d) => d.code)).size).toBe(69)
   })
 
   it.each(ALL_CODES)('doit faire correspondre la clé %s à sa propriété .code', (key) => {
@@ -210,7 +210,7 @@ describe('isRetryable', () => {
     expect(isRetryable(code)).toBe(false)
   })
 
-  it('doit être cohérent avec la définition pour les 62 codes', () => {
+  it('doit être cohérent avec la définition pour les 69 codes', () => {
     for (const code of ALL_CODES) {
       expect(isRetryable(code)).toBe(ERROR_CODES[code].isRetryable)
     }
@@ -226,6 +226,7 @@ describe('synchronisation ERROR_CODES ↔ seeds SQL platform.error_codes', () =>
   const repoRoot = path.resolve(here, '../../../..')
   const seed950 = path.join(repoRoot, 'db/schema-v1.2/950_seed_reference.sql')
   const seed960 = path.join(repoRoot, 'db/schema-v1.2/960_seed_ai_system.sql')
+  const migrationDir = path.join(repoRoot, 'db/migrations')
 
   interface SqlRow {
     code: string
@@ -286,9 +287,34 @@ describe('synchronisation ERROR_CODES ↔ seeds SQL platform.error_codes', () =>
     return rows
   }
 
+  function parseMigrations(dir: string): SqlRow[] {
+    const rows: SqlRow[] = []
+    for (const file of readdirSync(dir).sort()) {
+      if (!file.endsWith('.sql') || file.includes('baseline')) continue
+      const content = readFileSync(path.join(dir, file), 'utf8')
+      if (!content.includes('INSERT INTO platform.error_codes')) continue
+      for (const line of content.split(/\r?\n/)) {
+        const m = line.match(
+          /^\s*\('([A-Z][A-Z0-9_]+)'\s*,\s*(\d+)\s*,.*,\s*(true|false)\s*,\s*(true|false)\s*\)\s*,?\s*$/,
+        )
+        if (!m) continue
+        const [, code, status, rt, rf] = m as unknown as [string, string, string, string, string]
+        rows.push({
+          code,
+          category: code.split('_')[0] as string,
+          httpStatus: Number(status),
+          isRetryable: rt === 'true',
+          refundsCredits: rf === 'true',
+        })
+      }
+    }
+    return rows
+  }
+
   const rows950 = parse950(readFileSync(seed950, 'utf8'))
   const rows960 = parse960(readFileSync(seed960, 'utf8'))
-  const sqlRows = [...rows950, ...rows960]
+  const rowsMigrations = parseMigrations(migrationDir)
+  const sqlRows = [...rows950, ...rows960, ...rowsMigrations]
 
   it('doit extraire les 57 codes du seed 950 et les 5 codes du seed 960 (garde du parseur)', () => {
     expect(rows950).toHaveLength(57)

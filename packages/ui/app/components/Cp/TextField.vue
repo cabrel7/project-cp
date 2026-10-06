@@ -12,6 +12,8 @@ withDefaults(
     placeholder?: string
     disabled?: boolean
     required?: boolean
+    autocomplete?: string
+    inputmode?: 'text' | 'email' | 'tel' | 'numeric' | 'search' | 'url' | 'none'
   }>(),
   { type: 'text' },
 )
@@ -30,6 +32,8 @@ withDefaults(
       :placeholder="placeholder"
       :disabled="disabled"
       :required="required"
+      :autocomplete="autocomplete"
+      :inputmode="inputmode"
       class="w-full"
     />
     <template v-if="error" #error>

@@ -1,6 +1,7 @@
 // @ts-nocheck — generated circular FK refs
 import { pgTable, pgSchema, unique, check, bigint, text, jsonb, boolean, timestamp, uuid, cidr, index, foreignKey, inet, integer, char, smallint, uniqueIndex, numeric, date, type AnyPgColumn, vector, primaryKey } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
+import { bytea, citext, tstzrange } from './custom-types.js'
 
 export const ref = pgSchema("ref");
 export const iam = pgSchema("iam");
@@ -58,8 +59,8 @@ export const staffPermissionsInPlatform = platform.table("staff_permissions", {
 export const staffUsersInPlatform = platform.table("staff_users", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "platform.staff_users_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	email: text("email").notNull(),
+	// customType: citext
+	email: citext("email").notNull(),
 	fullName: text("full_name").notNull(),
 	passwordHash: text("password_hash").notNull(),
 	mfaSecretRef: text("mfa_secret_ref"),
@@ -78,8 +79,8 @@ export const staffUsersInPlatform = platform.table("staff_users", {
 export const staffSessionsInPlatform = platform.table("staff_sessions", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "platform.staff_sessions_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	staffUserId: bigint("staff_user_id", { mode: "bigint" }).notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	tokenHash: text("token_hash").notNull(),
+	// customType: bytea
+	tokenHash: bytea("token_hash").notNull(),
 	ip: inet().notNull(),
 	userAgent: text("user_agent"),
 	mfaPassedAt: timestamp("mfa_passed_at", { withTimezone: true, mode: 'string' }).notNull(),
@@ -103,8 +104,8 @@ export const staffApiKeysInPlatform = platform.table("staff_api_keys", {
 	staffUserId: bigint("staff_user_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
 	prefix: text().notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	keyHash: text("key_hash").notNull(),
+	// customType: bytea
+	keyHash: bytea("key_hash").notNull(),
 	scopes: text().array().notNull(),
 	allowedIps: cidr("allowed_ips").array(),
 	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
@@ -362,8 +363,8 @@ export const taxRatesInRef = ref.table("tax_rates", {
 	appliesTo: text("applies_to").default('all').notNull(),
 	name: jsonb().notNull(),
 	rate: numeric({ precision: 7, scale:  4 }).notNull(),
-	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
-	effectiveDuring: text("effective_during").notNull(),
+	// customType: tstzrange
+	effectiveDuring: tstzrange("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -384,8 +385,8 @@ export const userIdentitiesInIam = iam.table("user_identities", {
 	userId: bigint("user_id", { mode: "bigint" }).notNull(),
 	provider: text().notNull(),
 	providerUserId: text("provider_user_id").notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	email: text("email"),
+	// customType: citext
+	email: citext("email"),
 	profile: jsonb().default({}).notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	lastUsedAt: timestamp("last_used_at", { withTimezone: true, mode: 'string' }),
@@ -426,8 +427,8 @@ export const verificationTokensInIam = iam.table("verification_tokens", {
 	userId: bigint("user_id", { mode: "bigint" }),
 	purpose: text().notNull(),
 	target: text().notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	tokenHash: text("token_hash").notNull(),
+	// customType: bytea
+	tokenHash: bytea("token_hash").notNull(),
 	attempts: smallint().default(0).notNull(),
 	maxAttempts: smallint("max_attempts").default(5).notNull(),
 	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
@@ -480,8 +481,8 @@ export const referralsInBilling = billing.table("referrals", {
 	referrerOrgId: bigint("referrer_org_id", { mode: "bigint" }).notNull(),
 	referrerUserId: bigint("referrer_user_id", { mode: "bigint" }),
 	referredOrgId: bigint("referred_org_id", { mode: "bigint" }),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	code: text("code").notNull(),
+	// customType: citext
+	code: citext("code").notNull(),
 	status: text().default('pending').notNull(),
 	qualifiedAt: timestamp("qualified_at", { withTimezone: true, mode: 'string' }),
 	rewardGrantId: bigint("reward_grant_id", { mode: "bigint" }),
@@ -678,8 +679,8 @@ export const planPricesInBilling = billing.table("plan_prices", {
 	includedLlmCreditsMicro: bigint("included_llm_credits_micro", { mode: "bigint" }).default(0).notNull(),
 	includedInfraCreditsMicro: bigint("included_infra_credits_micro", { mode: "bigint" }).default(0).notNull(),
 	llmCoefficient: numeric("llm_coefficient", { precision: 6, scale:  4 }).notNull(),
-	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
-	effectiveDuring: text("effective_during").notNull(),
+	// customType: tstzrange
+	effectiveDuring: tstzrange("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	index("plan_prices_currency_idx").using("btree", table.currency.asc().nullsLast().op("bpchar_ops")),
@@ -743,8 +744,8 @@ export const creditPackPricesInBilling = billing.table("credit_pack_prices", {
 	packId: bigint("pack_id", { mode: "bigint" }).notNull(),
 	currency: char({ length: 3 }).notNull(),
 	amountMinor: bigint("amount_minor", { mode: "bigint" }).notNull(),
-	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
-	effectiveDuring: text("effective_during").notNull(),
+	// customType: tstzrange
+	effectiveDuring: tstzrange("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	index("credit_pack_prices_currency_idx").using("btree", table.currency.asc().nullsLast().op("bpchar_ops")),
@@ -781,8 +782,8 @@ export const infraMeterRatesInBilling = billing.table("infra_meter_rates", {
 	planId: bigint("plan_id", { mode: "bigint" }),
 	creditsMicroPerUnit: bigint("credits_micro_per_unit", { mode: "bigint" }).notNull(),
 	includedUnitsPerPeriod: bigint("included_units_per_period", { mode: "bigint" }).default(0).notNull(),
-	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
-	effectiveDuring: text("effective_during").notNull(),
+	// customType: tstzrange
+	effectiveDuring: tstzrange("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	index("infra_meter_rates_plan_idx").using("btree", table.planId.asc().nullsLast().op("int8_ops")),
@@ -920,8 +921,8 @@ export const modelPricesInAi = ai.table("model_prices", {
 	unit: text().notNull(),
 	unitPriceUsd: numeric("unit_price_usd", { precision: 24, scale:  14 }).notNull(),
 	tierCondition: jsonb("tier_condition"),
-	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
-	effectiveDuring: text("effective_during").notNull(),
+	// customType: tstzrange
+	effectiveDuring: tstzrange("effective_during").notNull(),
 	source: text().default('manual').notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -1046,8 +1047,8 @@ export const subprocessorsInCompliance = compliance.table("subprocessors", {
 export const couponsInBilling = billing.table("coupons", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "billing.coupons_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	code: text("code").notNull(),
+	// customType: citext
+	code: citext("code").notNull(),
 	kind: text().notNull(),
 	value: numeric({ precision: 18, scale:  4 }).notNull(),
 	currency: char({ length: 3 }),
@@ -1575,8 +1576,8 @@ export const userSessionsInIam = iam.table("user_sessions", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.user_sessions_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	userId: bigint("user_id", { mode: "bigint" }).notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	tokenHash: text("token_hash").notNull(),
+	// customType: bytea
+	tokenHash: bytea("token_hash").notNull(),
 	ip: inet(),
 	userAgent: text("user_agent"),
 	deviceLabel: text("device_label"),
@@ -1601,8 +1602,8 @@ export const oauthClientsInIam = iam.table("oauth_clients", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.oauth_clients_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	clientId: text("client_id").notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	clientSecretHash: text("client_secret_hash"),
+	// customType: bytea
+	clientSecretHash: bytea("client_secret_hash"),
 	name: text().notNull(),
 	logoUri: text("logo_uri"),
 	redirectUris: text("redirect_uris").array().notNull(),
@@ -1628,8 +1629,8 @@ export const oauthClientsInIam = iam.table("oauth_clients", {
 export const usersInIam = iam.table("users", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.users_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	email: text("email"),
+	// customType: citext
+	email: citext("email"),
 	emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true, mode: 'string' }),
 	phoneE164: text("phone_e164"),
 	phoneVerifiedAt: timestamp("phone_verified_at", { withTimezone: true, mode: 'string' }),
@@ -1891,11 +1892,11 @@ export const invitationsInIam = iam.table("invitations", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.invitations_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	email: text("email").notNull(),
+	// customType: citext
+	email: citext("email").notNull(),
 	roleId: bigint("role_id", { mode: "bigint" }).notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	tokenHash: text("token_hash").notNull(),
+	// customType: bytea
+	tokenHash: bytea("token_hash").notNull(),
 	invitedByUserId: bigint("invited_by_user_id", { mode: "bigint" }),
 	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
 	acceptedAt: timestamp("accepted_at", { withTimezone: true, mode: 'string' }),
@@ -1950,8 +1951,8 @@ export const workspacesInIam = iam.table("workspaces", {
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	slug: text("slug").notNull(),
+	// customType: citext
+	slug: citext("slug").notNull(),
 	description: text(),
 	dataRegionId: bigint("data_region_id", { mode: "bigint" }),
 	status: text().default('active').notNull(),
@@ -2027,8 +2028,8 @@ export const projectsInIam = iam.table("projects", {
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	workspaceId: bigint("workspace_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	slug: text("slug").notNull(),
+	// customType: citext
+	slug: citext("slug").notNull(),
 	description: text(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -2058,8 +2059,8 @@ export const filesInStorage = storage.table("files", {
 	filename: text().notNull(),
 	mimeType: text("mime_type").notNull(),
 	sizeBytes: bigint("size_bytes", { mode: "bigint" }).notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	checksumSha256: text("checksum_sha256"),
+	// customType: bytea
+	checksumSha256: bytea("checksum_sha256"),
 	dataRegionId: bigint("data_region_id", { mode: "bigint" }).notNull(),
 	scanStatus: text("scan_status").default('pending').notNull(),
 	uploadedByUserId: bigint("uploaded_by_user_id", { mode: "bigint" }),
@@ -2955,8 +2956,8 @@ export const bridgesInMcp = mcp.table("bridges", {
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	workspaceId: bigint("workspace_id", { mode: "bigint" }).notNull(),
 	name: text().notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	tokenHash: text("token_hash").notNull(),
+	// customType: bytea
+	tokenHash: bytea("token_hash").notNull(),
 	publicKey: text("public_key"),
 	agentVersion: text("agent_version"),
 	hostInfo: jsonb("host_info").default({}).notNull(),
@@ -3103,8 +3104,8 @@ export const connectorSourcesInMcp = mcp.table("connector_sources", {
 	sourceType: text("source_type").notNull(),
 	fileId: bigint("file_id", { mode: "bigint" }),
 	content: jsonb(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	contentHash: text("content_hash"),
+	// customType: bytea
+	contentHash: bytea("content_hash"),
 	analysis: jsonb().default({}).notNull(),
 	fetchedAt: timestamp("fetched_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -3194,8 +3195,8 @@ export const serversInMcp = mcp.table("servers", {
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	workspaceId: bigint("workspace_id", { mode: "bigint" }).notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	slug: text("slug").notNull(),
+	// customType: citext
+	slug: citext("slug").notNull(),
 	name: text().notNull(),
 	description: text(),
 	instructions: text(),
@@ -3256,8 +3257,8 @@ export const serverVersionsInMcp = mcp.table("server_versions", {
 	semver: text().notNull(),
 	status: text().default('validating').notNull(),
 	configSnapshot: jsonb("config_snapshot").notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	snapshotHash: text("snapshot_hash").notNull(),
+	// customType: bytea
+	snapshotHash: bytea("snapshot_hash").notNull(),
 	validationReport: jsonb("validation_report").default({}).notNull(),
 	changelog: text(),
 	publishedByUserId: bigint("published_by_user_id", { mode: "bigint" }),
@@ -3343,8 +3344,8 @@ export const toolEmbeddingsInMcp = mcp.table("tool_embeddings", {
 	serverId: bigint("server_id", { mode: "bigint" }).notNull(),
 	embeddingModel: text("embedding_model").notNull(),
 	embedding: vector({ dimensions: 1536 }).notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	contentHash: text("content_hash").notNull(),
+	// customType: bytea
+	contentHash: bytea("content_hash").notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	index("tool_embeddings_hnsw").using("hnsw", table.embedding.asc().nullsLast().op("vector_cosine_ops")),
@@ -3419,8 +3420,8 @@ export const accessTokensInMcp = mcp.table("access_tokens", {
 	environmentId: bigint("environment_id", { mode: "bigint" }),
 	name: text().notNull(),
 	prefix: text().notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	tokenHash: text("token_hash").notNull(),
+	// customType: bytea
+	tokenHash: bytea("token_hash").notNull(),
 	scopeMode: text("scope_mode").default('read_only').notNull(),
 	rateLimit: jsonb("rate_limit").default({}).notNull(),
 	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }),
@@ -3530,8 +3531,8 @@ export const oauthConsentsInIam = iam.table("oauth_consents", {
 
 export const oauthAuthorizationCodesInIam = iam.table("oauth_authorization_codes", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.oauth_authorization_codes_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	codeHash: text("code_hash").notNull(),
+	// customType: bytea
+	codeHash: bytea("code_hash").notNull(),
 	clientId: bigint("client_id", { mode: "bigint" }).notNull(),
 	userId: bigint("user_id", { mode: "bigint" }).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
@@ -3576,8 +3577,8 @@ export const oauthAuthorizationCodesInIam = iam.table("oauth_authorization_codes
 
 export const oauthTokensInIam = iam.table("oauth_tokens", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.oauth_tokens_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	tokenHash: text("token_hash").notNull(),
+	// customType: bytea
+	tokenHash: bytea("token_hash").notNull(),
 	tokenType: text("token_type").notNull(),
 	familyId: uuid("family_id").notNull(),
 	parentTokenId: bigint("parent_token_id", { mode: "bigint" }),
@@ -4039,8 +4040,8 @@ export const apiKeysInDev = dev.table("api_keys", {
 	projectId: bigint("project_id", { mode: "bigint" }),
 	name: text().notNull(),
 	prefix: text().notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	keyHash: text("key_hash").notNull(),
+	// customType: bytea
+	keyHash: bytea("key_hash").notNull(),
 	scopes: text().array().default(["run", "mcp.call"]).notNull(),
 	allowedIps: cidr("allowed_ips").array(),
 	allowedOrigins: text("allowed_origins").array(),
@@ -4231,8 +4232,8 @@ export const idempotencyKeysInDev = dev.table("idempotency_keys", {
 	key: text().notNull(),
 	requestMethod: text("request_method").notNull(),
 	requestPath: text("request_path").notNull(),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	requestHash: text("request_hash").notNull(),
+	// customType: bytea
+	requestHash: bytea("request_hash").notNull(),
 	responseStatus: smallint("response_status"),
 	responseBody: jsonb("response_body"),
 	lockedUntil: timestamp("locked_until", { withTimezone: true, mode: 'string' }),
@@ -4256,8 +4257,8 @@ export const idempotencyKeysInDev = dev.table("idempotency_keys", {
 
 export const deviceAuthorizationsInDev = dev.table("device_authorizations", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "dev.device_authorizations_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
-	// customType: bytea (mapped to text; cast to Buffer at app layer)
-	deviceCodeHash: text("device_code_hash").notNull(),
+	// customType: bytea
+	deviceCodeHash: bytea("device_code_hash").notNull(),
 	userCode: text("user_code").notNull(),
 	clientName: text("client_name").default('cli').notNull(),
 	userId: bigint("user_id", { mode: "bigint" }),
@@ -4320,8 +4321,8 @@ export const publishersInMarket = market.table("publishers", {
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	displayName: text("display_name").notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	slug: text("slug").notNull(),
+	// customType: citext
+	slug: citext("slug").notNull(),
 	bio: jsonb(),
 	website: text(),
 	logoFileId: bigint("logo_file_id", { mode: "bigint" }),
@@ -4371,8 +4372,8 @@ export const listingsInMarket = market.table("listings", {
 	organizationId: bigint("organization_id", { mode: "bigint" }).notNull(),
 	type: text().notNull(),
 	deliveryMode: text("delivery_mode").default('sealed').notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	slug: text("slug").notNull(),
+	// customType: citext
+	slug: citext("slug").notNull(),
 	name: jsonb().notNull(),
 	summary: jsonb().notNull(),
 	description: jsonb(),
@@ -4599,8 +4600,8 @@ export const dataSubjectRequestsInCompliance = compliance.table("data_subject_re
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	userId: bigint("user_id", { mode: "bigint" }),
 	organizationId: bigint("organization_id", { mode: "bigint" }),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	requesterEmail: text("requester_email").notNull(),
+	// customType: citext
+	requesterEmail: citext("requester_email").notNull(),
 	kind: text().notNull(),
 	status: text().default('received').notNull(),
 	dueAt: timestamp("due_at", { withTimezone: true, mode: 'string' }).notNull(),
@@ -4737,13 +4738,13 @@ export const organizationsInIam = iam.table("organizations", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.organizations_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
 	name: text().notNull(),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	slug: text("slug").notNull(),
+	// customType: citext
+	slug: citext("slug").notNull(),
 	kind: text().default('company').notNull(),
 	legalName: text("legal_name"),
 	taxId: text("tax_id"),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	billingEmail: text("billing_email"),
+	// customType: citext
+	billingEmail: citext("billing_email"),
 	billingAddress: jsonb("billing_address"),
 	countryCode: char("country_code", { length: 2 }).notNull(),
 	defaultCurrency: char("default_currency", { length: 3 }).notNull(),
@@ -4848,8 +4849,8 @@ export const listingPricesInMarket = market.table("listing_prices", {
 	currency: char({ length: 3 }).notNull(),
 	amountMinor: bigint("amount_minor", { mode: "bigint" }),
 	usagePct: numeric("usage_pct", { precision: 5, scale:  4 }),
-	// customType: tstzrange (mapped to text; parse as [start, end] at app layer)
-	effectiveDuring: text("effective_during").notNull(),
+	// customType: tstzrange
+	effectiveDuring: tstzrange("effective_during").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	index("listing_prices_currency_idx").using("btree", table.currency.asc().nullsLast().op("bpchar_ops")),
@@ -5162,8 +5163,8 @@ export const supportTicketsInPlatform = platform.table("support_tickets", {
 	number: bigint({ mode: "bigint" }).default(sql`nextval('platform.support_ticket_number_seq'::regclass)`).notNull(),
 	organizationId: bigint("organization_id", { mode: "bigint" }),
 	userId: bigint("user_id", { mode: "bigint" }),
-	// customType: citext (mapped to text; case-insensitive at DB layer)
-	contactEmail: text("contact_email"),
+	// customType: citext
+	contactEmail: citext("contact_email"),
 	subject: text().notNull(),
 	category: text().notNull(),
 	priority: text().default('normal').notNull(),
