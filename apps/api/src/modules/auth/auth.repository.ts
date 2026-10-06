@@ -1,4 +1,4 @@
-import { getDbAuth, getDbRw, getPoolRw } from '@cp/db'
+import { getDbAuth, getDbRw, getPoolAuth, getPoolRw } from '@cp/db'
 import { userSessionsInIam, usersInIam, verificationTokensInIam } from '@cp/db/schema'
 import { and, desc, eq, isNull, sql } from 'drizzle-orm'
 
@@ -76,6 +76,72 @@ export type SignupResult = {
   orgPublicId: string
 }
 
+/** Transaction `app_rw` ouverte par `pool.begin` (les variantes `…Tx` ne s'exécutent jamais hors transaction). */
+export type SqlLike = Parameters<Parameters<ReturnType<typeof getPoolRw>['begin']>[1]>[0]
+
+/**
+ * Crée l'utilisateur ET son organisation personnelle dans la transaction fournie (tout ou rien).
+ * Sert l'inscription e-mail (P2.1 : e-mail + mot de passe, statut `pending`) et l'inscription par
+ * téléphone (P2.2 : ni e-mail ni mot de passe, numéro déjà vérifié, statut `active`).
+ */
+export async function createUserWithOrgTx(
+  tx: SqlLike,
+  params: {
+    email: string | null
+    passwordHash: string | null
+    phoneE164: string | null
+    /** Un numéro n'est enregistré que vérifié (CHECK `users_phone_requires_verification`). */
+    phoneVerified: boolean
+    status: 'pending' | 'active'
+    fullName: string | null
+    orgName: string
+    /** Pays enregistré sur l'utilisateur (null : non renseigné, comme en P2.1). */
+    userCountryCode: string | null
+    locale: string
+    countryCode: string
+    defaultCurrency: string
+    dataRegionCode: string
+  },
+): Promise<SignupResult> {
+  const userRows = await tx`
+    INSERT INTO iam.users
+      (email, password_hash, phone_e164, phone_verified_at, full_name, locale, country_code, status)
+    VALUES
+      (${params.email}, ${params.passwordHash}, ${params.phoneE164},
+       CASE WHEN ${params.phoneVerified}::boolean THEN now() END, ${params.fullName}, ${params.locale},
+       ${params.userCountryCode}, ${params.status})
+    RETURNING id, public_id
+  `
+  const userRow = userRows[0]
+  if (!userRow) throw new Error('failed to insert user')
+
+  const userId = BigInt(userRow.id)
+  const userPublicId = userRow.public_id as string
+
+  await tx`SELECT set_config('app.user_id', ${userId.toString()}, true)`
+
+  const orgRows = await tx`
+    SELECT org_id, org_public_id FROM iam.create_personal_organization(
+      ${userId.toString()}::bigint,
+      ${userPublicId},
+      ${params.orgName},
+      ${params.countryCode}::char(2),
+      ${params.defaultCurrency}::char(3),
+      ${params.locale},
+      ${params.dataRegionCode}
+    )
+  `
+  const orgRow = orgRows[0]
+  if (!orgRow) throw new Error('failed to create personal organization')
+
+  return {
+    userId,
+    userPublicId,
+    orgId: BigInt(orgRow.org_id),
+    orgPublicId: orgRow.org_public_id as string,
+  }
+}
+
 export async function createUserWithOrg(params: {
   email: string
   passwordHash: string
@@ -85,43 +151,44 @@ export async function createUserWithOrg(params: {
   defaultCurrency: string
   dataRegionCode: string
 }): Promise<SignupResult> {
-  const pool = getPoolRw()
+  return getPoolRw().begin((tx) =>
+    createUserWithOrgTx(tx, {
+      email: params.email,
+      passwordHash: params.passwordHash,
+      phoneE164: null,
+      phoneVerified: false,
+      status: 'pending',
+      fullName: params.fullName,
+      orgName: params.fullName ?? params.email,
+      userCountryCode: null,
+      locale: params.locale,
+      countryCode: params.countryCode,
+      defaultCurrency: params.defaultCurrency,
+      dataRegionCode: params.dataRegionCode,
+    }),
+  )
+}
 
-  return pool.begin(async (tx) => {
-    const userRows = await tx`
-      INSERT INTO iam.users (email, password_hash, full_name, locale, status)
-      VALUES (${params.email}, ${params.passwordHash}, ${params.fullName}, ${params.locale}, 'pending')
-      RETURNING id, public_id
-    `
-    const userRow = userRows[0]
-    if (!userRow) throw new Error('failed to insert user')
-
-    const userId = BigInt(userRow.id)
-    const userPublicId = userRow.public_id as string
-
-    await tx`SELECT set_config('app.user_id', ${userId.toString()}, true)`
-
-    const orgRows = await tx`
-      SELECT org_id, org_public_id FROM iam.create_personal_organization(
-        ${userId.toString()}::bigint,
-        ${userPublicId},
-        ${params.fullName ?? params.email},
-        ${params.countryCode}::char(2),
-        ${params.defaultCurrency}::char(3),
-        ${params.locale},
-        ${params.dataRegionCode}
-      )
-    `
-    const orgRow = orgRows[0]
-    if (!orgRow) throw new Error('failed to create personal organization')
-
-    return {
-      userId,
-      userPublicId,
-      orgId: BigInt(orgRow.org_id),
-      orgPublicId: orgRow.org_public_id as string,
-    }
-  })
+export async function createSessionTx(
+  tx: SqlLike,
+  params: {
+    userId: bigint
+    tokenHash: Uint8Array
+    ip: string | null
+    userAgent: string | null
+    expiresAt: Date
+  },
+): Promise<{ id: bigint; publicId: string }> {
+  const hexHash = Buffer.from(params.tokenHash).toString('hex')
+  const rows = await tx`
+    INSERT INTO iam.user_sessions (user_id, token_hash, ip, user_agent, expires_at)
+    VALUES (${params.userId.toString()}::bigint, decode(${hexHash}, 'hex'), ${params.ip}::inet,
+            ${params.userAgent ? params.userAgent.slice(0, 512) : null}, ${params.expiresAt.toISOString()}::timestamptz)
+    RETURNING id, public_id
+  `
+  const row = rows[0]
+  if (!row) throw new Error('failed to insert session')
+  return { id: BigInt(row.id), publicId: row.public_id as string }
 }
 
 export async function createSession(params: {
@@ -131,21 +198,16 @@ export async function createSession(params: {
   userAgent: string | null
   expiresAt: Date
 }): Promise<{ id: bigint; publicId: string }> {
-  const db = getDbRw()
-  const hexHash = Buffer.from(params.tokenHash).toString('hex')
-  const rows = await db
-    .insert(userSessionsInIam)
-    .values({
-      userId: params.userId,
-      tokenHash: sql`decode(${hexHash}, 'hex')`,
-      ip: params.ip,
-      userAgent: params.userAgent ? params.userAgent.slice(0, 512) : null,
-      expiresAt: params.expiresAt.toISOString(),
-    })
-    .returning({ id: userSessionsInIam.id, publicId: userSessionsInIam.publicId })
-  const row = rows[0]
-  if (!row) throw new Error('failed to insert session')
-  return { id: row.id, publicId: row.publicId }
+  return getPoolRw().begin((tx) => createSessionTx(tx, params))
+}
+
+/**
+ * Règle D59 : `free_tier.require_phone_otp` n'est lisible ni par `app_rw` ni par `app_auth`
+ * (paramètre non public) ; seule la fonction SECURITY DEFINER `platform.free_tier_requires_phone_otp()` l'expose.
+ */
+export async function getFreeTierRequiresPhoneOtp(): Promise<boolean> {
+  const rows = await getPoolAuth()`SELECT platform.free_tier_requires_phone_otp() AS required`
+  return rows[0]?.required !== false
 }
 
 export async function revokeSession(sessionId: bigint): Promise<void> {

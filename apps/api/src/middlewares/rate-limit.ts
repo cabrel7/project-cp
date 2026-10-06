@@ -107,10 +107,11 @@ export async function consumeLimit(spec: LimiterSpec, key: string): Promise<void
 }
 
 /** Middleware : limite par IP client (`getClientIp`, jamais le X-Forwarded-For brut). IP inconnue : pas de limite. */
-export function ipRateLimit(spec: LimiterSpec) {
+export function ipRateLimit(spec: LimiterSpec | (() => LimiterSpec)) {
   return createMiddleware<AppEnv>(async (c, next) => {
     const ip = getClientIp(c)
-    if (ip) await consumeLimit(spec, ip)
+    // Un quota fourni par fonction est relu à chaque requête (valeurs injectables, voir auth.phone.config.ts).
+    if (ip) await consumeLimit(typeof spec === 'function' ? spec() : spec, ip)
     await next()
   })
 }

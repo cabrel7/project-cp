@@ -4,6 +4,10 @@ import {
   forgotPasswordBodySchema,
   loginBodySchema,
   meResponseSchema,
+  phoneRequestCodeBodySchema,
+  phoneRequestCodeResponseSchema,
+  phoneVerifyCodeBodySchema,
+  phoneVerifyCodeResponseSchema,
   registerBodySchema,
   resetPasswordBodySchema,
   sessionResponseSchema,
@@ -15,7 +19,14 @@ import type { AppEnv, AuthContext } from '../../context.js'
 import { getEnv } from '../../env.js'
 import { getClientIp } from '../../lib/client-ip.js'
 import { requireAuth } from '../../middlewares/auth.js'
-import { checkEmailRateLimit, rateLimitByIp } from '../../middlewares/rate-limit.js'
+import {
+  checkEmailRateLimit,
+  ipRateLimit,
+  type LimiterSpec,
+  rateLimitByIp,
+} from '../../middlewares/rate-limit.js'
+import { getPhoneConfig } from './auth.phone.config.js'
+import * as phoneService from './auth.phone.service.js'
 import * as service from './auth.service.js'
 
 export const authRoutes = new OpenAPIHono<AppEnv>()
@@ -343,6 +354,131 @@ authRoutes.openapi(resendVerificationRoute, async (c) => {
   const auth = getAuth(c)
   await service.resendVerification({ userId: auth.userId, ip: getClientIp(c) })
   return c.json({ ok: true as const }, 200)
+})
+
+// ── Téléphone : POST /v1/auth/phone/request-code et /verify-code ──
+// Pas d'Idempotency-Key : le code à usage unique rend l'appel naturellement idempotent (spec P2.2 C7).
+// Limites par IP lues à chaque requête (valeurs injectables), compteurs distincts demande / vérification.
+
+const phoneErrors = (description: string) => ({
+  description,
+  content: { 'application/json': { schema: errorResponseSchema } },
+})
+
+const requestIpLimit = (): LimiterSpec => ({
+  keyPrefix: 'rl:auth:otp:req:ip',
+  points: getPhoneConfig().requestPerIp,
+  duration: getPhoneConfig().windowSeconds,
+})
+const verifyIpLimit = (): LimiterSpec => ({
+  keyPrefix: 'rl:auth:otp:verify:ip',
+  points: getPhoneConfig().verifyPerIp,
+  duration: getPhoneConfig().windowSeconds,
+})
+
+const phoneRequestCodeRoute = createRoute({
+  method: 'post',
+  path: '/phone/request-code',
+  tags: ['Auth'],
+  summary: 'Send a sign-in code by SMS',
+  description:
+    'Serves both sign-in and sign-up. The response is identical whether or not an account exists for the number; the account is created or opened only when the code is verified.',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: phoneRequestCodeBodySchema,
+          example: { phone: '6 90 12 34 42', country: 'CM', locale: 'fr' },
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Code sent (or silently dropped for a blocked number)',
+      content: {
+        'application/json': {
+          schema: phoneRequestCodeResponseSchema,
+          example: { ok: true, expires_in_seconds: 300, resend_after_seconds: 60 },
+        },
+      },
+    },
+    422: phoneErrors('Invalid phone number (details: field, reason, expected_length)'),
+    429: phoneErrors('Too many requests (Retry-After header)'),
+    503: phoneErrors('SMS delivery unavailable (AUTH_SMS_UNAVAILABLE)'),
+  },
+})
+
+authRoutes.use('/phone/request-code', ipRateLimit(requestIpLimit))
+authRoutes.openapi(phoneRequestCodeRoute, async (c) => {
+  const body = c.req.valid('json')
+  const result = await phoneService.requestPhoneCode({
+    phone: body.phone,
+    country: body.country,
+    locale: body.locale,
+    ip: getClientIp(c),
+    userAgent: c.req.header('user-agent') ?? null,
+  })
+  return c.json(
+    {
+      ok: true as const,
+      expires_in_seconds: result.expiresInSeconds,
+      resend_after_seconds: result.resendAfterSeconds,
+    },
+    200,
+  )
+})
+
+const phoneVerifyCodeRoute = createRoute({
+  method: 'post',
+  path: '/phone/verify-code',
+  tags: ['Auth'],
+  summary: 'Verify an SMS code and sign in or sign up',
+  description:
+    'A verified number that already has an account signs in to it (is_new_user=false, full_name ignored); an unknown number creates the account and its personal organization. Sets the session cookie.',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: phoneVerifyCodeBodySchema,
+          example: {
+            phone: '6 90 12 34 42',
+            country: 'CM',
+            code: '270512',
+            full_name: 'Awa Nkeng',
+          },
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Signed in (Set-Cookie: session)',
+      content: { 'application/json': { schema: phoneVerifyCodeResponseSchema } },
+    },
+    403: phoneErrors('AUTH_ACCOUNT_SUSPENDED or AUTH_SIGNUP_CLOSED'),
+    422: phoneErrors(
+      'AUTH_OTP_INVALID (details.remaining_attempts), AUTH_OTP_EXPIRED, AUTH_OTP_ATTEMPTS_EXCEEDED or invalid input',
+    ),
+    429: phoneErrors('Too many attempts (Retry-After header)'),
+  },
+})
+
+authRoutes.use('/phone/verify-code', ipRateLimit(verifyIpLimit))
+authRoutes.openapi(phoneVerifyCodeRoute, async (c) => {
+  const body = c.req.valid('json')
+  const result = await phoneService.verifyPhoneCode({
+    phone: body.phone,
+    country: body.country,
+    code: body.code,
+    fullName: body.full_name,
+    rememberMe: body.remember_me,
+    locale: body.locale,
+    ip: getClientIp(c),
+    userAgent: c.req.header('user-agent') ?? null,
+  })
+  setSessionCookie(c, result.token, result.maxAge)
+  return c.json({ ...result.authResponse, is_new_user: result.isNewUser }, 200)
 })
 
 // ── GET /v1/auth/me ──

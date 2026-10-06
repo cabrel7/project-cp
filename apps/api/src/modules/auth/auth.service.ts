@@ -21,6 +21,15 @@ function expiresAt(remember: boolean): Date {
   return new Date(Date.now() + sessionMaxAge(remember) * 1000)
 }
 
+/**
+ * Règle D59 (spec §4.4) : éligible à l'offre gratuite ⇔ `NOT free_tier.require_phone_otp` OU numéro vérifié.
+ * Le paramètre n'est lisible que par la fonction SECURITY DEFINER (repository) ; le numéro vérifié dispense de la lire.
+ */
+async function isFreeTierEligible(user: { phoneVerifiedAt: string | null }): Promise<boolean> {
+  if (user.phoneVerifiedAt !== null) return true
+  return !(await repo.getFreeTierRequiresPhoneOtp())
+}
+
 // ── Register ──
 
 export async function register(params: {
@@ -119,7 +128,7 @@ export async function login(params: {
 
   return {
     authResponse: {
-      user: toMeResponse({ ...user, freeTierEligible: user.phoneVerifiedAt !== null }),
+      user: toMeResponse({ ...user, freeTierEligible: await isFreeTierEligible(user) }),
       session: toSessionResponse(
         {
           publicId: session.publicId,
@@ -249,11 +258,9 @@ export async function resendVerification(params: {
 }
 
 // ── Me ──
-// PROVISOIRE (passe A) : free_tier_eligible = numéro vérifié (valeur du seed du paramètre).
-// La passe B le remplace par platform.free_tier_requires_phone_otp() (spec §4.4).
 
 export async function getMe(userId: bigint): Promise<MeResponse> {
   const user = await repo.findUserById(userId)
   if (!user) throw new AppError('AUTH_INVALID_CREDENTIALS')
-  return toMeResponse({ ...user, freeTierEligible: user.phoneVerifiedAt !== null })
+  return toMeResponse({ ...user, freeTierEligible: await isFreeTierEligible(user) })
 }
