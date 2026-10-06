@@ -67,6 +67,15 @@ jobs:
           --health-timeout 5s
           --health-retries 10
           --health-start-period 10s
+      redis:
+        image: redis:8.0-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -118,6 +127,15 @@ jobs:
           DB_POOL_MAX_AUTH: '2'
           DB_POOL_MAX_ADMIN: '2'
         run: pnpm --filter @cp/db test
+
+      - name: API integration tests (PostgreSQL + Redis réels)
+        env:
+          DATABASE_URL: 'postgres://cp_owner:cp_owner_dev@localhost:5432/cp_test?sslmode=disable'
+          DATABASE_URL_RW: 'postgres://cp_rw:cp_rw_dev@localhost:5432/cp_test?sslmode=disable'
+          DATABASE_URL_AUTH: 'postgres://cp_auth:cp_auth_dev@localhost:5432/cp_test?sslmode=disable'
+          DATABASE_URL_ADMIN: 'postgres://cp_admin:cp_admin_dev@localhost:5432/cp_test?sslmode=disable'
+          REDIS_URL: 'redis://localhost:6379'
+        run: pnpm --filter @cp/api exec vitest run --dir src --reporter=default -t "PostgreSQL réel"
 
       - name: Drizzle-kit pull
         env:
