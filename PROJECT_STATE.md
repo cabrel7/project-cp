@@ -1,5 +1,5 @@
 # STATE — project-cp
-Updated: 2026-10-06 | Session: P2.1 auth e-mail
+Updated: 2026-10-06 | Session: P2.2 auth téléphone
 
 ## ✅ Done
 - Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D58, UI/UX).
@@ -29,11 +29,12 @@ Updated: 2026-10-06 | Session: P2.1 auth e-mail
 - **P1.4 — Gabarits G1-G8** (`packages/ui`) : 8 composants CpLayout* de présentation pure (LayoutList, LayoutDetail, LayoutWizard, LayoutDashboard, LayoutSettings, LayoutConversation, LayoutEditor, LayoutAuth). 11 clés i18n `cp.layout.*` (fr/en). UTextarea stub ajouté. 572 tests (48 fichiers). Reviewer 8.5/10 (3 MAJOR corrigés : `<main>` imbriqué → `<div>`/`<section>`, slot default dupliqué, import CpPageHeader manquant). UX 7.0/10 (2 CRITICAL corrigés : G6 role="log" + z-sticky + aria-label textarea, G8 min-h-dvh + shadow-sm). Branche `claude/jolly-johnson-qbhlwb`.
 
 - **P1.5 — Catalogue vivant + régression visuelle Playwright** (`packages/ui`) : fixture Nuxt minimale (`tests/e2e/fixture/`), 10 pages de démo (catalog, 8 gabarits G1-G8, app shell), Playwright 4 projets (desktop/mobile × clair/sombre). Specs : `catalog.spec.ts` (1 fullPage + 7 sections), `gabarits.spec.ts` (8 fullPage G1-G8), `app-shell.spec.ts` (fonctionnel + visuel + a11y), `admin-shell.spec.ts` (fonctionnel + visuel + a11y). Helpers : `gotoHydrated` (data-cp-hydrated marker), `prepareFullPage` (neutralise fixed/sticky avant fullPage). Correctifs composants : shrink-0 boutons icônes, transition split tiroir (focus), CpModeToggle hidden mobile (overflow). WCAG : title + lang dans fixture. 142 e2e passés, 572 unit tests, 0 échecs. Reviewer 7/10 (4 MAJOR corrigés). Branche `claude/jolly-johnson-qbhlwb`.
+- **P2.1 — Auth e-mail + mot de passe** : branche `p2/01-auth-email`, PR #15 squash-merged dans `dev`. Backend (11 routes, service, repository, middlewares, 113 tests + 10 intégration PG), frontend (5 pages auth, composables, i18n FR/EN, layout split-panel), migration 0002 (7 codes AUTH), security fixes (reviewer C1 + M1-M8 corrigés), UX fixes (autocomplete, a11y), E2E 148 tests (4 projets). CI verte. Mergé.
 
 - **Revue 05/10** : PR #10 (5 BLOQUANTS + 5 MAJEURS corrigés : partitions Drizzle, BYPASSRLS, `@cp/db/admin`, `withOrgContext`, RLS en CI, pagination, erreurs, SidebarNav NuxtLink + `locked`, ApprovalCard secondary, Chart reduced-motion) ; PR #11 (D27, D53-D57) ; PR #12 fidélité UI (`<UApp :locale>`, mode Simple/Technique fourni à la racine des apps, nav client/admin via `useClientNav`/`useAdminNav`, densité nav 32 px desktop, G3 plein écran, planche `docs/review/fidelite-1.png` validée par Dylan le 2026-10-05).
 
 ## 🔄 Active
-- **P2.1 — Auth e-mail + mot de passe** : branche `p2/01-auth-email`, PR #15 → `dev`. Backend (11 routes, service, repository, middlewares, 113 tests + 10 intégration PG), frontend (5 pages auth, composables, i18n FR/EN, layout split-panel), migration 0002 (7 codes AUTH), security fixes (reviewer C1 + M1-M8 corrigés), UX fixes (autocomplete, a11y), E2E 148 tests (4 projets). CI verte. En attente de revue / merge.
+- **P2.2 — Téléphone + OTP SMS** : branche `p2/02-auth-phone` → PR vers `dev` (en cours, voir ci-dessous à la fin du lot).
 
 ## 📋 Queue
 7. **P1 — Design system en code** ✅ (P1.0 à P1.5 + revue fidélité). Écarts mineurs restants en Known issues.
