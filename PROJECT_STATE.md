@@ -38,11 +38,13 @@ Updated: 2026-10-06 | Session: P2.2 auth téléphone
 
 ## 📋 Queue
 7. **P1 — Design system en code** ✅ (P1.0 à P1.5 + revue fidélité). Écarts mineurs restants en Known issues.
+7b. **P2.5** : rattachement d'un numéro à un compte e-mail + formulaire de la maquette 02 (téléphone dans le formulaire e-mail).
 8. **P2.2+** : téléphone + OTP, Google/Apple, 2FA TOTP, clés d'accès WebAuthn, clés d'API.
 9. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## 🏗️ Decisions
+- 2026-10-06 : D59-D64 ✅ (P2.2 : compte gratuit, numéro vérifié seulement, SMS synchrone, `CpPhoneField`, code 5 min + onglets puis maquette 02, audit d'identité reporté à P2.6), validées par Dylan. Hors décisions : `signup.mode` appliqué en P2.4 ; `remember_me=true` par défaut pour la session téléphone ; `@nuxt/test-utils` dans `apps/web` = lot séparé plus tard.
 - 2026-10-05 : D27, D53, D54, D55 (portée `packages/ui`) validées ; D56 polices `@fontsource` ; D57 catalogue = pages Nuxt + Playwright (pas d'Histoire).
 - Source unique : `docs/reference/06-journal-decisions.md` (ne pas dupliquer ici).
 
@@ -62,3 +64,4 @@ Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 - Nom définitif du produit non choisi (`brand.name` en paramètre).
 - Prix des plans provisoires (D20).
 - Partitions `usage.runs` pré-créées jusqu'à 2026-12 ; maintenance mensuelle à automatiser (job worker P3).
+- P2.2 — dettes actées (2026-10-06) : (1) audit des événements d'identité (P2.1 + P2.2) → P2.6 (D64) ; (2) modèles SMS dans `platform.message_templates` (SMS bilingue en code pour l'instant) ; (3) limites OTP depuis `platform.rate_limit_policies` (constantes typées pour l'instant) ; (4) **R1 — plafond global de SMS par jour et par pays OBLIGATOIRE avant tout vrai fournisseur SMS** ; (5) **R2 — numéros recyclés par les opérateurs / SIM swap : à traiter en P2.3** (2FA, alerte e-mail, ancienneté) ; (6) `signup.mode` non appliqué (P2.1 et P2.2) → P2.4 ; (7) `@nuxt/test-utils` absent de `apps/web` → lot séparé ; (8) R4 : une seule organisation Free par utilisateur éligible à imposer en P2.4/P3.4 ; (9) R5 : l'anonymisation devra remettre `phone_e164` et `phone_verified_at` à NULL.
