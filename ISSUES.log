@@ -1,0 +1,8 @@
+# ISSUES.log — erreurs évitables (boucle d'apprentissage, lue par /retrospective)
+# Format : date | agent | symptôme | cause | règle proposée
+2026-10-05 | frontend | planche de fidélité construite avec d'anciennes captures | captures de référence réutilisées au lieu de captures fraîches | e2e-tester : planche toujours depuis une capture du code courant
+2026-10-05 | backend/tester | fournisseur de mode Simple/Technique invisible dans la même page | provide/inject dans le même composant | skill cp-nuxt : fournir l'état global à la racine (plugin ou CpApp)
+2026-10-06 | backend | 2ᵉ inscription de la minute refusée « e-mail déjà utilisé » | slug dérivé des 8 premiers caractères d'un UUIDv7 (horodatage) + 23505 mappé sans regarder la contrainte | skill cp-database : jamais de préfixe d'UUIDv7 comme identifiant unique ; mapper 23505 selon constraint_name → traité : skill cp-database
+2026-10-06 | backend | rate limit contournable | IP prise dans la 1ʳᵉ valeur de x-forwarded-for | guard-rule ajoutée (x-forwarded-for hors getClientIp) ; skill cp-security : IP de la socket + proxys de confiance → traité : skill cp-security
+2026-10-06 | tester | « 10 tests sur PostgreSQL réel exécutés en CI » alors qu'ils étaient sautés partout | describe.skipIf sans base + aucune étape CI | agents : un test sauté n'est pas réussi ; vérifier ci.yml ; gate qui signale les sauts → traité : agents + gate + cp-testing
+2026-10-06 | backend/database | inscription impossible : RLS refuse INSERT … RETURNING sur iam.organizations | RETURNING applique les politiques SELECT, l'utilisateur n'est pas encore membre | skill cp-database : création d'entité racine par fonction SECURITY DEFINER testée en base réelle → traité : skill cp-database

@@ -38,7 +38,8 @@ elif [ -d "$HOME/.cache/ms-playwright" ]; then PW="✓ chromium (~/.cache/ms-pla
 TOOLS="$(t node) · $(t pnpm) · $(t ffmpeg) · ${PW} · $(t dbmate) · $(t squawk) · $(t psql) · $(t docker)"
 ENVK="local"; [ "${CLAUDE_CODE_REMOTE:-}" = "true" ] && ENVK="cloud"
 
-CTX="project-cp — session ${ENVK}. Outillage : ${TOOLS}"
+TIER=$(grep -E '^tier_(domaine|codebase):' "$DIR/PROJECT_CONTEXT.md" 2>/dev/null | sed 's/[[:space:]]*#.*//' | paste -sd' ' -)
+CTX="project-cp — session ${ENVK}. ${TIER}. Outillage : ${TOOLS}"
 [ -n "$SETUP_LOG" ] && CTX="${CTX}
 Préparation cloud :
 ${SETUP_LOG}"
@@ -48,7 +49,7 @@ ${SETUP_LOG}"
 ${STATE}"
 CTX="${CTX}
 
-Rappel : lire CLAUDE.md ; documentation dans docs/reference/ (00-index.md d'abord) ; skills du projet .claude/skills/cp-* ; un outil manquant = le signaler, ne pas contourner."
+Rappel — PROTOCOLE (CLAUDE.md) : classer trivial/feature ; feature = agents IMPÉRATIFS (architect → tester RED → database/backend GREEN → frontend → tester → reviewer opus) ; chaque agent lit ses skills cp-* AVANT d'agir (« Skills lus : … ») ; TDD backend/base ; un test sauté n'est pas réussi (PostgreSQL/Redis : pnpm infra:up, puis exécution réelle) ; erreurs évitables → ISSUES.log. Un outil manquant = le signaler, ne pas contourner."
 
 jq -cn --arg c "$CTX" '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:$c}}'
 exit 0

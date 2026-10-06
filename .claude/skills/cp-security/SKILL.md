@@ -14,6 +14,11 @@ description: Checklist sécurité de project-cp pour audit et implémentation �
 - [ ] Caches Redis et files préfixés par organisation ; aucune clé de cache partagée entre clients
 - [ ] Capacités scellées : prompt jamais renvoyé ; IA interne (org 0) invisible (T16)
 
+### IP client (rate limit, audit)
+Toujours via `getClientIp()` : IP de la socket (`getConnInfo`) et, derrière Nginx, la valeur ajoutée par le proxy de
+confiance (nombre de sauts configuré), **jamais la première valeur de `x-forwarded-for`** (fournie par le client).
+IP inconnue ≠ `127.0.0.1` partagé. Limiteur Redis avec `insuranceLimiter` mémoire : une panne Redis ne bloque pas tout le monde.
+
 ## Secrets
 - [ ] Coffre Infisical uniquement (connecteurs, BYOK, fournisseurs) ; lus au moment de l'appel, jamais en base, params, logs, réponses, traces OTel
 - [ ] Config serveur via `env.ts` (zod) ; `.env*` jamais commité ; `runtimeConfig.public` sans secret

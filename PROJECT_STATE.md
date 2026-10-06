@@ -2,7 +2,7 @@
 Updated: 2026-10-06 | Session: P2.1 auth e-mail
 
 ## ✅ Done
-- Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D57, UI/UX).
+- Documentation de référence v2 : `docs/reference/00` à `07` (produit, règles, architecture, schéma, garde-fous, décisions D01-D58, UI/UX).
 - Schéma PostgreSQL v1.2 : `db/schema-v1.2/` — 183 tables, RLS, 23 contrôles passés sur base neuve (T1-T22).
 - Design system « project-cp » (tokens, 8 gabarits, 27 composants) : `docs/design-system/`.
 - Maquettes de validation (7 pages) : authentification, onboarding, tableau de bord, MCP Builder, studios, admin IA, navigation.

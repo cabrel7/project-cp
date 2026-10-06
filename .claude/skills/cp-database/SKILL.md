@@ -62,6 +62,13 @@ export async function withOrgContext<T>(ctx: { orgId: bigint; userId: bigint | n
   `app_readonly` (analytique). Chaque app ouvre seulement les pools dont elle a besoin.
 - Organisation système = id 0 (IA interne) : invisible des clients (test T16).
 
+### Pièges RLS vérifiés (2026-10-06)
+- `INSERT … RETURNING` applique aussi les politiques **SELECT** : créer une entité racine (organisation) alors que
+  l'utilisateur n'en est pas encore membre échoue (`new row violates row-level security policy`). Création d'entité
+  racine = fonction `SECURITY DEFINER` (search_path figé, `EXECUTE` réservé au bon rôle) testée en base réelle.
+- Jamais un préfixe d'UUIDv7 comme identifiant unique (les premiers caractères = horodatage, identiques ~65 s).
+- `23505` (unicité) se mappe selon `constraint_name`, jamais globalement.
+
 ## 4. Requêtes Drizzle
 - Schéma TS généré par pull (jamais édité). Requêtes typées `tx.select().from(t).where(eq(...))` ; SQL brut seulement via `sql\`\`` paramétré dans `packages/db`.
 - Résolution public → interne dans le repository : `where(eq(agents.publicId, id))` sous RLS → 404 si absent (y compris autre organisation).

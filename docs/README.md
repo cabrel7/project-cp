@@ -25,7 +25,7 @@ toute modification de fond se fait d'abord ici, puis est reportée dans le proje
 - `reference/03-architecture-technique.md` — services, migrations, bibliothèques, organisation du dépôt
 - `reference/04-schema-donnees.md` — conventions, domaines, index, partitions, sécurité en base
 - `reference/05-garde-fous-ia.md` — pipeline, profils, arrêts d'urgence, IA interne
-- `reference/06-journal-decisions.md` — décisions D01 à D57
+- `reference/06-journal-decisions.md` — décisions D01 à D58
 - `reference/07-ui-ux.md` — décisions UI, navigation définitive, studios
 - `design-system/` — README (principes, couleur, typo, mouvement…), `patterns.md` (G1-G8), `contenu.md` (voix, glossaire),
   `dataviz.md`, `tokens.json` / `tokens.css`, `components/<27 composants>/README.md` + `bundle.css` (référence visuelle)
