@@ -74,11 +74,9 @@ export function useAuth() {
   }
 
   async function register(email: string, password: string, fullName?: string) {
-    const res = await call<AuthResponse>('/register', {
+    await call<{ ok: boolean }>('/register', {
       body: { email, password, ...(fullName ? { full_name: fullName } : {}) },
     })
-    user.value = res.user
-    await navigateTo('/')
   }
 
   async function logout() {
@@ -94,9 +92,9 @@ export function useAuth() {
     await call<unknown>('/forgot-password', { body: { email } })
   }
 
-  async function resetPassword(token: string, password: string, revokeSessions: boolean) {
+  async function resetPassword(token: string, password: string) {
     await call<unknown>('/reset-password', {
-      body: { token, password, revoke_sessions: revokeSessions },
+      body: { token, password },
     })
   }
 

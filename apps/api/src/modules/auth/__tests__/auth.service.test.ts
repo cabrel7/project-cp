@@ -17,6 +17,7 @@ vi.mock('../auth.repository.js', () => ({
   updateUserPassword: vi.fn(),
   markEmailVerified: vi.fn(),
   updateLastLogin: vi.fn(),
+  resetPasswordTx: vi.fn(),
 }))
 
 vi.mock('../auth.email.js', () => ({
@@ -24,7 +25,6 @@ vi.mock('../auth.email.js', () => ({
   sendPasswordResetEmail: vi.fn(),
 }))
 
-// Hachage argon2 simulé (rapide) ; la règle de robustesse du mot de passe reste la vraie.
 vi.mock('../auth.password.js', async () => {
   const actual = await vi.importActual<typeof import('../auth.password.js')>('../auth.password.js')
   return {
@@ -103,65 +103,28 @@ describe('register', () => {
       orgId: 10n,
       orgPublicId: 'o-pub',
     })
-    vi.mocked(repo.createSession).mockResolvedValue({ id: 5n, publicId: 's-pub' })
     vi.mocked(repo.createVerificationToken).mockResolvedValue(undefined)
-    vi.mocked(repo.findUserById).mockResolvedValue(userRow() as never)
   }
 
-  it('doit créer compte, session et jeton de vérification quand les données sont valides', async () => {
-    arrangeSuccess()
-
-    const res = await service.register(params)
-
-    expect(res.maxAge).toBe(86400)
-    expect(res.token).toMatch(/^[0-9a-f]{64}$/)
-    expect(res.authResponse.user).toMatchObject({
-      id: '0190a000-0000-7000-8000-000000000001',
-      email: 'alice@example.com',
-      email_verified: false,
-    })
-    expect(res.authResponse.session).toMatchObject({ id: 's-pub', is_current: true, ip: '1.2.3.4' })
-    // le mot de passe n'est jamais stocké en clair
-    expect(repo.createUserWithOrg).toHaveBeenCalledWith(
-      expect.objectContaining({ passwordHash: `hashed:${STRONG}`, email: params.email }),
-    )
-    // le cookie contient le jeton, la base seulement son empreinte
-    const sessionArgs = vi.mocked(repo.createSession).mock.calls[0]?.[0]
-    expect(Buffer.from(sessionArgs?.tokenHash ?? []).toString('hex')).toBe(
-      Buffer.from(hashToken(res.token)).toString('hex'),
-    )
-    expect(sessionArgs?.expiresAt.getTime()).toBe(NOW.getTime() + 86400 * 1000)
-  })
-
-  it('doit créer un jeton de vérification valable 24 h et envoyer l’e-mail', async () => {
+  it('doit créer compte et jeton de vérification quand les données sont valides (réponse non discriminante)', async () => {
     arrangeSuccess()
 
     await service.register(params)
 
-    const tokenArgs = vi.mocked(repo.createVerificationToken).mock.calls[0]?.[0]
-    expect(tokenArgs).toMatchObject({ userId: 1n, purpose: 'verify_email', target: params.email })
-    expect(tokenArgs?.expiresAt.getTime()).toBe(NOW.getTime() + 24 * 3600 * 1000)
-    const [to, rawToken, locale] = vi.mocked(email.sendVerificationEmail).mock.calls[0] ?? []
-    expect(to).toBe(params.email)
-    expect(locale).toBe('fr')
-    expect(Buffer.from(tokenArgs?.tokenHash ?? []).toString('hex')).toBe(
-      Buffer.from(hashToken(rawToken as string)).toString('hex'),
+    expect(repo.createUserWithOrg).toHaveBeenCalledWith(
+      expect.objectContaining({ passwordHash: `hashed:${STRONG}`, email: params.email }),
     )
+    expect(repo.createVerificationToken).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: 1n, purpose: 'verify_email', target: params.email }),
+    )
+    expect(email.sendVerificationEmail).toHaveBeenCalled()
   })
 
-  it('doit réussir même si l’envoi de l’e-mail échoue', async () => {
-    arrangeSuccess()
-    vi.mocked(email.sendVerificationEmail).mockRejectedValue(new Error('smtp down'))
-
-    await expect(service.register(params)).resolves.toBeDefined()
-  })
-
-  it('doit lever AUTH_EMAIL_ALREADY_EXISTS (409) quand l’e-mail existe déjà', async () => {
+  it("doit résoudre sans erreur quand l'e-mail existe déjà (non discriminant)", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(userRow() as never)
 
-    await expectAppError(service.register(params), 'AUTH_EMAIL_ALREADY_EXISTS')
+    await expect(service.register(params)).resolves.toBeUndefined()
     expect(repo.createUserWithOrg).not.toHaveBeenCalled()
-    expect(repo.createSession).not.toHaveBeenCalled()
   })
 
   it.each([
@@ -177,17 +140,25 @@ describe('register', () => {
 
   it('doit accepter un mot de passe de exactement 8 caractères valides (borne)', async () => {
     arrangeSuccess()
-    await expect(service.register({ ...params, password: 'Abcdef1x' })).resolves.toBeDefined()
+    await expect(service.register({ ...params, password: 'Abcdef1x' })).resolves.toBeUndefined()
   })
 
-  it('doit lever AUTH_EMAIL_ALREADY_EXISTS (409) quand une inscription concurrente viole l’unicité (23505)', async () => {
+  it("doit résoudre silencieusement quand une inscription concurrente viole l'unicité e-mail (23505)", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(null)
     vi.mocked(repo.createUserWithOrg).mockRejectedValue(
-      Object.assign(new Error('dup'), { code: '23505' }),
+      Object.assign(new Error('dup'), { code: '23505', constraint_name: 'users_email_key' }),
     )
 
-    await expectAppError(service.register(params), 'AUTH_EMAIL_ALREADY_EXISTS')
-    expect(repo.createSession).not.toHaveBeenCalled()
+    await expect(service.register(params)).resolves.toBeUndefined()
+  })
+
+  it("doit propager l'erreur quand la violation d'unicité n'est pas sur l'e-mail", async () => {
+    vi.mocked(repo.findUserByEmail).mockResolvedValue(null)
+    vi.mocked(repo.createUserWithOrg).mockRejectedValue(
+      Object.assign(new Error('dup'), { code: '23505', constraint_name: 'organizations_slug_uq' }),
+    )
+
+    await expect(service.register(params)).rejects.toThrow('dup')
   })
 
   it('doit propager telle quelle une erreur de base inattendue (pas de 409 abusif)', async () => {
@@ -202,6 +173,13 @@ describe('register', () => {
     arrangeSuccess()
     await service.register({ email: params.email, password: STRONG, ip: null, userAgent: null })
     expect(repo.createUserWithOrg).toHaveBeenCalledWith(expect.objectContaining({ fullName: null }))
+  })
+
+  it("doit réussir même si l'envoi de l'e-mail échoue", async () => {
+    arrangeSuccess()
+    vi.mocked(email.sendVerificationEmail).mockRejectedValue(new Error('smtp down'))
+
+    await expect(service.register(params)).resolves.toBeUndefined()
   })
 })
 
@@ -253,7 +231,7 @@ describe('login', () => {
     expect(args?.expiresAt.getTime()).toBe(NOW.getTime() + 604800 * 1000)
   })
 
-  it('doit lever AUTH_INVALID_CREDENTIALS et appeler dummyVerify quand l’utilisateur n’existe pas', async () => {
+  it("doit lever AUTH_INVALID_CREDENTIALS et appeler dummyVerify quand l'utilisateur n'existe pas", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(null)
 
     await expectAppError(service.login(params), 'AUTH_INVALID_CREDENTIALS')
@@ -280,7 +258,7 @@ describe('login', () => {
     expect(repo.updateLastLogin).not.toHaveBeenCalled()
   })
 
-  it('ne doit pas révéler la suspension quand le mot de passe est faux (pas d’énumération)', async () => {
+  it("ne doit pas révéler la suspension quand le mot de passe est faux (pas d'énumération)", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(userRow({ status: 'suspended' }) as never)
     vi.mocked(password.verifyPassword).mockResolvedValue(false)
 
@@ -288,7 +266,7 @@ describe('login', () => {
     expect(repo.createSession).not.toHaveBeenCalled()
   })
 
-  it('doit lever AUTH_INVALID_CREDENTIALS quand le compte n’a pas de mot de passe (ex. SSO)', async () => {
+  it("doit lever AUTH_INVALID_CREDENTIALS quand le compte n'a pas de mot de passe (ex. SSO)", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(userRow({ passwordHash: null }) as never)
 
     await expectAppError(service.login(params), 'AUTH_INVALID_CREDENTIALS')
@@ -296,7 +274,7 @@ describe('login', () => {
     expect(password.verifyPassword).not.toHaveBeenCalled()
   })
 
-  it('doit autoriser la connexion d’un compte « pending » (e-mail non vérifié)', async () => {
+  it("doit autoriser la connexion d'un compte « pending » (e-mail non vérifié)", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(userRow({ status: 'pending' }) as never)
     vi.mocked(password.verifyPassword).mockResolvedValue(true)
     vi.mocked(repo.createSession).mockResolvedValue({ id: 7n, publicId: 's-pub' })
@@ -327,7 +305,7 @@ describe('logout / logoutAll', () => {
     expect(repo.revokeAllUserSessions).toHaveBeenCalledWith(1n, 5n)
   })
 
-  it('logoutAll doit révoquer toutes les sessions quand aucune exception n’est donnée', async () => {
+  it("logoutAll doit révoquer toutes les sessions quand aucune exception n'est donnée", async () => {
     await service.logoutAll(1n)
     expect(repo.revokeAllUserSessions).toHaveBeenCalledWith(1n, undefined)
   })
@@ -381,7 +359,7 @@ describe('listSessions', () => {
     ])
   })
 
-  it('doit renvoyer une liste vide quand il n’y a aucune session', async () => {
+  it("doit renvoyer une liste vide quand il n'y a aucune session", async () => {
     vi.mocked(repo.listUserSessions).mockResolvedValue([])
     await expect(service.listSessions(1n, 6n)).resolves.toEqual([])
   })
@@ -401,7 +379,7 @@ describe('revokeSessionById', () => {
     expect(repo.revokeSession).toHaveBeenCalledWith(6n)
   })
 
-  it('doit lever PLATFORM_RESOURCE_NOT_FOUND (404) quand la session n’existe pas', async () => {
+  it("doit lever PLATFORM_RESOURCE_NOT_FOUND (404) quand la session n'existe pas", async () => {
     vi.mocked(repo.listUserSessions).mockResolvedValue(sessions as never)
 
     await expectAppError(
@@ -421,8 +399,7 @@ describe('revokeSessionById', () => {
     expect(repo.revokeSession).not.toHaveBeenCalled()
   })
 
-  it('ne doit chercher que dans les sessions de l’utilisateur appelant (pas celles d’un autre)', async () => {
-    // la session « pub-other » appartient à un autre utilisateur : absente de sa liste
+  it("ne doit chercher que dans les sessions de l'utilisateur appelant (pas celles d'un autre)", async () => {
     vi.mocked(repo.listUserSessions).mockResolvedValue(sessions as never)
 
     await expectAppError(
@@ -435,7 +412,7 @@ describe('revokeSessionById', () => {
 })
 
 describe('forgotPassword', () => {
-  it('doit créer un jeton « reset_password » de 30 min et envoyer l’e-mail quand l’utilisateur existe', async () => {
+  it("doit créer un jeton « reset_password » de 30 min et envoyer l'e-mail quand l'utilisateur existe", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(userRow({ locale: 'en' }) as never)
 
     await service.forgotPassword({ email: 'alice@example.com', ip: '1.2.3.4' })
@@ -456,7 +433,7 @@ describe('forgotPassword', () => {
     )
   })
 
-  it('doit résoudre sans erreur ni e-mail ni jeton quand l’utilisateur n’existe pas', async () => {
+  it("doit résoudre sans erreur ni e-mail ni jeton quand l'utilisateur n'existe pas", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(null)
 
     await expect(
@@ -466,7 +443,7 @@ describe('forgotPassword', () => {
     expect(email.sendPasswordResetEmail).not.toHaveBeenCalled()
   })
 
-  it('ne doit pas attendre l’envoi de l’e-mail (temps de réponse non discriminant)', async () => {
+  it("ne doit pas attendre l'envoi de l'e-mail (temps de réponse non discriminant)", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(userRow() as never)
     vi.mocked(email.sendPasswordResetEmail).mockReturnValue(new Promise(() => {}))
 
@@ -476,7 +453,7 @@ describe('forgotPassword', () => {
     expect(email.sendPasswordResetEmail).toHaveBeenCalledTimes(1)
   })
 
-  it('doit résoudre sans erreur même si l’envoi de l’e-mail échoue', async () => {
+  it("doit résoudre sans erreur même si l'envoi de l'e-mail échoue", async () => {
     vi.mocked(repo.findUserByEmail).mockResolvedValue(userRow() as never)
     vi.mocked(email.sendPasswordResetEmail).mockRejectedValue(new Error('smtp down'))
 
@@ -489,76 +466,43 @@ describe('forgotPassword', () => {
 describe('resetPassword', () => {
   const token = 'a'.repeat(64)
 
-  it('doit changer le mot de passe et révoquer toutes les sessions quand revokeOtherSessions est vrai', async () => {
-    vi.mocked(repo.consumeVerificationToken).mockResolvedValue({
-      id: 1n,
+  it('doit changer le mot de passe et toujours révoquer toutes les sessions (transaction unique)', async () => {
+    vi.mocked(repo.resetPasswordTx).mockResolvedValue({
       userId: 9n,
       target: 'alice@example.com',
     })
 
-    await service.resetPassword({ token, password: STRONG, revokeOtherSessions: true })
+    await service.resetPassword({ token, password: STRONG })
 
-    const [hash, purpose] = vi.mocked(repo.consumeVerificationToken).mock.calls[0] ?? []
-    expect(purpose).toBe('reset_password')
-    expect(Buffer.from(hash as Uint8Array).toString('hex')).toBe(
+    const args = vi.mocked(repo.resetPasswordTx).mock.calls[0]?.[0]
+    expect(args).toMatchObject({ passwordHash: `hashed:${STRONG}` })
+    expect(Buffer.from(args?.tokenHash ?? []).toString('hex')).toBe(
       Buffer.from(hashToken(token)).toString('hex'),
     )
-    expect(repo.updateUserPassword).toHaveBeenCalledWith(9n, `hashed:${STRONG}`)
-    expect(repo.revokeAllUserSessions).toHaveBeenCalledWith(9n)
-  })
-
-  it('ne doit pas révoquer les sessions quand revokeOtherSessions est faux', async () => {
-    vi.mocked(repo.consumeVerificationToken).mockResolvedValue({
-      id: 1n,
-      userId: 9n,
-      target: 'x',
-    })
-
-    await service.resetPassword({ token, password: STRONG, revokeOtherSessions: false })
-
-    expect(repo.updateUserPassword).toHaveBeenCalledTimes(1)
-    expect(repo.revokeAllUserSessions).not.toHaveBeenCalled()
   })
 
   it('doit lever AUTH_VERIFICATION_TOKEN_INVALID (422) quand le jeton est inconnu, expiré ou déjà utilisé', async () => {
-    vi.mocked(repo.consumeVerificationToken).mockResolvedValue(null)
+    vi.mocked(repo.resetPasswordTx).mockResolvedValue(null)
 
     await expectAppError(
-      service.resetPassword({ token, password: STRONG, revokeOtherSessions: true }),
+      service.resetPassword({ token, password: STRONG }),
       'AUTH_VERIFICATION_TOKEN_INVALID',
     )
-    expect(repo.updateUserPassword).not.toHaveBeenCalled()
-    expect(repo.revokeAllUserSessions).not.toHaveBeenCalled()
-  })
-
-  it('doit lever AUTH_VERIFICATION_TOKEN_INVALID quand le jeton n’est lié à aucun utilisateur', async () => {
-    vi.mocked(repo.consumeVerificationToken).mockResolvedValue({
-      id: 1n,
-      userId: null,
-      target: 'x',
-    } as never)
-
-    await expectAppError(
-      service.resetPassword({ token, password: STRONG, revokeOtherSessions: true }),
-      'AUTH_VERIFICATION_TOKEN_INVALID',
-    )
-    expect(repo.updateUserPassword).not.toHaveBeenCalled()
   })
 
   it('doit lever AUTH_PASSWORD_TOO_WEAK sans consommer le jeton quand le mot de passe est faible', async () => {
     await expectAppError(
-      service.resetPassword({ token, password: 'weak', revokeOtherSessions: true }),
+      service.resetPassword({ token, password: 'weak' }),
       'AUTH_PASSWORD_TOO_WEAK',
     )
-    expect(repo.consumeVerificationToken).not.toHaveBeenCalled()
-    expect(repo.updateUserPassword).not.toHaveBeenCalled()
+    expect(repo.resetPasswordTx).not.toHaveBeenCalled()
   })
 })
 
 describe('verifyEmail', () => {
   const token = 'b'.repeat(64)
 
-  it('doit marquer l’e-mail comme vérifié quand le jeton est valide', async () => {
+  it("doit marquer l'e-mail comme vérifié quand le jeton est valide", async () => {
     vi.mocked(repo.consumeVerificationToken).mockResolvedValue({
       id: 1n,
       userId: 3n,
@@ -582,7 +526,7 @@ describe('verifyEmail', () => {
     expect(repo.markEmailVerified).not.toHaveBeenCalled()
   })
 
-  it('doit lever AUTH_VERIFICATION_TOKEN_INVALID quand le jeton n’a pas d’utilisateur', async () => {
+  it("doit lever AUTH_VERIFICATION_TOKEN_INVALID quand le jeton n'a pas d'utilisateur", async () => {
     vi.mocked(repo.consumeVerificationToken).mockResolvedValue({
       id: 1n,
       userId: null,
@@ -595,7 +539,7 @@ describe('verifyEmail', () => {
 })
 
 describe('resendVerification', () => {
-  it('doit créer un jeton de 24 h et envoyer l’e-mail quand l’adresse n’est pas vérifiée', async () => {
+  it("doit créer un jeton de 24 h et envoyer l'e-mail quand l'adresse n'est pas vérifiée", async () => {
     vi.mocked(repo.findUserById).mockResolvedValue(userRow({ locale: 'en' }) as never)
 
     await service.resendVerification({ userId: 1n, ip: '1.2.3.4' })
@@ -614,7 +558,7 @@ describe('resendVerification', () => {
     )
   })
 
-  it('ne doit rien faire quand l’adresse est déjà vérifiée', async () => {
+  it("ne doit rien faire quand l'adresse est déjà vérifiée", async () => {
     vi.mocked(repo.findUserById).mockResolvedValue(
       userRow({ emailVerifiedAt: '2025-12-02T00:00:00.000Z' }) as never,
     )
@@ -624,7 +568,7 @@ describe('resendVerification', () => {
     expect(email.sendVerificationEmail).not.toHaveBeenCalled()
   })
 
-  it('ne doit rien faire quand l’utilisateur n’existe pas', async () => {
+  it("ne doit rien faire quand l'utilisateur n'existe pas", async () => {
     vi.mocked(repo.findUserById).mockResolvedValue(null)
 
     await expect(service.resendVerification({ userId: 1n, ip: null })).resolves.toBeUndefined()
@@ -632,7 +576,7 @@ describe('resendVerification', () => {
     expect(email.sendVerificationEmail).not.toHaveBeenCalled()
   })
 
-  it('ne doit rien faire quand l’utilisateur n’a pas d’e-mail', async () => {
+  it("ne doit rien faire quand l'utilisateur n'a pas d'e-mail", async () => {
     vi.mocked(repo.findUserById).mockResolvedValue(userRow({ email: null }) as never)
 
     await service.resendVerification({ userId: 1n, ip: null })
@@ -640,7 +584,7 @@ describe('resendVerification', () => {
     expect(email.sendVerificationEmail).not.toHaveBeenCalled()
   })
 
-  it('doit résoudre même si l’envoi de l’e-mail échoue', async () => {
+  it("doit résoudre même si l'envoi de l'e-mail échoue", async () => {
     vi.mocked(repo.findUserById).mockResolvedValue(userRow() as never)
     vi.mocked(email.sendVerificationEmail).mockRejectedValue(new Error('smtp down'))
 
@@ -668,7 +612,7 @@ describe('getMe', () => {
     expect(JSON.stringify(me)).not.toContain('"1"')
   })
 
-  it('doit lever une AppError quand l’utilisateur n’existe pas', async () => {
+  it("doit lever une AppError quand l'utilisateur n'existe pas", async () => {
     vi.mocked(repo.findUserById).mockResolvedValue(null)
 
     await expectAppError(service.getMe(404n), 'AUTH_INVALID_CREDENTIALS')

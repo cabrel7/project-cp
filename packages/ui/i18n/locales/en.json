@@ -290,6 +290,9 @@
         "orWith": "or sign up with",
         "emailExists": "This email address is already in use.",
         "passwordWeak": "The password is too weak.",
+        "sent": "Check your email",
+        "sentDetail": "If an account didn't already exist for this address, we sent you a verification email. Check your spam folder if you don't see it.",
+        "goToLogin": "Sign in",
         "tagline": "Your account is ready in two minutes.",
         "taglineSub": "Free to try, no credit card required. An assistant guides you step by step."
       },

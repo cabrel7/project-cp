@@ -29,15 +29,13 @@ export async function register(params: {
   fullName?: string | null
   ip: string | null
   userAgent: string | null
-}): Promise<{ authResponse: AuthResponse; token: string; maxAge: number }> {
+}): Promise<void> {
   if (!validatePasswordStrength(params.password)) {
     throw new AppError('AUTH_PASSWORD_TOO_WEAK')
   }
 
   const existing = await repo.findUserByEmail(params.email)
-  if (existing) {
-    throw new AppError('AUTH_EMAIL_ALREADY_EXISTS')
-  }
+  if (existing) return
 
   const passwordHash = await hashPassword(params.password)
 
@@ -52,22 +50,17 @@ export async function register(params: {
       dataRegionCode: 'eu-fr',
     })
     .catch((err: unknown) => {
-      // Course entre deux inscriptions : violation d'unicité -> 409, pas 500.
-      if ((err as { code?: string })?.code === '23505') {
-        throw new AppError('AUTH_EMAIL_ALREADY_EXISTS')
+      const pgErr = err as { code?: string; constraint_name?: string; constraint?: string }
+      if (pgErr.code === '23505') {
+        const constraint = pgErr.constraint_name ?? pgErr.constraint ?? ''
+        if (constraint.includes('email')) {
+          return null
+        }
       }
       throw err
     })
 
-  const { token, hash } = generateSessionToken()
-  const maxAge = sessionMaxAge(false)
-  const session = await repo.createSession({
-    userId: signupResult.userId,
-    tokenHash: hash,
-    ip: params.ip,
-    userAgent: params.userAgent,
-    expiresAt: expiresAt(false),
-  })
+  if (!signupResult) return
 
   const { token: verifyToken, hash: verifyHash } = generateVerificationToken()
   await repo.createVerificationToken({
@@ -79,30 +72,7 @@ export async function register(params: {
     ip: params.ip,
   })
 
-  await sendVerificationEmail(params.email, verifyToken, 'fr').catch(() => {})
-
-  const user = await repo.findUserById(signupResult.userId)
-  if (!user) throw new Error('user not found after signup')
-
-  return {
-    authResponse: {
-      user: toMeResponse(user),
-      session: toSessionResponse(
-        {
-          publicId: session.publicId,
-          ip: params.ip,
-          userAgent: params.userAgent,
-          deviceLabel: null,
-          createdAt: new Date().toISOString(),
-          lastSeenAt: new Date().toISOString(),
-        },
-        session.id,
-        session.id,
-      ),
-    },
-    token,
-    maxAge,
-  }
+  void sendVerificationEmail(params.email, verifyToken, 'fr').catch(() => {})
 }
 
 // ── Login ──
@@ -131,7 +101,6 @@ export async function login(params: {
     throw new AppError('AUTH_INVALID_CREDENTIALS')
   }
 
-  // Statut révélé seulement après preuve du mot de passe (pas d'énumération).
   if (user.status === 'suspended') {
     throw new AppError('AUTH_ACCOUNT_SUSPENDED')
   }
@@ -221,36 +190,22 @@ export async function forgotPassword(params: { email: string; ip: string | null 
     ip: params.ip,
   })
 
-  // Non attendu : le temps de réponse ne doit pas révéler l'existence du compte.
   void sendPasswordResetEmail(params.email, token, user.locale).catch(() => {})
 }
 
 // ── Reset password ──
 
-export async function resetPassword(params: {
-  token: string
-  password: string
-  revokeOtherSessions: boolean
-}): Promise<void> {
+export async function resetPassword(params: { token: string; password: string }): Promise<void> {
   if (!validatePasswordStrength(params.password)) {
     throw new AppError('AUTH_PASSWORD_TOO_WEAK')
   }
 
-  const hash = hashToken(params.token)
-  const consumed = await repo.consumeVerificationToken(hash, 'reset_password')
-  if (!consumed) {
-    throw new AppError('AUTH_VERIFICATION_TOKEN_INVALID')
-  }
-
-  if (!consumed.userId) {
-    throw new AppError('AUTH_VERIFICATION_TOKEN_INVALID')
-  }
-
   const passwordHash = await hashPassword(params.password)
-  await repo.updateUserPassword(consumed.userId, passwordHash)
+  const hash = hashToken(params.token)
 
-  if (params.revokeOtherSessions) {
-    await repo.revokeAllUserSessions(consumed.userId)
+  const result = await repo.resetPasswordTx({ tokenHash: hash, passwordHash })
+  if (!result) {
+    throw new AppError('AUTH_VERIFICATION_TOKEN_INVALID')
   }
 }
 

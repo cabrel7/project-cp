@@ -40,7 +40,7 @@ describe('sendVerificationEmail', () => {
     expect(mail.from).toBe('noreply@example.com')
     expect(mail.to).toBe('alice@example.com')
     expect(mail.subject).toBe('Vérifiez votre adresse e-mail')
-    expect(mail.text).toContain('https://app.example.com/verify-email?token=tok123')
+    expect(mail.text).toContain('https://app.example.com/auth/verify-email?token=tok123')
     expect(mail.text).toContain('Bienvenue')
     expect(mail.text).toContain('24 heures')
   })
@@ -50,7 +50,7 @@ describe('sendVerificationEmail', () => {
 
     const mail = sendMail.mock.calls[0]?.[0]
     expect(mail.subject).toBe('Verify your email address')
-    expect(mail.text).toContain('https://app.example.com/verify-email?token=tok123')
+    expect(mail.text).toContain('https://app.example.com/auth/verify-email?token=tok123')
     expect(mail.text).toContain('Welcome')
     expect(mail.text).toContain('24 hours')
   })
@@ -118,7 +118,7 @@ describe('sendPasswordResetEmail', () => {
     expect(mail.from).toBe('noreply@example.com')
     expect(mail.to).toBe('alice@example.com')
     expect(mail.subject).toBe('Réinitialisation de votre mot de passe')
-    expect(mail.text).toContain('https://app.example.com/reset-password?token=rst456')
+    expect(mail.text).toContain('https://app.example.com/auth/reset-password?token=rst456')
     expect(mail.text).toContain('30 minutes')
   })
 
@@ -127,7 +127,7 @@ describe('sendPasswordResetEmail', () => {
 
     const mail = sendMail.mock.calls[0]?.[0]
     expect(mail.subject).toBe('Reset your password')
-    expect(mail.text).toContain('https://app.example.com/reset-password?token=rst456')
+    expect(mail.text).toContain('https://app.example.com/auth/reset-password?token=rst456')
     expect(mail.text).toContain('30 minutes')
   })
 

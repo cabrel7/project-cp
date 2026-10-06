@@ -290,6 +290,9 @@
         "orWith": "ou s'inscrire avec",
         "emailExists": "Cette adresse e-mail est déjà utilisée.",
         "passwordWeak": "Le mot de passe est trop faible.",
+        "sent": "Vérifiez votre e-mail",
+        "sentDetail": "Si un compte n'existait pas déjà pour cette adresse, nous vous avons envoyé un e-mail de vérification. Pensez à regarder dans les indésirables.",
+        "goToLogin": "Se connecter",
         "tagline": "Votre compte est prêt en deux minutes.",
         "taglineSub": "Offre gratuite pour essayer, sans carte bancaire. Un assistant vous guide ensuite pas à pas."
       },

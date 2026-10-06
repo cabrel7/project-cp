@@ -21,7 +21,7 @@ export async function sendVerificationEmail(
   locale: string,
 ): Promise<void> {
   const env = getEnv()
-  const link = `${env.APP_URL}/verify-email?token=${token}`
+  const link = `${env.APP_URL}/auth/verify-email?token=${token}`
 
   const subject = locale === 'fr' ? 'Vérifiez votre adresse e-mail' : 'Verify your email address'
   const text =
@@ -43,7 +43,7 @@ export async function sendPasswordResetEmail(
   locale: string,
 ): Promise<void> {
   const env = getEnv()
-  const link = `${env.APP_URL}/reset-password?token=${token}`
+  const link = `${env.APP_URL}/auth/reset-password?token=${token}`
 
   const subject = locale === 'fr' ? 'Réinitialisation de votre mot de passe' : 'Reset your password'
   const text =

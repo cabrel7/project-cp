@@ -106,7 +106,7 @@ export async function createUserWithOrg(params: {
     if (!region) throw new Error(`data region '${params.dataRegionCode}' not found`)
 
     // 4. Create individual organization
-    const orgSlug = `user-${userPublicId.slice(0, 8)}`
+    const orgSlug = `user-${userPublicId}`
     const orgRows = await tx`
       INSERT INTO iam.organizations (name, slug, kind, country_code, default_currency, default_locale, data_region_id, created_by_user_id)
       VALUES (${params.fullName ?? params.email}, ${orgSlug}, 'individual', ${params.countryCode}, ${params.defaultCurrency}, ${params.locale}, ${region.id}, ${userId.toString()})
@@ -287,12 +287,59 @@ export async function updateUserPassword(userId: bigint, passwordHash: string): 
     .where(eq(usersInIam.id, userId))
 }
 
+export async function resetPasswordTx(params: {
+  tokenHash: Uint8Array
+  passwordHash: string
+}): Promise<{ userId: bigint; target: string } | null> {
+  const pool = getPoolRw()
+  const hexHash = Buffer.from(params.tokenHash).toString('hex')
+
+  return pool.begin(async (tx) => {
+    const tokenRows = await tx`
+      UPDATE iam.verification_tokens
+      SET consumed_at = now()
+      WHERE token_hash = decode(${hexHash}, 'hex')
+        AND purpose = 'reset_password'
+        AND consumed_at IS NULL
+        AND expires_at > now()
+        AND attempts < max_attempts
+      RETURNING id, user_id, target
+    `
+    const token = tokenRows[0]
+    if (!token) return null
+
+    await tx`
+      UPDATE iam.verification_tokens
+      SET consumed_at = now()
+      WHERE user_id = ${token.user_id}
+        AND purpose = 'reset_password'
+        AND consumed_at IS NULL
+        AND id != ${token.id}
+    `
+
+    await tx`
+      UPDATE iam.users
+      SET password_hash = ${params.passwordHash}, updated_at = now()
+      WHERE id = ${token.user_id}
+    `
+
+    await tx`
+      UPDATE iam.user_sessions
+      SET revoked_at = now()
+      WHERE user_id = ${token.user_id}
+        AND revoked_at IS NULL
+    `
+
+    return { userId: BigInt(token.user_id), target: token.target as string }
+  })
+}
+
 export async function markEmailVerified(userId: bigint): Promise<void> {
   const db = getDbRw()
   await db
     .update(usersInIam)
     .set({ emailVerifiedAt: sql`now()`, status: 'active', updatedAt: sql`now()` })
-    .where(eq(usersInIam.id, userId))
+    .where(and(eq(usersInIam.id, userId), eq(usersInIam.status, 'pending')))
 }
 
 export async function updateLastLogin(userId: bigint): Promise<void> {

@@ -1,28 +1,69 @@
-import { isIP } from 'node:net'
+import { createHash } from 'node:crypto'
 import { createMiddleware } from 'hono/factory'
-import { RateLimiterMemory } from 'rate-limiter-flexible'
+import Redis from 'ioredis'
+import { RateLimiterMemory, RateLimiterRedis } from 'rate-limiter-flexible'
 import type { AppEnv } from '../context.js'
+import { getEnv } from '../env.js'
+import { getClientIp } from '../lib/client-ip.js'
 import { AppError } from '../lib/errors.js'
 
-const authLimiter = new RateLimiterMemory({
-  points: 10,
-  duration: 60,
-  keyPrefix: 'auth',
-})
+type Limiter = RateLimiterRedis | RateLimiterMemory
 
-export const rateLimitAuth = createMiddleware<AppEnv>(async (c, next) => {
-  // NB : x-forwarded-for n'est fiable que derrière un proxy de confiance qui l'écrase.
-  const candidate = c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-  const ip = candidate && isIP(candidate) ? candidate : '127.0.0.1'
-  let limited = false
+let ipLimiter: Limiter | undefined
+let emailLimiter: Limiter | undefined
+
+function getLimiters(): { ip: Limiter; email: Limiter } {
+  if (ipLimiter && emailLimiter) return { ip: ipLimiter, email: emailLimiter }
+
+  const env = getEnv()
   try {
-    await authLimiter.consume(ip)
+    const client = new Redis(env.REDIS_URL, { maxRetriesPerRequest: 1, lazyConnect: true })
+    ipLimiter = new RateLimiterRedis({
+      storeClient: client,
+      points: 30,
+      duration: 60,
+      keyPrefix: 'rl:auth:ip',
+    })
+    emailLimiter = new RateLimiterRedis({
+      storeClient: client,
+      points: 5,
+      duration: 300,
+      keyPrefix: 'rl:auth:email',
+    })
   } catch {
-    limited = true
+    ipLimiter = new RateLimiterMemory({ points: 30, duration: 60, keyPrefix: 'auth:ip' })
+    emailLimiter = new RateLimiterMemory({ points: 5, duration: 300, keyPrefix: 'auth:email' })
   }
-  if (limited) {
+
+  return { ip: ipLimiter, email: emailLimiter }
+}
+
+export const rateLimitByIp = createMiddleware<AppEnv>(async (c, next) => {
+  const ip = getClientIp(c) ?? '127.0.0.1'
+  const { ip: limiter } = getLimiters()
+  try {
+    await limiter.consume(ip)
+  } catch {
     c.header('Retry-After', '60')
     throw new AppError('PLATFORM_RATE_LIMIT')
   }
   await next()
 })
+
+function hashEmail(email: string): string {
+  return createHash('sha256').update(email.toLowerCase().trim()).digest('hex')
+}
+
+export async function checkEmailRateLimit(email: string): Promise<void> {
+  const { email: limiter } = getLimiters()
+  try {
+    await limiter.consume(hashEmail(email))
+  } catch {
+    throw new AppError('PLATFORM_RATE_LIMIT')
+  }
+}
+
+export function resetLimiters(): void {
+  ipLimiter = undefined
+  emailLimiter = undefined
+}

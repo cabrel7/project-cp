@@ -197,18 +197,27 @@ test.describe('Inscription /auth/register', () => {
     await expect(reg.submit).toBeDisabled() // conditions non acceptées
   })
 
-  test('e-mail déjà utilisé (409) : alerte localisée', async ({ page }) => {
-    await mockAuthApi(page, 'register', {
-      status: 409,
-      body: { error: { code: 'AUTH_EMAIL_ALREADY_EXISTS' } },
-    })
+  test('inscription réussie : écran de confirmation « vérifiez votre e-mail »', async ({
+    page,
+  }) => {
+    const calls = await mockAuthApi(page, 'register', { status: 200, body: { ok: true } })
     const reg = new RegisterPage(page)
     await reg.goto()
+    await reg.fullName.fill('Ada Lovelace')
     await reg.email.fill('ada@example.com')
     await reg.password.fill('longenough1')
     await reg.terms.check()
     await reg.submit.click()
-    await expect(reg.alert).toContainText(auth.register.emailExists)
+
+    await expect(page.getByRole('status')).toContainText(auth.register.sent)
+    await expect(page.getByRole('status')).toContainText(auth.register.sentDetail)
+    await expect(reg.submit).toHaveCount(0)
+    expect(calls).toHaveLength(1)
+    expect(calls[0]?.body).toEqual({
+      email: 'ada@example.com',
+      password: 'longenough1',
+      full_name: 'Ada Lovelace',
+    })
   })
 
   test('« Se connecter » mène à /auth/login', async ({ page }) => {
@@ -279,7 +288,6 @@ test.describe('Nouveau mot de passe /auth/reset-password', () => {
     await expect(reset.password).toBeVisible()
     await expect(reset.confirm).toBeVisible()
     await expect(reset.strength).toBeVisible()
-    await expect(reset.revoke).toBeChecked()
     await expect(reset.submit).toBeDisabled()
 
     await reset.password.fill('Abcdefghij12')
@@ -329,7 +337,6 @@ test.describe('Nouveau mot de passe /auth/reset-password', () => {
     expect(calls[0]?.body).toEqual({
       token: 'expired',
       password: 'longenough1',
-      revoke_sessions: true,
     })
   })
 

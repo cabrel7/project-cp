@@ -120,9 +120,6 @@ export class ResetPasswordPage extends AuthPage {
   get confirm() {
     return this.page.getByLabel(labelRe(auth.reset.confirmPassword))
   }
-  get revoke() {
-    return this.page.getByRole('checkbox', { name: auth.reset.revokeSessions })
-  }
   get submit() {
     return this.page.getByRole('button', { name: auth.reset.submit })
   }

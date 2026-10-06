@@ -1,4 +1,3 @@
-import { isIP } from 'node:net'
 import { errorResponseSchema } from '@cp/shared'
 import {
   authResponseSchema,
@@ -14,8 +13,9 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { csrf } from 'hono/csrf'
 import type { AppEnv, AuthContext } from '../../context.js'
 import { getEnv } from '../../env.js'
+import { getClientIp } from '../../lib/client-ip.js'
 import { requireAuth } from '../../middlewares/auth.js'
-import { rateLimitAuth } from '../../middlewares/rate-limit.js'
+import { checkEmailRateLimit, rateLimitByIp } from '../../middlewares/rate-limit.js'
 import * as service from './auth.service.js'
 
 export const authRoutes = new OpenAPIHono<AppEnv>()
@@ -26,11 +26,6 @@ function getAuth(c: { get: (key: 'auth') => AuthContext | undefined }): AuthCont
   const auth = c.get('auth')
   if (!auth) throw new Error('requireAuth middleware missing')
   return auth
-}
-
-function getClientIp(c: { req: { header: (name: string) => string | undefined } }): string | null {
-  const ip = c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-  return ip && isIP(ip) ? ip : null
 }
 
 function setSessionCookie(
@@ -66,13 +61,9 @@ const registerRoute = createRoute({
     body: { content: { 'application/json': { schema: registerBodySchema } } },
   },
   responses: {
-    201: {
-      description: 'Account created',
-      content: { 'application/json': { schema: authResponseSchema } },
-    },
-    409: {
-      description: 'Email already in use',
-      content: { 'application/json': { schema: errorResponseSchema } },
+    200: {
+      description: 'Registration request accepted',
+      content: { 'application/json': { schema: z.object({ ok: z.literal(true) }) } },
     },
     422: {
       description: 'Password too weak',
@@ -81,18 +72,18 @@ const registerRoute = createRoute({
   },
 })
 
-authRoutes.use('/register', rateLimitAuth)
+authRoutes.use('/register', rateLimitByIp)
 authRoutes.openapi(registerRoute, async (c) => {
   const body = c.req.valid('json')
-  const result = await service.register({
+  await checkEmailRateLimit(body.email)
+  await service.register({
     email: body.email,
     password: body.password,
     fullName: body.full_name ?? null,
     ip: getClientIp(c),
     userAgent: c.req.header('user-agent') ?? null,
   })
-  setSessionCookie(c, result.token, result.maxAge)
-  return c.json(result.authResponse, 201)
+  return c.json({ ok: true as const }, 200)
 })
 
 // ── POST /v1/auth/login ──
@@ -117,9 +108,10 @@ const loginRoute = createRoute({
   },
 })
 
-authRoutes.use('/login', rateLimitAuth)
+authRoutes.use('/login', rateLimitByIp)
 authRoutes.openapi(loginRoute, async (c) => {
   const body = c.req.valid('json')
+  await checkEmailRateLimit(body.email)
   const result = await service.login({
     email: body.email,
     password: body.password,
@@ -257,9 +249,10 @@ const forgotPasswordRoute = createRoute({
   },
 })
 
-authRoutes.use('/forgot-password', rateLimitAuth)
+authRoutes.use('/forgot-password', rateLimitByIp)
 authRoutes.openapi(forgotPasswordRoute, async (c) => {
   const body = c.req.valid('json')
+  await checkEmailRateLimit(body.email)
   await service.forgotPassword({ email: body.email, ip: getClientIp(c) })
   return c.json({ ok: true as const }, 200)
 })
@@ -272,15 +265,7 @@ const resetPasswordRoute = createRoute({
   tags: ['Auth'],
   summary: 'Reset password using token',
   request: {
-    body: {
-      content: {
-        'application/json': {
-          schema: resetPasswordBodySchema.extend({
-            revoke_sessions: z.boolean().default(true),
-          }),
-        },
-      },
-    },
+    body: { content: { 'application/json': { schema: resetPasswordBodySchema } } },
   },
   responses: {
     200: {
@@ -294,13 +279,12 @@ const resetPasswordRoute = createRoute({
   },
 })
 
-authRoutes.use('/reset-password', rateLimitAuth)
+authRoutes.use('/reset-password', rateLimitByIp)
 authRoutes.openapi(resetPasswordRoute, async (c) => {
   const body = c.req.valid('json')
   await service.resetPassword({
     token: body.token,
     password: body.password,
-    revokeOtherSessions: body.revoke_sessions,
   })
   return c.json({ ok: true as const }, 200)
 })
@@ -327,7 +311,7 @@ const verifyEmailRoute = createRoute({
   },
 })
 
-authRoutes.use('/verify-email', rateLimitAuth)
+authRoutes.use('/verify-email', rateLimitByIp)
 authRoutes.openapi(verifyEmailRoute, async (c) => {
   const body = c.req.valid('json')
   await service.verifyEmail(body.token)
@@ -353,7 +337,7 @@ const resendVerificationRoute = createRoute({
   },
 })
 
-authRoutes.use('/resend-verification', rateLimitAuth)
+authRoutes.use('/resend-verification', rateLimitByIp)
 authRoutes.use('/resend-verification', requireAuth)
 authRoutes.openapi(resendVerificationRoute, async (c) => {
   const auth = getAuth(c)

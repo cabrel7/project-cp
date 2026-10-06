@@ -13,7 +13,6 @@ const token = computed(() => {
 
 const password = ref('')
 const confirm = ref('')
-const revokeSessions = ref(true)
 const errorKey = ref<string | null>(token.value ? null : 'cp.auth.reset.invalidToken')
 const done = ref(false)
 
@@ -26,7 +25,7 @@ async function onSubmit() {
   if (!canSubmit.value) return
   errorKey.value = null
   try {
-    await resetPassword(token.value, password.value, revokeSessions.value)
+    await resetPassword(token.value, password.value)
     done.value = true
   } catch (e) {
     errorKey.value = authErrorKey(e)
@@ -87,7 +86,6 @@ useHead({ title: () => t('cp.auth.reset.title') })
             :error="mismatch ? t('cp.auth.reset.passwordMismatch') : undefined"
             required
           />
-          <UCheckbox v-model="revokeSessions" :label="t('cp.auth.reset.revokeSessions')" />
           <UButton
             type="submit"
             size="xl"

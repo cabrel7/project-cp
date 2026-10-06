@@ -21,6 +21,8 @@ const apiEnvSchema = z.object({
   SESSION_MAX_AGE_SECONDS: z.coerce.number().int().positive().default(86400),
   SESSION_REMEMBER_MAX_AGE_SECONDS: z.coerce.number().int().positive().default(604800),
 
+  REDIS_URL: z.string().url().default('redis://localhost:6379'),
+
   OTEL_ENABLED: z
     .enum(['true', 'false', '1', '0'])
     .default('false')
