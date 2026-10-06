@@ -41,15 +41,23 @@ export async function register(params: {
 
   const passwordHash = await hashPassword(params.password)
 
-  const signupResult = await repo.createUserWithOrg({
-    email: params.email,
-    passwordHash,
-    fullName: params.fullName ?? null,
-    locale: 'fr',
-    countryCode: 'CM',
-    defaultCurrency: 'XAF',
-    dataRegionCode: 'eu-fr',
-  })
+  const signupResult = await repo
+    .createUserWithOrg({
+      email: params.email,
+      passwordHash,
+      fullName: params.fullName ?? null,
+      locale: 'fr',
+      countryCode: 'CM',
+      defaultCurrency: 'XAF',
+      dataRegionCode: 'eu-fr',
+    })
+    .catch((err: unknown) => {
+      // Course entre deux inscriptions : violation d'unicité -> 409, pas 500.
+      if ((err as { code?: string })?.code === '23505') {
+        throw new AppError('AUTH_EMAIL_ALREADY_EXISTS')
+      }
+      throw err
+    })
 
   const { token, hash } = generateSessionToken()
   const maxAge = sessionMaxAge(false)
@@ -113,11 +121,6 @@ export async function login(params: {
     throw new AppError('AUTH_INVALID_CREDENTIALS')
   }
 
-  if (user.status === 'suspended') {
-    await dummyVerify()
-    throw new AppError('AUTH_ACCOUNT_SUSPENDED')
-  }
-
   if (!user.passwordHash) {
     await dummyVerify()
     throw new AppError('AUTH_INVALID_CREDENTIALS')
@@ -126,6 +129,11 @@ export async function login(params: {
   const valid = await verifyPassword(user.passwordHash, params.password)
   if (!valid) {
     throw new AppError('AUTH_INVALID_CREDENTIALS')
+  }
+
+  // Statut révélé seulement après preuve du mot de passe (pas d'énumération).
+  if (user.status === 'suspended') {
+    throw new AppError('AUTH_ACCOUNT_SUSPENDED')
   }
 
   const { token, hash } = generateSessionToken()
@@ -213,7 +221,8 @@ export async function forgotPassword(params: { email: string; ip: string | null 
     ip: params.ip,
   })
 
-  await sendPasswordResetEmail(params.email, token, user.locale).catch(() => {})
+  // Non attendu : le temps de réponse ne doit pas révéler l'existence du compte.
+  void sendPasswordResetEmail(params.email, token, user.locale).catch(() => {})
 }
 
 // ── Reset password ──

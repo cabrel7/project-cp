@@ -1,3 +1,4 @@
+import { isIP } from 'node:net'
 import { errorResponseSchema } from '@cp/shared'
 import {
   authResponseSchema,
@@ -28,7 +29,8 @@ function getAuth(c: { get: (key: 'auth') => AuthContext | undefined }): AuthCont
 }
 
 function getClientIp(c: { req: { header: (name: string) => string | undefined } }): string | null {
-  return c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ?? null
+  const ip = c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
+  return ip && isIP(ip) ? ip : null
 }
 
 function setSessionCookie(
@@ -200,6 +202,7 @@ const listSessionsRoute = createRoute({
 })
 
 authRoutes.use('/sessions', requireAuth)
+authRoutes.use('/sessions/*', requireAuth)
 authRoutes.openapi(listSessionsRoute, async (c) => {
   const auth = getAuth(c)
   const sessions = await service.listSessions(auth.userId, auth.sessionId)
@@ -350,6 +353,7 @@ const resendVerificationRoute = createRoute({
   },
 })
 
+authRoutes.use('/resend-verification', rateLimitAuth)
 authRoutes.use('/resend-verification', requireAuth)
 authRoutes.openapi(resendVerificationRoute, async (c) => {
   const auth = getAuth(c)

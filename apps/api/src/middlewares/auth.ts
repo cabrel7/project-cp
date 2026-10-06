@@ -1,6 +1,7 @@
 import { createMiddleware } from 'hono/factory'
 import type { AppEnv } from '../context.js'
 import { getEnv } from '../env.js'
+import { AppError } from '../lib/errors.js'
 import {
   findSessionByTokenHash,
   findUserById,
@@ -32,22 +33,19 @@ export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
   }
 
   if (!rawToken) {
-    return c.json({ error: { code: 'AUTH_UNAUTHORIZED', message: 'Authentication required' } }, 401)
+    throw new AppError('AUTH_TOKEN_INVALID')
   }
 
   const hash = hashToken(rawToken)
   const session = await findSessionByTokenHash(hash)
 
   if (!session || session.revokedAt || new Date(session.expiresAt) < new Date()) {
-    return c.json(
-      { error: { code: 'AUTH_UNAUTHORIZED', message: 'Invalid or expired session' } },
-      401,
-    )
+    throw new AppError('AUTH_TOKEN_INVALID')
   }
 
   const user = await findUserById(session.userId)
   if (!user || user.status === 'suspended' || user.status === 'deleted') {
-    return c.json({ error: { code: 'AUTH_UNAUTHORIZED', message: 'Account unavailable' } }, 401)
+    throw new AppError('AUTH_TOKEN_INVALID')
   }
 
   c.set('auth', {
@@ -57,7 +55,9 @@ export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
     sessionPublicId: session.publicId,
   })
 
-  const newExpiry = new Date(Date.now() + env.SESSION_MAX_AGE_SECONDS * 1000)
+  // Expiration glissante sans jamais raccourcir une session « se souvenir de moi ».
+  const slid = Date.now() + env.SESSION_MAX_AGE_SECONDS * 1000
+  const newExpiry = new Date(Math.max(slid, new Date(session.expiresAt).getTime()))
   touchSession(session.id, newExpiry).catch(() => {})
 
   await next()

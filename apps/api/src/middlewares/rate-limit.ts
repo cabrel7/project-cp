@@ -1,6 +1,8 @@
+import { isIP } from 'node:net'
 import { createMiddleware } from 'hono/factory'
 import { RateLimiterMemory } from 'rate-limiter-flexible'
 import type { AppEnv } from '../context.js'
+import { AppError } from '../lib/errors.js'
 
 const authLimiter = new RateLimiterMemory({
   points: 10,
@@ -9,20 +11,18 @@ const authLimiter = new RateLimiterMemory({
 })
 
 export const rateLimitAuth = createMiddleware<AppEnv>(async (c, next) => {
-  const ip = c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1'
+  // NB : x-forwarded-for n'est fiable que derrière un proxy de confiance qui l'écrase.
+  const candidate = c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
+  const ip = candidate && isIP(candidate) ? candidate : '127.0.0.1'
+  let limited = false
   try {
     await authLimiter.consume(ip)
-    await next()
   } catch {
-    c.header('Retry-After', '60')
-    return c.json(
-      {
-        error: {
-          code: 'AUTH_TOO_MANY_REQUESTS',
-          message: 'Too many requests, please try again later',
-        },
-      },
-      429,
-    )
+    limited = true
   }
+  if (limited) {
+    c.header('Retry-After', '60')
+    throw new AppError('PLATFORM_RATE_LIMIT')
+  }
+  await next()
 })
