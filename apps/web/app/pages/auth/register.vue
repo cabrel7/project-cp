@@ -48,8 +48,8 @@ useHead({ title: () => t('cp.auth.register.title') })
     />
 
     <form class="flex flex-col gap-5" novalidate @submit.prevent="onSubmit">
-      <CpTextField v-model="fullName" :label="t('cp.auth.register.fullName')" />
-      <CpTextField v-model="email" type="email" :label="t('cp.auth.register.email')" required />
+      <CpTextField v-model="fullName" :label="t('cp.auth.register.fullName')" autocomplete="name" />
+      <CpTextField v-model="email" type="email" :label="t('cp.auth.register.email')" autocomplete="email" required />
       <div class="flex flex-col gap-2">
         <AuthPasswordField
           v-model="password"

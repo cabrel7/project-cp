@@ -45,7 +45,7 @@ const languages = [
 
     <main class="flex flex-col p-4 md:p-6 lg:p-10">
       <header class="flex items-center justify-between">
-        <div class="flex items-center gap-3 lg:invisible">
+        <div class="flex items-center gap-3 lg:hidden">
           <span class="flex size-10 items-center justify-center rounded-md bg-cp-brand-violet text-cp-on-primary">
             <UIcon name="i-lucide-workflow" class="size-6" aria-hidden="true" />
           </span>

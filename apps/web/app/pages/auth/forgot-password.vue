@@ -51,7 +51,7 @@ useHead({ title: () => t('cp.auth.forgot.title') })
       />
 
       <form class="flex flex-col gap-5" novalidate @submit.prevent="send">
-        <CpTextField v-model="email" type="email" :label="t('cp.auth.forgot.email')" required />
+        <CpTextField v-model="email" type="email" :label="t('cp.auth.forgot.email')" autocomplete="email" required />
         <UButton
           v-if="!sent"
           type="submit"
