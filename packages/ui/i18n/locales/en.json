@@ -254,6 +254,92 @@
       "listView": "List view",
       "allow": "Allow",
       "deny": "Deny"
+    },
+    "auth": {
+      "login": {
+        "title": "Sign in",
+        "subtitle": "Don't have an account?",
+        "createAccount": "Create an account",
+        "email": "Email address",
+        "password": "Password",
+        "forgotPassword": "Forgot password?",
+        "rememberMe": "Remember me on this device",
+        "submit": "Sign in",
+        "or": "or",
+        "passkey": "Use a passkey",
+        "legal": "By continuing, you agree to the {terms} and {privacy}.",
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "tabEmail": "Email",
+        "tabPhone": "Phone",
+        "invalidCredentials": "Invalid credentials. Check your email and password.",
+        "tagline": "All the AI your business needs, in one place.",
+        "taglineSub": "Integrate AI into your apps, connect your tools, and launch agents that work for you."
+      },
+      "register": {
+        "title": "Create an account",
+        "subtitle": "Already registered?",
+        "signIn": "Sign in",
+        "fullName": "Full name",
+        "email": "Email address",
+        "password": "Password",
+        "terms": "I agree to the {terms} and {privacy}.",
+        "termsLink": "Terms of Service",
+        "privacyLink": "Privacy Policy",
+        "submit": "Create my account",
+        "orWith": "or sign up with",
+        "emailExists": "This email address is already in use.",
+        "passwordWeak": "The password is too weak.",
+        "tagline": "Your account is ready in two minutes.",
+        "taglineSub": "Free to try, no credit card required. An assistant guides you step by step."
+      },
+      "forgot": {
+        "title": "Forgot password",
+        "description": "Enter your account email. We'll send a link to choose a new one.",
+        "email": "Email",
+        "submit": "Send reset link",
+        "back": "Back to sign in",
+        "sent": "Link sent",
+        "sentDetail": "If an account exists for this address, you'll receive an email in a few minutes. Check your spam folder.",
+        "resend": "Resend link",
+        "openMail": "Open my email"
+      },
+      "reset": {
+        "title": "Choose a new password",
+        "forAccount": "For account",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password",
+        "revokeSessions": "Sign out my other devices",
+        "submit": "Save",
+        "invalidToken": "This link has expired or is invalid.",
+        "success": "Password changed successfully.",
+        "passwordMismatch": "Passwords don't match.",
+        "requestNewLink": "Request a new link"
+      },
+      "verify": {
+        "title": "Email verification",
+        "loading": "Verifying…",
+        "success": "Your email address has been verified.",
+        "error": "This verification link is invalid or has expired.",
+        "goToLogin": "Go to sign in"
+      },
+      "password": {
+        "show": "Show",
+        "hide": "Hide",
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong",
+        "veryStrong": "Very strong",
+        "minChars": "{n} characters minimum"
+      },
+      "language": "Language",
+      "errorTitle": "Something went wrong",
+      "genericError": "Something went wrong. Try again in a moment.",
+      "rateLimited": "Too many attempts. Wait a few minutes before trying again.",
+      "accountSuspended": "This account is suspended. Contact support.",
+      "signupClosed": "Sign-ups are closed for now.",
+      "termsRequired": "Accept the terms to continue.",
+      "comingSoon": "Coming soon"
     }
   }
 }
