@@ -2,6 +2,10 @@
 <!-- Lu À LA DEMANDE par les agents. Règle : une information = un seul endroit.
      Ce fichier RÉSUME et POINTE vers docs/ ; en cas de doute, la source fait foi. -->
 
+tier_domaine: critique    # auth, paiements Mobile Money, données personnelles, multi-tenant (RLS)
+tier_codebase: actif      # monorepo en construction active (P2) — ni neuf, ni legacy
+<!-- Validés par Dylan le 2026-10-06. Pilotent la rigueur (voir CLAUDE.md, protocole), jamais le saut d'étapes. -->
+
 ## Produit
 Plateforme « AI Control Plane » du Groupe ELS : rendre n'importe quel logiciel compatible avec l'IA, pour tout le monde (commerçant sans compétence technique, créateur d'apps, développeur, entreprise). Un seul moteur API-first, plusieurs parcours. Marché : Afrique francophone d'abord (FCFA, Mobile Money, mobile d'abord), bilingue FR/EN, multi-devises (XAF, XOF, EUR, USD).
 → `docs/reference/01-specification-produit.md`

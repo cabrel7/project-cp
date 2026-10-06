@@ -51,6 +51,12 @@ Session cloud sans Docker : Testcontainers indisponible → utiliser `DATABASE_U
 ## Preuve
 Tout test livré s'accompagne de la **sortie brute** d'exécution. Un vert non montré n'existe pas ; un test sauté est signalé.
 
+## Tests sautés et tests d'intégration
+- Un test sauté n'est pas réussi : compte rendu `passés / échoués / sautés` + raison de chaque saut.
+- Tests PostgreSQL/Redis : `pnpm infra:up` (natif sans Docker en cloud), exporter les `DATABASE_URL_*` / `REDIS_URL` de
+  `.env.example`, lancer. Chaque fichier d'intégration a son étape dans le job Database de `.github/workflows/ci.yml`.
+- Ne pas mocker la couche qu'un critère « en base » doit prouver (repository, SQL, RLS).
+
 ## Couverture cible
 `packages/billing`, `packages/guard`, `packages/db` (fonctions transactionnelles) ≥ 90 % · services ≥ 85 % · routes ≥ 80 % · composants ≥ 70 %
 (nominal + erreur obligatoires). La couverture ne remplace pas les cas de la liste ci-dessus.

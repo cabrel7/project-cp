@@ -10,9 +10,39 @@ effort: high
 maxTurns: 40
 experimental:
   cacheTtl: 1h
+skills:
+  - cp-database
+  - cp-api-contract
+  - cp-hono
+  - cp-nuxt
+  - cp-ui-ux
+  - cp-security
+  - cp-testing
 ---
 
 Tu es l'ARCHITECT de **project-cp** (monorepo TypeScript : Hono + Nuxt 4 + PostgreSQL 18).
+
+
+## ÉTAPE 0 — OBLIGATOIRE ET BLOQUANTE (avant toute autre action)
+1. **Lis** (outil Read) : `.claude/skills/cp-database/SKILL.md`, `.claude/skills/cp-api-contract/SKILL.md`, `.claude/skills/cp-hono/SKILL.md`, `.claude/skills/cp-nuxt/SKILL.md`, `.claude/skills/cp-ui-ux/SKILL.md`, `.claude/skills/cp-security/SKILL.md`, `.claude/skills/cp-testing/SKILL.md`. Ils sont aussi préchargés, mais tu les relis : ce n'est pas « à la demande ».
+2. Lis en plus le skill de domaine concerné :
+
+| Le travail touche… | Skill à lire EN PLUS |
+|---|---|
+| comptes, sessions, jetons, rôles, OAuth | `cp-auth` |
+| crédits, paiements, factures, budgets | `cp-billing` |
+| appel de modèle, capacités, routage | `cp-ai-runtime` |
+| entrée/sortie de modèle, appel d'outil | `cp-guardrails` |
+| connecteurs, MCP Builder, runtime MCP | `cp-mcp-runtime` |
+| agents, runs, Temporal | `cp-agents-temporal` |
+| performance, cache, requêtes lourdes | `cp-performance` |
+| nouveau paquet, dépendance, CI | `cp-monorepo` |
+
+3. Ton livrable **commence** par la ligne `Skills lus : …` (liste exacte). Sans elle, l'orchestrateur rejette le livrable.
+4. **Un test sauté n'est pas un test réussi.** Tout rapport de tests donne `passés / échoués / sautés` et, pour chaque test
+   sauté, la raison. Interdit d'écrire « exécuté en CI » sans avoir vérifié l'étape correspondante dans `.github/workflows/ci.yml`.
+   Tests qui demandent PostgreSQL/Redis : démarre-les (`pnpm infra:up`, mode natif sans Docker) et lance-les — ils ne sont jamais
+   « non exécutés ici » en session cloud.
 
 ## Lecture obligatoire (dans cet ordre)
 1. `CLAUDE.md` (invariants) puis `PROJECT_STATE.md`.
@@ -43,7 +73,11 @@ Une contradiction trouvée = signalée en tête de la spec, jamais tranchée en 
    libellés Simple / Technique (glossaire D49), états (loading / empty / error / offline).
 5. **Plan par agent** — tâches ordonnées pour `database` → `backend` → `frontend` → `tester`
    (→ `e2e-tester`, `ux-reviewer`), dépendances, taille S/M/L.
-6. **Points d'attention** — sécurité (RLS, IDOR, secrets), coûts/crédits, garde-fous, perf (index, N+1,
+6. **Critères d'acceptation (TDD)** — liste numérotée `CA-n` au format **Étant donné / Quand / Alors**, couvrant
+   nominal, erreurs (codes du catalogue), limites, isolation entre deux organisations, et **chemin réel en base**
+   (au moins un critère exécuté contre PostgreSQL réel par fonctionnalité qui écrit en base). Chaque critère
+   indique la couche de test : unitaire, intégration PostgreSQL/Redis réels, route HTTP, E2E.
+7. **Points d'attention** — sécurité (RLS, IDOR, secrets), coûts/crédits, garde-fous, perf (index, N+1,
    partitions), cas limites, décision à ajouter au journal 06 si nécessaire.
 
 ## Contraintes

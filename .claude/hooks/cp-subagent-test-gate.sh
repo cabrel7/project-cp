@@ -3,7 +3,7 @@
 # cp-subagent-test-gate.sh — SubagentStop — project-cp (anti « vert menteur »)
 # Quand frontend / backend / database termine, relance UNIQUEMENT les contrôles
 # du périmètre modifié :
-#   - apps/* et packages/*  → biome check + vitest related (par paquet)
+#   - apps/* et packages/*  → biome check + vitest related (par paquet) ; tests SAUTÉS signalés
 #   - db/migrations/*.sql   → squawk (+ tests SQL si DATABASE_URL_TEST est défini)
 # Échec → {"decision":"block","reason":…} : l'agent doit corriger avant de rendre la main.
 # Monorepo pnpm : les binaires sont résolus par paquet (pnpm exec).
@@ -28,6 +28,7 @@ CHANGED=$( { git diff --name-only 2>/dev/null
              git ls-files --others --exclude-standard 2>/dev/null; } | sort -u )
 [ -z "$CHANGED" ] && exit 0
 FAIL=""
+SKIPS=""
 
 # ── TypeScript / Vue : par paquet ─────────────────────────────────────
 if command -v pnpm >/dev/null 2>&1; then
@@ -49,6 +50,13 @@ $(echo "$OUT" | tail -40)"
       OUT=$( cd "$P" && pnpm exec vitest related --run --passWithNoTests $REL 2>&1 ) || FAIL="${FAIL}
 === VITEST ${P} (échec) ===
 $(echo "$OUT" | tail -60)"
+      # Un test sauté n'est pas un test réussi : on le signale (base absente, skipIf, .skip oublié…).
+      SKIPPED=$(echo "$OUT" | sed 's/\x1b\[[0-9;]*m//g' | grep -E '^[[:space:]]*Tests[[:space:]]' | grep -oE '[0-9]+ skipped' | grep -oE '[0-9]+' | tail -1)
+      if [ -n "$SKIPPED" ] && [ "$SKIPPED" -gt 0 ]; then
+        SKIPS="${SKIPS}
+=== VITEST ${P} : ${SKIPPED} test(s) SAUTÉ(S) ===
+$(echo "$OUT" | sed 's/\x1b\[[0-9;]*m//g' | grep -E '↓|skipped' | head -15)"
+      fi
     fi
   done
 fi
@@ -77,6 +85,14 @@ $(echo "$OUT" | tail -40)"
 $(echo "$OUT" | tail -60)"
     fi
   fi
+fi
+
+# Tests sautés : bloquant au premier arrêt (l'agent doit lancer la base ou justifier chaque saut).
+if [ -z "$FAIL" ] && [ -n "$SKIPS" ] && [ "$ACTIVE" != "true" ]; then
+  MSG=$(printf '%s' "$SKIPS" | tail -c 3000)
+  jq -cn --arg r "Des tests ont été SAUTÉS : un test sauté n'est pas un test réussi. Si ce sont des tests PostgreSQL/Redis, lance 'pnpm infra:up', exporte les DATABASE_URL_* / REDIS_URL de .env.example et relance-les. Sinon, justifie chaque saut dans ton livrable (passés / échoués / sautés + raison).$MSG" \
+    '{decision:"block",reason:$r}'
+  exit 0
 fi
 
 if [ -n "$FAIL" ]; then
