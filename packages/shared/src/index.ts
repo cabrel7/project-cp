@@ -1,4 +1,22 @@
 export {
+  type AuthResponse,
+  authResponseSchema,
+  type ForgotPasswordBody,
+  forgotPasswordBodySchema,
+  type LoginBody,
+  loginBodySchema,
+  type MeResponse,
+  meResponseSchema,
+  type RegisterBody,
+  type ResetPasswordBody,
+  registerBodySchema,
+  resetPasswordBodySchema,
+  type SessionResponse,
+  sessionResponseSchema,
+  type VerifyEmailBody,
+  verifyEmailBodySchema,
+} from './auth-schemas.js'
+export {
   ERROR_CODES,
   type ErrorCategory,
   type ErrorCode,
