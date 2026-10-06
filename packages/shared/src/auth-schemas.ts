@@ -1,8 +1,13 @@
 import { z } from 'zod'
 import { publicIdSchema } from './schemas.js'
 
+const emailField = z
+  .string()
+  .email()
+  .transform((e) => e.toLowerCase().trim())
+
 export const registerBodySchema = z.object({
-  email: z.string().email(),
+  email: emailField,
   password: z.string().min(8).max(128),
   full_name: z.string().min(1).max(200).optional(),
 })
@@ -10,7 +15,7 @@ export const registerBodySchema = z.object({
 export type RegisterBody = z.infer<typeof registerBodySchema>
 
 export const loginBodySchema = z.object({
-  email: z.string().email(),
+  email: emailField,
   password: z.string().min(1),
   remember_me: z.boolean().default(false),
 })
@@ -18,7 +23,7 @@ export const loginBodySchema = z.object({
 export type LoginBody = z.infer<typeof loginBodySchema>
 
 export const forgotPasswordBodySchema = z.object({
-  email: z.string().email(),
+  email: emailField,
 })
 
 export type ForgotPasswordBody = z.infer<typeof forgotPasswordBodySchema>
