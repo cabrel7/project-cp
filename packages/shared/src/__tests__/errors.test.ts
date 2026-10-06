@@ -301,7 +301,7 @@ describe('synchronisation ERROR_CODES ↔ seeds SQL platform.error_codes', () =>
         const [, code, status, rt, rf] = m as unknown as [string, string, string, string, string]
         rows.push({
           code,
-          category: code.split('_')[0],
+          category: code.split('_')[0] as string,
           httpStatus: Number(status),
           isRetryable: rt === 'true',
           refundsCredits: rf === 'true',
