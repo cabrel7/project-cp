@@ -135,6 +135,10 @@ jobs:
           DATABASE_URL_AUTH: 'postgres://cp_auth:cp_auth_dev@localhost:5432/cp_test?sslmode=disable'
           DATABASE_URL_ADMIN: 'postgres://cp_admin:cp_admin_dev@localhost:5432/cp_test?sslmode=disable'
           REDIS_URL: 'redis://localhost:6379'
+          # P2.2 : un saut d'intégration (PG ou Redis injoignable) devient un ÉCHEC, jamais un faux vert
+          CP_REQUIRE_INTEGRATION: '1'
+          OTP_PEPPER: 'ci-only-otp-pepper-0123456789abcdef-not-a-secret'
+          SMS_PROVIDER: 'simulated'
         run: pnpm --filter @cp/api exec vitest run --dir src --reporter=default -t "PostgreSQL réel"
 
       - name: Drizzle-kit pull

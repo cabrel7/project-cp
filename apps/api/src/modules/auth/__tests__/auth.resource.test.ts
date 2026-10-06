@@ -9,6 +9,9 @@ const baseUser = {
   locale: 'fr',
   timezone: 'Europe/Paris',
   createdAt: '2025-12-01T00:00:00.000Z',
+  phoneE164: null as string | null,
+  phoneVerifiedAt: null as string | null,
+  freeTierEligible: false,
 }
 
 describe('toMeResponse', () => {
@@ -21,7 +24,25 @@ describe('toMeResponse', () => {
       locale: 'fr',
       timezone: 'Europe/Paris',
       created_at: '2025-12-01T00:00:00.000Z',
+      phone: null,
+      phone_verified: false,
+      free_tier_eligible: false,
     })
+  })
+
+  it('P2.2 : doit exposer phone, phone_verified et free_tier_eligible pour un utilisateur téléphone', () => {
+    const res = toMeResponse({
+      ...baseUser,
+      email: null,
+      emailVerifiedAt: null,
+      phoneE164: '+237690123442',
+      phoneVerifiedAt: '2026-10-06T10:00:00.000Z',
+      freeTierEligible: true,
+    })
+    expect(res.phone).toBe('+237690123442')
+    expect(res.phone_verified).toBe(true)
+    expect(res.email).toBeNull()
+    expect(res.free_tier_eligible).toBe(true)
   })
 
   it('doit indiquer email_verified=false quand emailVerifiedAt est null', () => {
@@ -45,9 +66,12 @@ describe('toMeResponse', () => {
       'created_at',
       'email',
       'email_verified',
+      'free_tier_eligible',
       'full_name',
       'id',
       'locale',
+      'phone',
+      'phone_verified',
       'timezone',
     ])
   })
