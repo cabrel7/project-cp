@@ -88,4 +88,6 @@ GRANT EXECUTE ON FUNCTION iam.create_personal_organization(bigint, text, text, c
 SET LOCAL lock_timeout = '3s';
 SET LOCAL statement_timeout = '30s';
 
+-- Retour arrière de cette migration uniquement (aucun client ne dépend encore de la fonction) :
+-- squawk-ignore ban-drop-function
 DROP FUNCTION IF EXISTS iam.create_personal_organization(bigint, text, text, char, char, text, text);
