@@ -21,7 +21,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { AppError } from '../../../lib/errors.js'
+import type { AppError } from '../../../lib/errors.js'
 import { loadSrc, uniqueCmPhone, wrongCodeFor } from './phone-test-utils.js'
 
 // ── Doubles hissés (vi.mock est hissé avant les imports) ───────────────────────────────────────────
@@ -157,7 +157,9 @@ async function appErrorOf(promise: Promise<unknown>): Promise<AppError> {
     () => null,
     (e: unknown) => e,
   )
-  expect(err, 'une AppError était attendue').toBeInstanceOf(AppError)
+  // `vi.resetModules()` recharge `lib/errors.js` : la classe n'est plus la même (instanceof faux).
+  // On vérifie donc l'identité par le nom ; chaque test contrôle ensuite `code`, `status`, etc.
+  expect((err as { name?: string } | null)?.name, 'une AppError était attendue').toBe('AppError')
   return err as AppError
 }
 

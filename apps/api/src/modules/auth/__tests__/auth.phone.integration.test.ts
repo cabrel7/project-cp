@@ -302,8 +302,17 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       expect(hash.subarray(0, 32).equals(createHash('sha256').update(code).digest())).toBe(false)
     })
 
+    // Comptage restreint aux cibles que ce test pourrait produire (saisie brute ou normalisation partielle) :
+    // un comptage global de `verification_tokens` casserait si un autre fichier d'intégration tourne en parallèle.
+    const countCa5Tokens = () =>
+      asAdmin(
+        (s) =>
+          s`SELECT count(*)::int AS n FROM iam.verification_tokens
+            WHERE target IN ('6 90 12 34', '6901234', '+2376901234', '+6901234')`,
+      )
+
     it('CA-5 (R) : numéro invalide → 422 {field, reason, expected_length}, aucune ligne, aucun SMS, saisie non renvoyée', async () => {
-      const before = await asAdmin((s) => s`SELECT count(*)::int AS n FROM iam.verification_tokens`)
+      const before = await countCa5Tokens()
       const { getSimulatedOutbox } = await sim()
       const nSms = getSimulatedOutbox().length
       const { res, json, text } = await post(
@@ -320,7 +329,7 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       })
       expect(text).not.toContain('6 90 12 34')
       expect(text).not.toContain('6901234')
-      const after = await asAdmin((s) => s`SELECT count(*)::int AS n FROM iam.verification_tokens`)
+      const after = await countCa5Tokens()
       expect(after[0]?.n).toBe(before[0]?.n)
       expect(getSimulatedOutbox().length).toBe(nSms)
     })
@@ -328,6 +337,7 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
     it('CA-7 (I) : numéro existant et inconnu → statut, corps et en-têtes RateLimit identiques, 1 jeton + 1 SMS chacun', async () => {
       const known = uniqueCmPhone()
       expect((await signup(known)).res.status).toBe(200)
+      await redis.del(`rl:auth:otp:req:phone:${hmac(known.e164)}`) // lève le délai de renvoi (60 s, CA-27)
       const unknown = uniqueCmPhone()
       const a = await requestCode(known, uniqueIp())
       const b = await requestCode(unknown, uniqueIp())
@@ -349,6 +359,7 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
     it('CA-7 (R) : toute réponse 200 respecte un plancher de 300 ms (inconnu, existant, bloqué)', async () => {
       const known = uniqueCmPhone()
       await signup(known)
+      await redis.del(`rl:auth:otp:req:phone:${hmac(known.e164)}`) // lève le délai de renvoi (60 s, CA-27)
       const blocked = uniqueCmPhone()
       const times: number[] = []
       times.push((await requestCode(uniqueCmPhone(), uniqueIp())).elapsed)
