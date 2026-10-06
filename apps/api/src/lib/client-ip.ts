@@ -19,7 +19,11 @@ export function getClientIp(c: Context): string | null {
     }
   }
 
-  const info = getConnInfo(c)
-  const addr = info.remote.address
-  return addr && isIP(addr) ? addr : null
+  // Hors serveur Node (ex. `app.request()` sans liaisons) il n'y a pas de socket : IP inconnue, jamais une erreur.
+  try {
+    const addr = getConnInfo(c).remote.address
+    return addr && isIP(addr) ? addr : null
+  } catch {
+    return null
+  }
 }

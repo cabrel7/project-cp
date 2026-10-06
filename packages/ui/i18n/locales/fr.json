@@ -335,6 +335,20 @@
         "veryStrong": "Très solide",
         "minChars": "{n} caractères minimum"
       },
+      "phone": {
+        "label": "Numéro de téléphone",
+        "country": "Pays",
+        "hintLogin": "Nous vous envoyons un code par SMS. Pas de mot de passe à retenir.",
+        "hintRegister": "Nous vous enverrons un code pour le vérifier. Un seul compte gratuit par numéro.",
+        "submit": "Recevoir un code",
+        "errors": {
+          "tooShort": "Il manque un chiffre : un numéro {country} en compte {n}. | Il manque {count} chiffres : un numéro {country} en compte {n}.",
+          "tooLong": "Ce numéro a trop de chiffres.",
+          "invalid": "Ce numéro n'est pas valide.",
+          "notMobile": "Indiquez un numéro de mobile pour recevoir le SMS.",
+          "countryNotSupported": "Ce pays n'est pas encore disponible."
+        }
+      },
       "language": "Langue",
       "errorTitle": "Une erreur est survenue",
       "genericError": "Une erreur est survenue. Réessayez dans un instant.",

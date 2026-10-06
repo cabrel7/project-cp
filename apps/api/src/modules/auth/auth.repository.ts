@@ -18,6 +18,8 @@ export async function findUserByEmail(email: string) {
       fullName: usersInIam.fullName,
       timezone: usersInIam.timezone,
       createdAt: usersInIam.createdAt,
+      phoneE164: usersInIam.phoneE164,
+      phoneVerifiedAt: usersInIam.phoneVerifiedAt,
     })
     .from(usersInIam)
     .where(and(eq(usersInIam.email, email), isNull(usersInIam.deletedAt)))
@@ -56,6 +58,8 @@ export async function findUserById(userId: bigint) {
       timezone: usersInIam.timezone,
       status: usersInIam.status,
       createdAt: usersInIam.createdAt,
+      phoneE164: usersInIam.phoneE164,
+      phoneVerifiedAt: usersInIam.phoneVerifiedAt,
     })
     .from(usersInIam)
     .where(and(eq(usersInIam.id, userId), isNull(usersInIam.deletedAt)))

@@ -119,7 +119,7 @@ export async function login(params: {
 
   return {
     authResponse: {
-      user: toMeResponse(user),
+      user: toMeResponse({ ...user, freeTierEligible: user.phoneVerifiedAt !== null }),
       session: toSessionResponse(
         {
           publicId: session.publicId,
@@ -249,9 +249,11 @@ export async function resendVerification(params: {
 }
 
 // ── Me ──
+// PROVISOIRE (passe A) : free_tier_eligible = numéro vérifié (valeur du seed du paramètre).
+// La passe B le remplace par platform.free_tier_requires_phone_otp() (spec §4.4).
 
 export async function getMe(userId: bigint): Promise<MeResponse> {
   const user = await repo.findUserById(userId)
   if (!user) throw new AppError('AUTH_INVALID_CREDENTIALS')
-  return toMeResponse(user)
+  return toMeResponse({ ...user, freeTierEligible: user.phoneVerifiedAt !== null })
 }

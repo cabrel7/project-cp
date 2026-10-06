@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { phoneCountrySchema } from './phone.js'
 import { publicIdSchema } from './schemas.js'
 
 const emailField = z
@@ -61,6 +62,9 @@ export const meResponseSchema = z.object({
   locale: z.string(),
   timezone: z.string(),
   created_at: z.string(),
+  phone: z.string().nullable(),
+  phone_verified: z.boolean(),
+  free_tier_eligible: z.boolean(),
 })
 
 export type MeResponse = z.infer<typeof meResponseSchema>
@@ -71,3 +75,40 @@ export const authResponseSchema = z.object({
 })
 
 export type AuthResponse = z.infer<typeof authResponseSchema>
+
+/** Numéro libre : la normalisation E.164 se fait dans le service (raison structurée en cas de refus). */
+const phoneInputField = z.string().trim().min(4).max(32)
+
+export const phoneRequestCodeBodySchema = z.object({
+  phone: phoneInputField,
+  country: phoneCountrySchema.default('CM'),
+  locale: z.enum(['fr', 'en']).default('fr'),
+})
+
+export type PhoneRequestCodeBody = z.infer<typeof phoneRequestCodeBodySchema>
+
+export const phoneRequestCodeResponseSchema = z.object({
+  ok: z.literal(true),
+  expires_in_seconds: z.number().int(),
+  resend_after_seconds: z.number().int(),
+})
+
+export type PhoneRequestCodeResponse = z.infer<typeof phoneRequestCodeResponseSchema>
+
+export const phoneVerifyCodeBodySchema = z.object({
+  phone: phoneInputField,
+  country: phoneCountrySchema.default('CM'),
+  code: z.string().regex(/^[0-9]{6}$/),
+  /** Utilisé seulement si le compte est créé. */
+  full_name: z.string().trim().min(1).max(200).optional(),
+  remember_me: z.boolean().default(true),
+  locale: z.enum(['fr', 'en']).default('fr'),
+})
+
+export type PhoneVerifyCodeBody = z.infer<typeof phoneVerifyCodeBodySchema>
+
+export const phoneVerifyCodeResponseSchema = authResponseSchema.extend({
+  is_new_user: z.boolean(),
+})
+
+export type PhoneVerifyCodeResponse = z.infer<typeof phoneVerifyCodeResponseSchema>

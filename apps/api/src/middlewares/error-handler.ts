@@ -33,6 +33,9 @@ export const onError: ErrorHandler<AppEnv> = (err, c) => {
       logger?.warn({ code: err.code, details: err.details, requestId }, err.code)
     }
     const details = err.httpStatus >= 500 ? undefined : err.details
+    if (err.retryAfterSeconds !== undefined) {
+      c.header('Retry-After', String(Math.max(1, Math.ceil(err.retryAfterSeconds))))
+    }
     return c.json(errorBody(err.code, err.message, requestId, details), err.httpStatus as 400)
   }
 

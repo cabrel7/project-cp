@@ -335,6 +335,20 @@
         "veryStrong": "Very strong",
         "minChars": "{n} characters minimum"
       },
+      "phone": {
+        "label": "Phone number",
+        "country": "Country",
+        "hintLogin": "We'll text you a code. No password to remember.",
+        "hintRegister": "We'll send you a code to verify it. One free account per number.",
+        "submit": "Get a code",
+        "errors": {
+          "tooShort": "One digit is missing: a {country} number has {n}. | {count} digits are missing: a {country} number has {n}.",
+          "tooLong": "This number has too many digits.",
+          "invalid": "This number isn't valid.",
+          "notMobile": "Enter a mobile number to receive the text.",
+          "countryNotSupported": "This country isn't available yet."
+        }
+      },
       "language": "Language",
       "errorTitle": "Something went wrong",
       "genericError": "Something went wrong. Try again in a moment.",

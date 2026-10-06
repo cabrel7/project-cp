@@ -7,6 +7,14 @@ export {
   loginBodySchema,
   type MeResponse,
   meResponseSchema,
+  type PhoneRequestCodeBody,
+  type PhoneRequestCodeResponse,
+  type PhoneVerifyCodeBody,
+  type PhoneVerifyCodeResponse,
+  phoneRequestCodeBodySchema,
+  phoneRequestCodeResponseSchema,
+  phoneVerifyCodeBodySchema,
+  phoneVerifyCodeResponseSchema,
   type RegisterBody,
   type ResetPasswordBody,
   registerBodySchema,
@@ -25,6 +33,15 @@ export {
   isRetryable,
 } from './errors.js'
 export { GLOSSARY, type GlossaryMode, type GlossaryTerm, type Locale, t } from './glossary.js'
+export {
+  maskPhone,
+  type NormalizePhoneResult,
+  normalizePhone,
+  type PhoneCountry,
+  type PhoneRejectReason,
+  phoneCountrySchema,
+  SUPPORTED_PHONE_COUNTRIES,
+} from './phone.js'
 export {
   type ErrorResponse,
   errorResponseSchema,
