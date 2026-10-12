@@ -10,6 +10,8 @@ export default defineNuxtConfig({
     public: { apiBase: '' },
   },
   routeRules: {
+    // Écran du code SMS : dépend de la demande mémorisée dans sessionStorage (navigateur seulement).
+    '/auth/phone/**': { ssr: false },
     '/v1/**': { proxy: 'http://localhost:4000/v1/**' },
   },
   typescript: {

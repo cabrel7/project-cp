@@ -322,6 +322,10 @@ importers:
         version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(@vitest/coverage-v8@5.0.2)(happy-dom@18.0.1)(vite@8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   apps/web:
+    dependencies:
+      '@cp/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
     devDependencies:
       '@cp/ui':
         specifier: workspace:*

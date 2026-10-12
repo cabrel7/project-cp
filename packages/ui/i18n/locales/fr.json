@@ -294,7 +294,9 @@
         "sentDetail": "Si un compte n'existait pas déjà pour cette adresse, nous vous avons envoyé un e-mail de vérification. Pensez à regarder dans les indésirables.",
         "goToLogin": "Se connecter",
         "tagline": "Votre compte est prêt en deux minutes.",
-        "taglineSub": "Offre gratuite pour essayer, sans carte bancaire. Un assistant vous guide ensuite pas à pas."
+        "taglineSub": "Offre gratuite pour essayer, sans carte bancaire. Un assistant vous guide ensuite pas à pas.",
+        "tabEmail": "E-mail",
+        "tabPhone": "Téléphone"
       },
       "forgot": {
         "title": "Mot de passe oublié",
@@ -347,7 +349,8 @@
           "invalid": "Ce numéro n'est pas valide.",
           "notMobile": "Indiquez un numéro de mobile pour recevoir le SMS.",
           "countryNotSupported": "Ce pays n'est pas encore disponible."
-        }
+        },
+        "loading": "Chargement du champ téléphone…"
       },
       "language": "Langue",
       "errorTitle": "Une erreur est survenue",
@@ -356,7 +359,34 @@
       "accountSuspended": "Ce compte est suspendu. Contactez le support.",
       "signupClosed": "Les inscriptions sont fermées pour le moment.",
       "termsRequired": "Acceptez les conditions pour continuer.",
-      "comingSoon": "Bientôt disponible"
+      "comingSoon": "Bientôt disponible",
+      "code": {
+        "back": "Retour",
+        "title": "Entrez le code reçu par SMS",
+        "sentTo": "Envoyé au {phone}.",
+        "change": "Modifier",
+        "label": "Code à 6 chiffres",
+        "digit": "Chiffre {n} sur 6",
+        "resendIn": "Vous n'avez rien reçu ? Nouvel envoi possible dans {time}",
+        "resendReady": "Vous pouvez demander un nouveau code.",
+        "resend": "Renvoyer le code",
+        "resent": "Nouveau code envoyé.",
+        "validity": "Le code est valable {minutes} minutes. Ne le communiquez à personne, même à notre équipe.",
+        "submit": "Vérifier",
+        "invalid": "Code incorrect. Il vous reste {count} essai. | Code incorrect. Il vous reste {count} essais.",
+        "expired": "Ce code a expiré. Demandez-en un nouveau.",
+        "tooManyAttempts": "Trop d'essais pour ce code. Demandez-en un nouveau.",
+        "requestNew": "Recevoir un nouveau code",
+        "smsUnavailable": "L'envoi de SMS est momentanément indisponible. Connectez-vous avec votre e-mail.",
+        "useEmail": "Utiliser mon e-mail"
+      },
+      "duration": {
+        "seconds": "{n} seconde | {n} secondes",
+        "minutes": "{n} minute | {n} minutes",
+        "minutesSeconds": "{m} min {s} s"
+      },
+      "rateLimitedIn": "Trop de demandes. Réessayez dans {time}.",
+      "offline": "Vous êtes hors ligne. Vérifiez votre connexion puis réessayez."
     }
   }
 }

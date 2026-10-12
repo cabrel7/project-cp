@@ -1,8 +1,9 @@
 <script setup lang="ts">
-// Inscription par e-mail (maquette 02). Le champ téléphone et Google/Apple arrivent en P2.2+.
+// Inscription par e-mail ou par téléphone (maquette 02, D63 : onglets). Google/Apple : désactivés.
 definePageMeta({ layout: false })
 
 const { t } = useI18n()
+const route = useRoute()
 const { register, isLoading } = useAuth()
 
 const fullName = ref('')
@@ -11,6 +12,11 @@ const password = ref('')
 const acceptTerms = ref(false)
 const errorKey = ref<string | null>(null)
 const sent = ref(false)
+const tabs = computed(() => [
+  { label: t('cp.auth.register.tabEmail'), value: 'email', icon: 'i-lucide-mail' },
+  { label: t('cp.auth.register.tabPhone'), value: 'phone', icon: 'i-lucide-phone' },
+])
+const tab = ref(route.query.tab === 'phone' ? 'phone' : 'email')
 
 const canSubmit = computed(() => !!email.value && password.value.length >= 8 && acceptTerms.value)
 
@@ -40,6 +46,8 @@ useHead({ title: () => t('cp.auth.register.title') })
       </p>
     </header>
 
+    <UTabs v-if="!sent" v-model="tab" :items="tabs" :content="false" variant="pill" color="primary" class="w-full" />
+
     <template v-if="sent">
       <UAlert
         color="success"
@@ -52,7 +60,7 @@ useHead({ title: () => t('cp.auth.register.title') })
       <UButton to="/auth/login" size="xl" block :label="t('cp.auth.register.goToLogin')" />
     </template>
 
-    <template v-else>
+    <template v-else-if="tab === 'email'">
       <UAlert
         v-if="errorKey"
         color="error"
@@ -95,7 +103,11 @@ useHead({ title: () => t('cp.auth.register.title') })
           :label="t('cp.auth.register.submit')"
         />
       </form>
+    </template>
 
+    <LazyAuthPhoneForm v-else mode="register" />
+
+    <template v-if="!sent">
       <USeparator :label="t('cp.auth.register.orWith')" />
 
       <div class="grid grid-cols-2 gap-3">

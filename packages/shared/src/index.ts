@@ -34,6 +34,7 @@ export {
 } from './errors.js'
 export { GLOSSARY, type GlossaryMode, type GlossaryTerm, type Locale, t } from './glossary.js'
 export {
+  getPhoneDialCode,
   maskPhone,
   type NormalizePhoneResult,
   normalizePhone,

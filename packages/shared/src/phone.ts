@@ -103,6 +103,11 @@ export function normalizePhone(input: string, country: PhoneCountry): NormalizeP
   }
 }
 
+/** Indicatif d'un pays supporté (« +237 »), pour le sélecteur de pays du formulaire. */
+export function getPhoneDialCode(country: PhoneCountry): string {
+  return `+${getCountryCallingCode(country)}`
+}
+
 /** « +237 6 90 •• •• 42 » : indicatif, 3 premiers chiffres nationaux et 2 derniers (écran code SMS, logs dev). */
 export function maskPhone(e164: string): string {
   try {
