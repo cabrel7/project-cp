@@ -13,7 +13,8 @@ import { auth, authText, gotoHydrated, isDark, isMobile, mockAuthApi } from './p
 // viewport ou à un schéma de couleurs sont conditionnées au nom du projet.
 
 // La pastille Nuxt DevTools (mode dev) affiche un temps de rendu variable : masquée dans les captures.
-const HIDE_DEVTOOLS = '#nuxt-devtools-anchor { display: none !important }'
+const HIDE_DEVTOOLS =
+  '#nuxt-devtools-anchor, #nuxt-devtools-container, nuxt-devtools-inspect-panel, #vue-tracer-overlay { display: none !important }'
 
 test.describe('Connexion /auth/login', () => {
   test('affiche titre, champs, case « rester connecté », onglets et boutons sociaux désactivés', async ({
@@ -32,7 +33,8 @@ test.describe('Connexion /auth/login', () => {
     await expect(login.rememberMe).toBeChecked()
 
     await expect(login.tabEmail).toHaveAttribute('aria-selected', 'true')
-    await expect(login.tabPhone).toBeDisabled()
+    await expect(login.tabPhone).toBeEnabled()
+    await expect(login.tabPhone).toHaveAttribute('aria-selected', 'false')
 
     await expect(login.google).toBeDisabled()
     await expect(login.apple).toBeDisabled()
