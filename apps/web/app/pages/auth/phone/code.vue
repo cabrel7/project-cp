@@ -10,7 +10,7 @@ definePageMeta({ layout: false })
 const CODE_LENGTH = 6
 const VALIDITY_MINUTES = 5
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const {
   request,
   isLoading,
@@ -68,16 +68,21 @@ function focusFirst() {
   nextTick(() => pin.value?.inputsRef?.[0]?.$el?.focus())
 }
 
+// Un champ par chiffre : étiquette propre à chaque case (« Chiffre n sur 6 »), à rejouer au changement de langue.
+function labelDigits() {
+  pin.value?.inputsRef?.forEach((input, i) => {
+    input.$el?.setAttribute('aria-label', t('cp.auth.code.digit', { n: i + 1 }))
+  })
+}
+watch(locale, () => nextTick(labelDigits), { flush: 'post' })
+
 onMounted(async () => {
   if (!restore()) {
     await navigateTo('/auth/login?tab=phone', { replace: true })
     return
   }
-  // Un champ par chiffre : étiquette propre à chaque case (« Chiffre n sur 6 »).
   nextTick(() => {
-    pin.value?.inputsRef?.forEach((input, i) => {
-      input.$el?.setAttribute('aria-label', t('cp.auth.code.digit', { n: i + 1 }))
-    })
+    labelDigits()
     focusFirst()
   })
   const { maskPhone } = await import('@cp/shared/phone')

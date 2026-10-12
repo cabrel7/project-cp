@@ -24,7 +24,13 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const errorId = `cp-phone-error-${useId()}`
+const uid = useId()
+const errorId = `cp-phone-error-${uid}`
+// Deux contrôles dans un seul UFormField : sans id explicite ils hériteraient du même id (doublon).
+// Le <label for> doit viser le champ du numéro ; le sélecteur de pays a son propre aria-label.
+// UFormField retient le dernier id déclaré : l'ordre sélecteur → champ ci-dessous est donc significatif.
+const countryId = `cp-phone-country-${uid}`
+const phoneId = `cp-phone-number-${uid}`
 // Mobile : control-lg (48 px) ; à partir de md : control-md (40 px).
 const control = 'h-(--cp-control-lg) md:h-(--cp-control-md)'
 
@@ -37,6 +43,7 @@ const options = computed(() =>
   <UFormField :label="label" :help="error ? undefined : hint" :error="error || undefined">
     <div class="flex items-start gap-2">
       <USelect
+        :id="countryId"
         v-model="country"
         :items="options"
         :disabled="disabled"
@@ -45,6 +52,7 @@ const options = computed(() =>
         :ui="{ base: control, trailingIcon: 'text-cp-ink-muted' }"
       />
       <UInput
+        :id="phoneId"
         v-model="model"
         type="tel"
         inputmode="tel"

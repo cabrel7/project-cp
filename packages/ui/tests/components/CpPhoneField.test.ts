@@ -41,6 +41,17 @@ describe('CpPhoneField', () => {
     expect(mountField().get('select').attributes('aria-label')).toBe('Pays')
   })
 
+  it('donne des id distincts au sélecteur de pays et au champ du numéro', () => {
+    const wrapper = mountField()
+    const selectId = wrapper.get('select').attributes('id')
+    const inputId = wrapper.get('input').attributes('id')
+    expect(selectId).toBeTruthy()
+    expect(inputId).toBeTruthy()
+    expect(selectId).not.toBe(inputId)
+    const ids = [...wrapper.element.querySelectorAll('[id]')].map((e) => e.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
   it('rend un champ type=tel, inputmode=tel, autocomplete=tel-national', () => {
     const input = mountField().get('input')
     expect(input.attributes('type')).toBe('tel')

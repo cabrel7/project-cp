@@ -3,7 +3,6 @@
 definePageMeta({ layout: false })
 
 const { t } = useI18n()
-const route = useRoute()
 const { login, isLoading } = useAuth()
 
 const email = ref('')
@@ -15,7 +14,7 @@ const tabs = computed(() => [
   { label: t('cp.auth.login.tabEmail'), value: 'email' },
   { label: t('cp.auth.login.tabPhone'), value: 'phone' },
 ])
-const tab = ref(route.query.tab === 'phone' ? 'phone' : 'email')
+const tab = useAuthTab()
 
 async function onSubmit() {
   errorKey.value = null
