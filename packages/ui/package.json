@@ -9,6 +9,7 @@
     "typecheck": "nuxt typecheck",
     "test": "vitest run --passWithNoTests",
     "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
+    "test:e2e:ci": "playwright test --config tests/e2e/playwright.config.ts --project=desktop-light --project=mobile-light",
     "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots",
     "postinstall": "nuxt prepare"
   },
