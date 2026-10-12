@@ -8,6 +8,7 @@
  */
 import { BlockList, isIP } from 'node:net'
 import { getPoolAuth, getPoolRw } from '@cp/db'
+import { normalizeIp } from '../../lib/client-ip.js'
 import { OTP_TTL_SECONDS } from './auth.phone.config.js'
 import { createSessionTx, createUserWithOrgTx, type SqlLike } from './auth.repository.js'
 
@@ -106,15 +107,19 @@ export async function getCountryRules(country: string): Promise<CountryRules | n
   }
 }
 
+/** Grammaire stricte : `réseau/préfixe`, un seul « / », préfixe = 1 à 3 chiffres décimaux (pas de signe, d'espace, d'hexa). */
+const CIDR_PREFIX = /^[0-9]{1,3}$/
+
 function cidrContains(cidr: string, ip: string): boolean {
-  const [network, prefix] = cidr.split('/')
-  const family = network ? isIP(network) : 0
-  const ipFamily = isIP(ip)
-  const length = Number(prefix)
-  if (!network || family === 0 || family !== ipFamily || !Number.isInteger(length)) return false
+  const parts = cidr.split('/')
+  if (parts.length !== 2) return false
+  const [network, prefix] = parts
+  if (!network || prefix === undefined || !CIDR_PREFIX.test(prefix)) return false
+  const family = isIP(network)
+  if (family === 0 || family !== isIP(ip)) return false
   try {
     const list = new BlockList()
-    list.addSubnet(network, length, family === 6 ? 'ipv6' : 'ipv4')
+    list.addSubnet(network, Number(prefix), family === 6 ? 'ipv6' : 'ipv4')
     return list.check(ip, family === 6 ? 'ipv6' : 'ipv4')
   } catch {
     return false // une plage mal formée ne bloque personne et ne fait jamais échouer une demande
@@ -124,15 +129,22 @@ function cidrContains(cidr: string, ip: string): boolean {
 /**
  * Numéro, IP ou plage (CIDR) de `platform.blocklist_entries`, hors entrées expirées. Lue par `app_auth`.
  * Les plages sont comparées côté application : une valeur `cidr` invalide ne peut pas faire échouer la requête SQL.
+ * Sans IP (inconnue), aucune comparaison d'adresse n'est faite : une entrée `ip` vide ne bloque personne.
  */
 export async function isBlocked(params: { phone: string; ip: string | null }): Promise<boolean> {
-  const rows = await getPoolAuth()`
+  const ip = params.ip === null ? null : normalizeIp(params.ip)
+  const rows =
+    ip === null
+      ? await getPoolAuth()`
+    SELECT kind, value FROM platform.blocklist_entries
+     WHERE (expires_at IS NULL OR expires_at > now())
+       AND kind = 'phone' AND value = ${params.phone}`
+      : await getPoolAuth()`
     SELECT kind, value FROM platform.blocklist_entries
      WHERE (expires_at IS NULL OR expires_at > now())
        AND ((kind = 'phone' AND value = ${params.phone})
-         OR (kind = 'ip' AND value = ${params.ip ?? ''})
+         OR (kind = 'ip' AND value = ${ip})
          OR kind = 'cidr')`
-  const ip = params.ip
   return rows.some((r) => r.kind !== 'cidr' || (ip !== null && cidrContains(r.value as string, ip)))
 }
 
@@ -150,6 +162,8 @@ export async function issueOtpToken(params: {
 }): Promise<void> {
   const hex = Buffer.from(params.tokenHash).toString('hex')
   await getPoolRw().begin(async (tx) => {
+    // Sérialise « expirer puis insérer » pour un même numéro : jamais deux jetons actifs concurrents.
+    await tx`SELECT pg_advisory_xact_lock(hashtext(${params.target}))`
     await EXPIRE_ACTIVE(tx, params.target)
     await tx`
       INSERT INTO iam.verification_tokens (purpose, target, token_hash, expires_at, ip)

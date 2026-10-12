@@ -26,6 +26,7 @@ import {
   uniqueCmPhone,
   uniqueIp,
   uniqueSnPhone,
+  withGlobalLock,
   wrongCodeFor,
 } from './phone-test-utils.js'
 
@@ -176,8 +177,6 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
     asAdmin((s) => s`SELECT id FROM iam.user_sessions WHERE user_id = ${userId}`)
   const orgsOf = (userId: string) =>
     asAdmin((s) => s`SELECT * FROM iam.organizations WHERE created_by_user_id = ${userId}`)
-  const countUsers = () =>
-    asAdmin((s) => s`SELECT count(*)::int AS n FROM iam.users`).then((r) => Number(r[0]?.n))
 
   async function withBlock(kind: string, value: string, expired: boolean, fn: () => Promise<void>) {
     await asAdmin(
@@ -244,8 +243,14 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
         await s`DELETE FROM platform.blocklist_entries WHERE kind = ${k ?? ''} AND value = ${v ?? ''}`
       }
       await s`UPDATE ref.countries SET is_signup_allowed = true WHERE code = 'SN'`
-      await s`UPDATE platform.settings SET value = 'true'::jsonb WHERE key = 'free_tier.require_phone_otp'`
     }).catch(() => {})
+    // Remise à la valeur du seed sous le verrou inter-fichiers (le fichier « compléments » modifie ce paramètre).
+    await withGlobalLock(redis, 'free-tier-setting', () =>
+      asAdmin(
+        (s) =>
+          s`UPDATE platform.settings SET value = 'true'::jsonb WHERE key = 'free_tier.require_phone_otp'`,
+      ),
+    ).catch(() => {})
     redis.disconnect()
     vi.unstubAllEnvs()
     resetEnvCache()
@@ -478,7 +483,6 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
     it('[OBLIGATOIRE] connexion par code (CA-11)', async () => {
       const p = uniqueCmPhone()
       const first = await signup(p, 'Awa Nkeng')
-      const usersBefore = await countUsers()
       const u = (await userByPhone(p.e164))[0] as Json
       const orgsBefore = (await orgsOf(u.id)).length
       const ip = uniqueIp()
@@ -491,8 +495,14 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       const after = (await userByPhone(p.e164))[0] as Json
       expect(after.full_name).toBe('Awa Nkeng')
       expect(after.last_login_at).not.toBeNull()
-      expect(await countUsers()).toBeGreaterThanOrEqual(usersBefore)
+      // Comptage PAR NUMÉRO / PAR UTILISATEUR (un comptage global est faux en parallèle d'autres fichiers) :
+      // la connexion ne crée ni second utilisateur pour ce numéro, ni nouvelle organisation, ni adhésion.
+      expect(await userByPhone(p.e164)).toHaveLength(1)
       expect((await orgsOf(u.id)).length).toBe(orgsBefore)
+      expect(orgsBefore).toBe(1)
+      expect(
+        await asAdmin((s) => s`SELECT 1 FROM iam.memberships WHERE user_id = ${u.id}`),
+      ).toHaveLength(1)
       expect(await sessionsOf(u.id)).toHaveLength(2)
     })
 
@@ -734,35 +744,41 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       (await app.request('/v1/auth/me', { headers: { cookie } }, socketEnv(uniqueIp()))).json()
 
     it('CA-24 (paramètre activé) : e-mail sans téléphone → false ; numéro vérifié → true', async () => {
-      const m = await me(await emailUserCookie())
-      expect(m.phone).toBeNull()
-      expect(m.free_tier_eligible).toBe(false)
+      // Verrou inter-fichiers : le fichier « compléments » modifie ce paramètre global (valeurs invalides, on/off).
+      const cookie = await emailUserCookie()
       const phoneUser = await signup(uniqueCmPhone())
-      expect((await me(cookieOf(phoneUser.res))).free_tier_eligible).toBe(true)
+      await withGlobalLock(redis, 'free-tier-setting', async () => {
+        const m = await me(cookie)
+        expect(m.phone).toBeNull()
+        expect(m.free_tier_eligible).toBe(false)
+        expect((await me(cookieOf(phoneUser.res))).free_tier_eligible).toBe(true)
+      })
     })
 
     it('CA-25 (paramètre désactivé) : e-mail sans téléphone → true ; « un numéro = un utilisateur » reste actif', async () => {
-      try {
-        await asAdmin(
-          (s) =>
-            s`UPDATE platform.settings SET value = 'false'::jsonb WHERE key = 'free_tier.require_phone_otp'`,
-        )
-        expect((await me(await emailUserCookie())).free_tier_eligible).toBe(true)
-        const p = uniqueCmPhone()
-        const a = await signup(p)
-        const ip = uniqueIp()
-        await redis.del(`rl:auth:otp:req:phone:${hmac(p.e164)}`)
-        await requestCode(p, ip)
-        const second = await verify(p, await lastCode(p.e164), ip, { full_name: 'Autre' })
-        expect(second.json.is_new_user).toBe(false)
-        expect(second.json.user.id).toBe(a.json.user.id)
-        expect(await userByPhone(p.e164)).toHaveLength(1)
-      } finally {
-        await asAdmin(
-          (s) =>
-            s`UPDATE platform.settings SET value = 'true'::jsonb WHERE key = 'free_tier.require_phone_otp'`,
-        )
-      }
+      await withGlobalLock(redis, 'free-tier-setting', async () => {
+        try {
+          await asAdmin(
+            (s) =>
+              s`UPDATE platform.settings SET value = 'false'::jsonb WHERE key = 'free_tier.require_phone_otp'`,
+          )
+          expect((await me(await emailUserCookie())).free_tier_eligible).toBe(true)
+          const p = uniqueCmPhone()
+          const a = await signup(p)
+          const ip = uniqueIp()
+          await redis.del(`rl:auth:otp:req:phone:${hmac(p.e164)}`)
+          await requestCode(p, ip)
+          const second = await verify(p, await lastCode(p.e164), ip, { full_name: 'Autre' })
+          expect(second.json.is_new_user).toBe(false)
+          expect(second.json.user.id).toBe(a.json.user.id)
+          expect(await userByPhone(p.e164)).toHaveLength(1)
+        } finally {
+          await asAdmin(
+            (s) =>
+              s`UPDATE platform.settings SET value = 'true'::jsonb WHERE key = 'free_tier.require_phone_otp'`,
+          )
+        }
+      })
     })
   })
 

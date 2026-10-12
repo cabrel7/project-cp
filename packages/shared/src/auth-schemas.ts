@@ -2,6 +2,10 @@ import { z } from 'zod'
 import { phoneCountrySchema } from './phone.js'
 import { publicIdSchema } from './schemas.js'
 
+/** Refuse l'octet NUL (PostgreSQL le rejette : 22021) ; à appliquer à tout champ texte libre. */
+const noNul = (v: string) => !v.includes('\u0000')
+const NO_NUL_MESSAGE = 'must not contain a NUL character'
+
 const emailField = z
   .string()
   .email()
@@ -9,15 +13,15 @@ const emailField = z
 
 export const registerBodySchema = z.object({
   email: emailField,
-  password: z.string().min(8).max(128),
-  full_name: z.string().min(1).max(200).optional(),
+  password: z.string().min(8).max(128).refine(noNul, NO_NUL_MESSAGE),
+  full_name: z.string().min(1).max(200).refine(noNul, NO_NUL_MESSAGE).optional(),
 })
 
 export type RegisterBody = z.infer<typeof registerBodySchema>
 
 export const loginBodySchema = z.object({
   email: emailField,
-  password: z.string().min(1),
+  password: z.string().min(1).refine(noNul, NO_NUL_MESSAGE),
   remember_me: z.boolean().default(false),
 })
 
@@ -30,14 +34,14 @@ export const forgotPasswordBodySchema = z.object({
 export type ForgotPasswordBody = z.infer<typeof forgotPasswordBodySchema>
 
 export const resetPasswordBodySchema = z.object({
-  token: z.string().min(1),
-  password: z.string().min(8).max(128),
+  token: z.string().min(1).refine(noNul, NO_NUL_MESSAGE),
+  password: z.string().min(8).max(128).refine(noNul, NO_NUL_MESSAGE),
 })
 
 export type ResetPasswordBody = z.infer<typeof resetPasswordBodySchema>
 
 export const verifyEmailBodySchema = z.object({
-  token: z.string().min(1),
+  token: z.string().min(1).refine(noNul, NO_NUL_MESSAGE),
 })
 
 export type VerifyEmailBody = z.infer<typeof verifyEmailBodySchema>
@@ -77,7 +81,7 @@ export const authResponseSchema = z.object({
 export type AuthResponse = z.infer<typeof authResponseSchema>
 
 /** Numéro libre : la normalisation E.164 se fait dans le service (raison structurée en cas de refus). */
-const phoneInputField = z.string().trim().min(4).max(32)
+const phoneInputField = z.string().trim().min(4).max(32).refine(noNul, NO_NUL_MESSAGE)
 
 export const phoneRequestCodeBodySchema = z.object({
   phone: phoneInputField,
@@ -100,7 +104,7 @@ export const phoneVerifyCodeBodySchema = z.object({
   country: phoneCountrySchema.default('CM'),
   code: z.string().regex(/^[0-9]{6}$/),
   /** Utilisé seulement si le compte est créé. */
-  full_name: z.string().trim().min(1).max(200).optional(),
+  full_name: z.string().trim().min(1).max(200).refine(noNul, NO_NUL_MESSAGE).optional(),
   remember_me: z.boolean().default(true),
   locale: z.enum(['fr', 'en']).default('fr'),
 })

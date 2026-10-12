@@ -3,6 +3,15 @@ import { z } from 'zod'
 /** Pepper de développement uniquement (jamais utilisé en production : `OTP_PEPPER` y est obligatoire). */
 const DEV_OTP_PEPPER = 'dev-only-otp-pepper-never-use-in-production-0000'
 
+/**
+ * Valeurs de `OTP_PEPPER` publiées dans le dépôt (`.env.example`, repli de dev, CI) : ce ne sont plus des secrets.
+ * Valides hors production uniquement ; jamais citées dans un message d'erreur.
+ */
+const PUBLIC_OTP_PEPPERS: ReadonlySet<string> = new Set([
+  DEV_OTP_PEPPER,
+  'ci-only-otp-pepper-0123456789abcdef-not-a-secret',
+])
+
 const apiEnvSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -49,6 +58,13 @@ const apiEnvSchema = z
         code: 'custom',
         path: ['SMS_PROVIDER'],
         message: 'SMS_PROVIDER=simulated is forbidden when NODE_ENV=production',
+      })
+    }
+    if (raw.OTP_PEPPER !== undefined && PUBLIC_OTP_PEPPERS.has(raw.OTP_PEPPER)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['OTP_PEPPER'],
+        message: 'OTP_PEPPER must not be a publicly known value when NODE_ENV=production',
       })
     }
     if (raw.OTP_PEPPER === undefined) {

@@ -36,7 +36,9 @@ export function authErrorKey(error: unknown): string {
       return phoneReasonKey(typeof reason === 'string' ? reason : undefined)
     }
     if (error.status === 429) return 'cp.auth.rateLimited'
-    return AUTH_ERROR_KEYS[error.code] ?? 'cp.auth.genericError'
+    return Object.hasOwn(AUTH_ERROR_KEYS, error.code)
+      ? (AUTH_ERROR_KEYS[error.code] ?? 'cp.auth.genericError')
+      : 'cp.auth.genericError'
   }
   return 'cp.auth.genericError'
 }

@@ -116,5 +116,7 @@ const PHONE_REASON_KEYS: Record<string, string> = {
 }
 
 export function phoneReasonKey(reason: string | undefined): string {
-  return (reason && PHONE_REASON_KEYS[reason]) || 'cp.auth.phone.errors.invalid'
+  return reason && Object.hasOwn(PHONE_REASON_KEYS, reason)
+    ? (PHONE_REASON_KEYS[reason] ?? 'cp.auth.phone.errors.invalid')
+    : 'cp.auth.phone.errors.invalid'
 }

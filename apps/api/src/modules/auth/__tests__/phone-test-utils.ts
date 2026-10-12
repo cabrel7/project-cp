@@ -8,7 +8,8 @@
  *   (et ceux de la CI) ; aucune valeur fixe ne doit collisionner entre deux exécutions.
  * - Extraction du code depuis la boîte simulée (le code n'est jamais lu en base : il y est haché).
  */
-import { randomInt } from 'node:crypto'
+import { randomBytes, randomInt } from 'node:crypto'
+import type Redis from 'ioredis'
 
 export const loadSrc = async <T>(relativePath: string): Promise<T> =>
   (await import(/* @vite-ignore */ relativePath)) as T
@@ -51,4 +52,29 @@ export function wrongCodeFor(code: string): string {
 /** Liaisons Node simulées pour `app.request(…, env)` : `getClientIp` lit `c.env.incoming.socket`. */
 export function socketEnv(remoteAddress: string) {
   return { incoming: { socket: { remoteAddress, remotePort: 54321, remoteFamily: 'IPv4' } } }
+}
+
+/**
+ * Exclusion mutuelle ENTRE FICHIERS pour une ressource globale de la base partagée (paramètre
+ * `free_tier.require_phone_otp`, pays `SN`…) : vitest exécute les fichiers d'intégration en parallèle sur la même
+ * base. Tout test qui MODIFIE ou qui ASSERTE la valeur d'un paramètre global doit passer par ce verrou (Redis,
+ * `SET NX PX`), sinon un fichier voit transitoirement la valeur de l'autre (tests intermittents).
+ */
+export async function withGlobalLock<T>(
+  redis: Redis,
+  name: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const key = `cp:test:lock:${name}`
+  const token = randomBytes(8).toString('hex')
+  const deadline = Date.now() + 60_000
+  while ((await redis.set(key, token, 'PX', 30_000, 'NX')) !== 'OK') {
+    if (Date.now() > deadline) throw new Error(`verrou de test « ${name} » non obtenu en 60 s`)
+    await new Promise((resolve) => setTimeout(resolve, 40))
+  }
+  try {
+    return await fn()
+  } finally {
+    if ((await redis.get(key)) === token) await redis.del(key)
+  }
 }
