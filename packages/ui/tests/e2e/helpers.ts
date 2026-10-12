@@ -10,7 +10,8 @@ export async function gotoHydrated(page: Page, path: string): Promise<void> {
 }
 
 /**
- * Neutralise position:fixed/sticky avant une capture fullPage.
+ * Neutralise position:fixed/sticky avant une capture fullPage (desktop : sidebar sticky ;
+ * mobile : tiroir fermé, scrim et tabbar masqués).
  * Les éléments fixed (tabbar mobile, sidebar, scrim) restent collés au
  * viewport et se superposent au contenu dans les captures pleine page.
  */
@@ -27,6 +28,16 @@ export async function prepareFullPage(page: Page): Promise<void> {
       nav[class*="sticky"],
       header[class*="sticky"] {
         position: relative !important;
+      }
+      /* Mobile : tiroir fermé, scrim et tabbar (fixed) ne doivent pas revenir dans le flux
+         flex de la coquille (sinon colonnes parasites et débordement horizontal).
+         La tabbar est couverte par la capture dédiée app-shell-tabs.png. */
+      @media (max-width: 767px) {
+        [data-cp-sidebar],
+        [data-cp-scrim],
+        [data-cp-tabbar] {
+          display: none !important;
+        }
       }
     `,
   })
