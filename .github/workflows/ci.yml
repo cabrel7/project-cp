@@ -213,8 +213,15 @@ jobs:
       - name: Installer Chromium (Playwright)
         run: pnpm --filter @cp/ui exec playwright install --with-deps chromium
 
+      # Deux jeux de références : `<projet>` (session, Chromium préinstallé) et `<projet>-ci` (ce job, CI=true).
+      # Écarts de pixels après un changement voulu ou une montée de Playwright : lancer le workflow
+      # `update-e2e-snapshots` (Actions > Run workflow) sur la branche, puis relancer la CI. Ne PAS relâcher le seuil.
       - name: E2E (desktop-light, mobile-light)
-        run: pnpm --filter @cp/ui test:e2e:ci
+        run: |
+          pnpm --filter @cp/ui test:e2e:ci || {
+            echo "::error::E2E en échec. Si ce sont des écarts de rendu : régénérer le jeu CI via le workflow 'update-e2e-snapshots' sur cette branche (voir packages/ui/tests/e2e/README.md), sans relâcher maxDiffPixelRatio."
+            exit 1
+          }
 
       - name: Artefacts d'échec (rapport, traces, diffs)
         if: failure()

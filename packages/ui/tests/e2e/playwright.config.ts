@@ -21,6 +21,14 @@ const CHROMIUM = resolveChromiumPath()
 // exactOptionalPropertyTypes : on n'ajoute la clé que si un chemin est défini.
 const launchOptions = CHROMIUM ? { executablePath: CHROMIUM } : {}
 const IS_CI = !!process.env.CI
+
+// Deux jeux de références visuelles : le rendu dépend de la version de Chromium.
+// Local/session : Chromium préinstallé -> `{projectName}` ; CI : Chromium de Playwright -> `{projectName}-ci`.
+// Régénération CI : workflow `update-e2e-snapshots` (voir tests/e2e/README.md).
+export function snapshotEnvSuffix(env: Record<string, string | undefined> = process.env): string {
+  return env.CI ? '-ci' : ''
+}
+const SNAPSHOT_SUFFIX = snapshotEnvSuffix()
 const MOBILE = { width: 375, height: 667 }
 const DESKTOP = { width: 1280, height: 800 }
 
@@ -29,7 +37,7 @@ const DESKTOP = { width: 1280, height: 800 }
 export default defineConfig({
   testDir: './specs',
   outputDir: './test-results',
-  snapshotPathTemplate: '{testDir}/../__screens__/{testFileName}/{projectName}/{arg}{ext}',
+  snapshotPathTemplate: `{testDir}/../__screens__/{testFileName}/{projectName}${SNAPSHOT_SUFFIX}/{arg}{ext}`,
   fullyParallel: true,
   forbidOnly: IS_CI,
   workers: IS_CI ? 1 : 2,

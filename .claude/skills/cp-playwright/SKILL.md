@@ -62,3 +62,9 @@ Débogage d'un échec visuel/animation : vidéo dans `test-results/` → `cp-ffm
 
 ## Règles
 Un test = un parcours, indépendant, sa propre organisation ; nettoyage par l'API de test ; pas d'ordre implicite ; sortie brute collée dans le livrable.
+
+## Références visuelles : jeu local vs jeu CI
+- Le rendu dépend de la version de Chromium : session cloud = Chromium préinstallé (`/opt/pw-browsers`), CI = Chromium de Playwright (`playwright install`). Une même référence ne peut pas satisfaire les deux.
+- Deux jeux dans `packages/ui/tests/e2e/__screens__/` : `<projet>/` (local, vérifié contre les maquettes) et `<projet>-ci/` (si `CI` est défini, généré par la CI).
+- Régénérer le jeu CI après un changement visuel voulu ou une montée de Playwright : lancer le workflow `update-e2e-snapshots` (workflow_dispatch) sur la branche ; il génère, revérifie sans `--update-snapshots`, puis pousse ; relancer ensuite la CI.
+- Jamais `--update-snapshots` avec `CI=true` en local ; **ne jamais relâcher `maxDiffPixelRatio`** pour faire passer la CI.
