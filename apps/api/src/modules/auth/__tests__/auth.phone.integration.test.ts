@@ -884,6 +884,7 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       await signup(known)
       const unknown = uniqueCmPhone()
       vi.stubEnv('NODE_ENV', 'production')
+      vi.stubEnv('APP_URL', 'https://app.example.test') // requis en production (CSRF) — ne pas dépendre de .env.example
       vi.stubEnv('SMS_PROVIDER', 'none')
       resetEnvCache()
       ;(await factory()).resetSmsProvider()

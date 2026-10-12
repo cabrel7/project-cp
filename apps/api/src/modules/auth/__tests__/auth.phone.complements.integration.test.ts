@@ -723,6 +723,7 @@ describe.skipIf(!(hasDb && hasRedis))(
         await requestCode(p, ip)
         const code = await lastCode(p.e164)
         vi.stubEnv('NODE_ENV', 'production')
+        vi.stubEnv('APP_URL', 'https://app.example.test') // requis en production (CSRF) — ne pas dépendre de .env.example
         vi.stubEnv('SMS_PROVIDER', 'none')
         resetEnvCache()
         const { res, json } = await verify(p, code, ip, { full_name: 'Awa Prod' })
@@ -1301,6 +1302,7 @@ describe.skipIf(!(hasDb && hasRedis))(
 
         const u = uniqueCmPhone()
         vi.stubEnv('NODE_ENV', 'production')
+        vi.stubEnv('APP_URL', 'https://app.example.test') // requis en production (CSRF) — ne pas dépendre de .env.example
         vi.stubEnv('SMS_PROVIDER', 'none')
         resetEnvCache()
         resetSmsProvider()
