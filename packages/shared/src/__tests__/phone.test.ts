@@ -67,6 +67,22 @@ describe('normalizePhone — refus structurés (CA-2, CA-3, CA-4)', () => {
     })
   })
 
+  it('doit refuser TOO_SHORT avec expectedLength=9 pour 8 chiffres (CM, maquette 05)', async () => {
+    const { normalizePhone } = await loadPhone()
+    for (const input of ['6 90 12 34', '69012345', '+237 6901 2345']) {
+      expect(normalizePhone(input, 'CM')).toEqual({
+        ok: false,
+        reason: 'TOO_SHORT',
+        expectedLength: 9,
+      })
+    }
+  })
+
+  it('doit refuser TOO_LONG pour 10 chiffres nationaux (CM)', async () => {
+    const { normalizePhone } = await loadPhone()
+    expect(normalizePhone('6901234425', 'CM')).toMatchObject({ ok: false, reason: 'TOO_LONG' })
+  })
+
   it('doit refuser TOO_LONG quand il y a trop de chiffres', async () => {
     const { normalizePhone } = await loadPhone()
     const result = normalizePhone('6901234421234', 'CM')

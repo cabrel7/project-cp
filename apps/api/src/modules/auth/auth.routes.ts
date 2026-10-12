@@ -31,7 +31,14 @@ import * as service from './auth.service.js'
 
 export const authRoutes = new OpenAPIHono<AppEnv>()
 
-authRoutes.use(csrf())
+// Origines autorisées : celle de l'API (comportement par défaut de Hono) et le site web (APP_URL), que le proxy
+// Nitro ou un `NUXT_PUBLIC_API_BASE` same-site fait apparaître en `Origin`. Lecture de l'env à chaque requête.
+authRoutes.use(
+  csrf({
+    origin: (origin, c) =>
+      origin === new URL(c.req.url).origin || origin === new URL(getEnv().APP_URL).origin,
+  }),
+)
 
 function getAuth(c: { get: (key: 'auth') => AuthContext | undefined }): AuthContext {
   const auth = c.get('auth')

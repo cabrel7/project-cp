@@ -18,7 +18,8 @@ const apiEnvSchema = z
     PORT: z.coerce.number().int().positive().default(4000),
     LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 
-    APP_URL: z.string().url().default('http://localhost:3000'),
+    // Origine du site web : liens des e-mails et origine autorisée par le contrôle CSRF. Obligatoire en production.
+    APP_URL: z.string().url().optional(),
 
     SMTP_HOST: z.string().min(1).default('localhost'),
     SMTP_PORT: z.coerce.number().int().positive().default(1025),
@@ -52,6 +53,13 @@ const apiEnvSchema = z
   })
   .superRefine((raw, ctx) => {
     if (raw.NODE_ENV !== 'production') return
+    if (raw.APP_URL === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['APP_URL'],
+        message: 'APP_URL is required when NODE_ENV=production',
+      })
+    }
     // Messages volontairement sans aucune valeur (le pepper est un secret).
     if (raw.SMS_PROVIDER === 'simulated') {
       ctx.addIssue({
@@ -77,6 +85,7 @@ const apiEnvSchema = z
   })
   .transform((raw) => ({
     ...raw,
+    APP_URL: raw.APP_URL ?? 'http://localhost:3000',
     SMS_PROVIDER: raw.SMS_PROVIDER ?? (raw.NODE_ENV === 'production' ? 'none' : 'simulated'),
     OTP_PEPPER: raw.OTP_PEPPER ?? DEV_OTP_PEPPER,
   }))

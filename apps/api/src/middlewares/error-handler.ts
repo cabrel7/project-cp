@@ -49,6 +49,13 @@ export const onError: ErrorHandler<AppEnv> = (err, c) => {
         401,
       )
     }
+    if (status === 403) {
+      // Rejet CSRF (hono/csrf) ou équivalent : code du catalogue, aucun détail sur la règle appliquée.
+      return c.json(
+        errorBody('AUTH_INSUFFICIENT_PERMISSIONS', 'Insufficient permissions.', requestId),
+        403,
+      )
+    }
     if (status === 404) {
       return c.json(
         errorBody(

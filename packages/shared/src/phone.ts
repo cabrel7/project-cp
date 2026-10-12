@@ -65,6 +65,13 @@ function expectedNationalLength(country: PhoneCountry): number | undefined {
   return getExampleNumber(country, examples)?.nationalNumber.length
 }
 
+function tooShort(country: PhoneCountry): NormalizePhoneResult {
+  const expectedLength = expectedNationalLength(country)
+  return expectedLength === undefined
+    ? { ok: false, reason: 'TOO_SHORT' }
+    : { ok: false, reason: 'TOO_SHORT', expectedLength }
+}
+
 /**
  * Normalise une saisie en E.164. Ne lève jamais ; ne renvoie jamais d'`e164` pour une entrée refusée.
  * Le préfixe international `00` est assimilé à `+`.
@@ -76,13 +83,20 @@ export function normalizePhone(input: string, country: PhoneCountry): NormalizeP
     if (length === 'NOT_A_NUMBER') return { ok: false, reason: 'NOT_A_NUMBER' }
     if (length === 'INVALID_COUNTRY') return { ok: false, reason: 'INVALID_COUNTRY' }
     if (length === 'TOO_LONG') return { ok: false, reason: 'TOO_LONG' }
-    if (length === 'TOO_SHORT') {
-      const expectedLength = expectedNationalLength(country)
-      return expectedLength === undefined
-        ? { ok: false, reason: 'TOO_SHORT' }
-        : { ok: false, reason: 'TOO_SHORT', expectedLength }
-    }
+    if (length === 'TOO_SHORT') return tooShort(country)
     const parsed = parsePhoneNumberWithError(raw, country)
+    // Numéro invalide : la bibliothèque répond `INVALID_LENGTH` ou rien (ex. 8 chiffres au Cameroun, longueur
+    // « possible » pour un fixe) : on compare à la longueur attendue du pays pour guider la saisie.
+    if (
+      (length === 'INVALID_LENGTH' || !parsed.isValid()) &&
+      parsed.countryCallingCode === getCountryCallingCode(country)
+    ) {
+      const expectedLength = expectedNationalLength(country)
+      if (expectedLength !== undefined) {
+        if (parsed.nationalNumber.length < expectedLength) return tooShort(country)
+        if (parsed.nationalNumber.length > expectedLength) return { ok: false, reason: 'TOO_LONG' }
+      }
+    }
     if (parsed.country !== undefined && !isSupportedCountry(parsed.country)) {
       return { ok: false, reason: 'COUNTRY_NOT_SUPPORTED' }
     }
