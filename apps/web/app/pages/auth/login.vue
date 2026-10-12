@@ -12,8 +12,8 @@ const rememberMe = ref(true)
 const errorKey = ref<string | null>(null)
 
 const tabs = computed(() => [
-  { label: t('cp.auth.login.tabEmail'), value: 'email', icon: 'i-lucide-mail' },
-  { label: t('cp.auth.login.tabPhone'), value: 'phone', icon: 'i-lucide-phone' },
+  { label: t('cp.auth.login.tabEmail'), value: 'email' },
+  { label: t('cp.auth.login.tabPhone'), value: 'phone' },
 ])
 const tab = ref(route.query.tab === 'phone' ? 'phone' : 'email')
 
@@ -41,7 +41,7 @@ useHead({ title: () => t('cp.auth.login.title') })
       </p>
     </header>
 
-    <UTabs v-model="tab" :items="tabs" :content="false" variant="pill" color="primary" class="w-full" />
+    <AuthMethodTabs v-model="tab" :items="tabs" />
 
     <template v-if="tab === 'email'">
       <UAlert
@@ -73,10 +73,10 @@ useHead({ title: () => t('cp.auth.login.title') })
             </NuxtLink>
           </template>
         </AuthPasswordField>
-        <UCheckbox v-model="rememberMe" :label="t('cp.auth.login.rememberMe')" />
+        <AuthCheckbox v-model="rememberMe">{{ t('cp.auth.login.rememberMe') }}</AuthCheckbox>
         <UButton
           type="submit"
-          size="xl"
+          size="lg"
           block
           :loading="isLoading"
           :disabled="!email || !password"
@@ -92,7 +92,7 @@ useHead({ title: () => t('cp.auth.login.title') })
       <UButton
         color="neutral"
         variant="outline"
-        size="xl"
+        size="lg"
         block
         disabled
         icon="i-lucide-key-round"
@@ -100,8 +100,8 @@ useHead({ title: () => t('cp.auth.login.title') })
         :title="t('cp.auth.comingSoon')"
       />
       <div class="grid grid-cols-2 gap-3">
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
       </div>
     </div>
 

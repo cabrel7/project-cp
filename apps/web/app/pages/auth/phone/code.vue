@@ -112,6 +112,11 @@ async function onRequestNew() {
   }
 }
 
+// Dès que l'on retape un chiffre, le message d'erreur précédent n'a plus lieu d'être.
+watch(digits, (value) => {
+  if (isInvalid.value && value.length > 0) error.value = null
+})
+
 // Envoi automatique dès que les 6 chiffres sont saisis (le bouton « Vérifier » reste disponible).
 watch(isComplete, (complete) => {
   if (complete) onVerify()
@@ -152,7 +157,11 @@ useHead({ title: () => t('cp.auth.code.title') })
             </template>
           </i18n-t>
           {{ ' ' }}
-          <NuxtLink :to="backTo" class="text-cp-primary underline-offset-2 hover:underline" @click="cancel">
+          <NuxtLink
+            :to="backTo"
+            class="inline-flex min-h-11 items-center px-1 text-cp-primary underline-offset-2 hover:underline"
+            @click="cancel"
+          >
             {{ t('cp.auth.code.change') }}
           </NuxtLink>
         </p>
@@ -189,7 +198,13 @@ useHead({ title: () => t('cp.auth.code.title') })
       </UAlert>
 
       <form class="flex flex-col gap-6 pb-28 lg:pb-0" novalidate @submit.prevent="onVerify">
-        <div class="flex flex-col gap-2" role="group" aria-labelledby="cp-code-label">
+        <div
+          class="flex flex-col gap-2"
+          role="group"
+          aria-labelledby="cp-code-label"
+          :aria-invalid="isInvalid ? 'true' : undefined"
+          :aria-describedby="isInvalid ? 'cp-code-error' : undefined"
+        >
           <span id="cp-code-label" class="text-label text-cp-ink">{{ t('cp.auth.code.label') }}</span>
           <UPinInput
             ref="pin"
@@ -202,11 +217,12 @@ useHead({ title: () => t('cp.auth.code.title') })
             :highlight="isInvalid"
             :disabled="isEnded || isLoading"
             class="w-full justify-between"
-            :ui="{ base: 'size-(--cp-control-lg) text-center' }"
+            :ui="{ base: 'size-(--cp-control-lg) text-center tabular-nums !text-heading-1' }"
             data-testid="auth-code-input"
           />
           <p
-            class="min-h-6 text-body-sm text-cp-danger"
+            id="cp-code-error"
+            class="min-h-5 text-body-sm text-cp-danger"
             aria-live="assertive"
             data-testid="auth-code-invalid"
           >
@@ -243,12 +259,12 @@ useHead({ title: () => t('cp.auth.code.title') })
 
         <!-- Mobile : bouton collant en bas, au-dessus de la zone sûre ; desktop : dans le flux. -->
         <div
-          class="fixed inset-x-0 bottom-0 bg-cp-canvas px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:static lg:bg-transparent lg:p-0"
+          class="fixed inset-x-0 bottom-0 border-t border-cp-line bg-cp-canvas px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:static lg:border-0 lg:bg-transparent lg:p-0"
         >
           <UButton
             v-if="isEnded"
             type="button"
-            size="xl"
+            size="lg"
             block
             :loading="isLoading"
             :disabled="!canRequestNew"
@@ -259,7 +275,7 @@ useHead({ title: () => t('cp.auth.code.title') })
           <UButton
             v-else
             type="submit"
-            size="xl"
+            size="lg"
             block
             :loading="isLoading"
             :disabled="!canVerify"

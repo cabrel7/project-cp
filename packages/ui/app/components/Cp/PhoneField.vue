@@ -42,7 +42,7 @@ const options = computed(() =>
         :disabled="disabled"
         :aria-label="t('cp.auth.phone.country')"
         :class="['w-36 shrink-0', control]"
-        :ui="{ base: control }"
+        :ui="{ base: control, trailingIcon: 'text-cp-ink-muted' }"
       />
       <UInput
         v-model="model"

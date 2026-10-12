@@ -164,8 +164,7 @@ async function onSubmit() {
       @focusout="touched = true"
     />
 
-    <UCheckbox v-if="mode === 'register'" v-model="acceptTerms">
-      <template #label>
+    <AuthCheckbox v-if="mode === 'register'" v-model="acceptTerms">
         <i18n-t keypath="cp.auth.register.terms" tag="span">
           <template #terms>
             <NuxtLink to="/legal/terms" class="text-cp-primary hover:underline">{{ t('cp.auth.register.termsLink') }}</NuxtLink>
@@ -174,12 +173,11 @@ async function onSubmit() {
             <NuxtLink to="/legal/privacy" class="text-cp-primary hover:underline">{{ t('cp.auth.register.privacyLink') }}</NuxtLink>
           </template>
         </i18n-t>
-      </template>
-    </UCheckbox>
+      </AuthCheckbox>
 
     <UButton
       type="submit"
-      size="xl"
+      size="lg"
       block
       :loading="isLoading"
       :disabled="!canSubmit"

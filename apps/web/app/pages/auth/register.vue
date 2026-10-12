@@ -13,8 +13,8 @@ const acceptTerms = ref(false)
 const errorKey = ref<string | null>(null)
 const sent = ref(false)
 const tabs = computed(() => [
-  { label: t('cp.auth.register.tabEmail'), value: 'email', icon: 'i-lucide-mail' },
-  { label: t('cp.auth.register.tabPhone'), value: 'phone', icon: 'i-lucide-phone' },
+  { label: t('cp.auth.register.tabEmail'), value: 'email' },
+  { label: t('cp.auth.register.tabPhone'), value: 'phone' },
 ])
 const tab = ref(route.query.tab === 'phone' ? 'phone' : 'email')
 
@@ -46,7 +46,7 @@ useHead({ title: () => t('cp.auth.register.title') })
       </p>
     </header>
 
-    <UTabs v-if="!sent" v-model="tab" :items="tabs" :content="false" variant="pill" color="primary" class="w-full" />
+    <AuthMethodTabs v-if="!sent" v-model="tab" :items="tabs" />
 
     <template v-if="sent">
       <UAlert
@@ -57,7 +57,7 @@ useHead({ title: () => t('cp.auth.register.title') })
         :description="t('cp.auth.register.sentDetail')"
         role="status"
       />
-      <UButton to="/auth/login" size="xl" block :label="t('cp.auth.register.goToLogin')" />
+      <UButton to="/auth/login" size="lg" block :label="t('cp.auth.register.goToLogin')" />
     </template>
 
     <template v-else-if="tab === 'email'">
@@ -82,8 +82,7 @@ useHead({ title: () => t('cp.auth.register.title') })
           />
           <CpPasswordStrength :password="password" />
         </div>
-        <UCheckbox v-model="acceptTerms">
-          <template #label>
+        <AuthCheckbox v-model="acceptTerms">
             <i18n-t keypath="cp.auth.register.terms" tag="span">
               <template #terms>
                 <NuxtLink to="/legal/terms" class="text-cp-primary hover:underline">{{ t('cp.auth.register.termsLink') }}</NuxtLink>
@@ -92,11 +91,10 @@ useHead({ title: () => t('cp.auth.register.title') })
                 <NuxtLink to="/legal/privacy" class="text-cp-primary hover:underline">{{ t('cp.auth.register.privacyLink') }}</NuxtLink>
               </template>
             </i18n-t>
-          </template>
-        </UCheckbox>
+          </AuthCheckbox>
         <UButton
           type="submit"
-          size="xl"
+          size="lg"
           block
           :loading="isLoading"
           :disabled="!canSubmit"
@@ -111,8 +109,8 @@ useHead({ title: () => t('cp.auth.register.title') })
       <USeparator :label="t('cp.auth.register.orWith')" />
 
       <div class="grid grid-cols-2 gap-3">
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
       </div>
     </template>
   </CpLayoutLogin>

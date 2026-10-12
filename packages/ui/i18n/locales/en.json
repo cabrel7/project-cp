@@ -344,7 +344,7 @@
         "hintRegister": "We'll send you a code to verify it. One free account per number.",
         "submit": "Get a code",
         "errors": {
-          "tooShort": "One digit is missing: a {country} number has {n}. | {count} digits are missing: a {country} number has {n}.",
+          "tooShort": "One digit is missing: a number for this country has {n}. | {count} digits are missing: a number for this country has {n}.",
           "tooLong": "This number has too many digits.",
           "invalid": "This number isn't valid.",
           "notMobile": "Enter a mobile number to receive the text.",

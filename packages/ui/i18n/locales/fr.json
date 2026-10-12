@@ -344,7 +344,7 @@
         "hintRegister": "Nous vous enverrons un code pour le vérifier. Un seul compte gratuit par numéro.",
         "submit": "Recevoir un code",
         "errors": {
-          "tooShort": "Il manque un chiffre : un numéro {country} en compte {n}. | Il manque {count} chiffres : un numéro {country} en compte {n}.",
+          "tooShort": "Il manque un chiffre : un numéro de ce pays en compte {n}. | Il manque {count} chiffres : un numéro de ce pays en compte {n}.",
           "tooLong": "Ce numéro a trop de chiffres.",
           "invalid": "Ce numéro n'est pas valide.",
           "notMobile": "Indiquez un numéro de mobile pour recevoir le SMS.",
