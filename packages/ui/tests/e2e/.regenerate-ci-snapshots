@@ -1,0 +1,2 @@
+Marqueur : toute modification de ce fichier, poussée sur une branche (hors main/dev), déclenche le workflow update-e2e-snapshots (jeu de références CI). Le bot ne le modifie jamais.
+demande: 2

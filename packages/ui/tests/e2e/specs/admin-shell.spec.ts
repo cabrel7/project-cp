@@ -58,9 +58,11 @@ test.describe('AdminShell — desktop', () => {
     const box = await shell.navItem('Pilotage').boundingBox()
     expect(box?.height).toBeGreaterThanOrEqual(32)
     expect(box?.height).toBeLessThan(40)
-    await shell.navItem('Audit').click()
-    await expect(shell.navItem('Audit')).toHaveAttribute('aria-current', 'page')
-    await expect(shell.log).toHaveText('nav:audit')
+    // « Audit » n'est pas une entrée seule : l'item s'appelle « Équipe interne et audit » (docs/reference/07-ui-ux.md, Exploitation).
+    const internalTeam = shell.navItem('Équipe interne et audit')
+    await internalTeam.click()
+    await expect(internalTeam).toHaveAttribute('aria-current', 'page')
+    await expect(shell.log).toHaveText('nav:internal-team')
   })
 
   test("arrêt d'urgence : bouton danger libellé, émet emergency-stop", async ({ page }) => {
@@ -149,7 +151,7 @@ test.describe('AdminShell — mobile 375×667', () => {
     await shell.goto()
     await shell.openDrawer()
     await shell.navItem('Clients').click()
-    await expect(shell.log).toHaveText('nav:customers')
+    await expect(shell.log).toHaveText('nav:clients')
     await expect(shell.nav).toBeHidden()
   })
 })

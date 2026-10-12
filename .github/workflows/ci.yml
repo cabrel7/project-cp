@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches: [main, dev, 'claude/**', 'p*/**']
+    branches: [main, dev, 'claude/**', 'p*/**', 'fix/**']
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -185,3 +185,52 @@ jobs:
       - uses: ./.github/actions/setup-pnpm
       - name: Turbo build
         run: pnpm turbo run build
+
+  # ── E2E design system (packages/ui) ───────────────────────────────────
+  # Playwright + Chromium installés ICI (jamais en session cloud, où Chromium est préinstallé).
+  # Projets desktop-light et mobile-light seulement ; indépendant du job db.
+  e2e-design-system:
+    name: E2E design system
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Version de Playwright
+        id: pw
+        run: echo "version=$(pnpm --filter @cp/ui exec playwright --version | awk '{print $NF}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache du navigateur Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      # --with-deps (apt) à chaque fois : le cache ne couvre pas les bibliothèques système.
+      - name: Installer Chromium (Playwright)
+        run: pnpm --filter @cp/ui exec playwright install --with-deps chromium
+
+      # Deux jeux de références : `<projet>` (session, Chromium préinstallé) et `<projet>-ci` (ce job, CI=true).
+      # Écarts de pixels après un changement voulu ou une montée de Playwright : modifier la ligne
+      # `demande:` du marqueur packages/ui/tests/e2e/.regenerate-ci-snapshots et pousser (déclenche
+      # `update-e2e-snapshots`), puis relancer la CI. Ne PAS relâcher le seuil.
+      - name: E2E (desktop-light, mobile-light)
+        run: |
+          pnpm --filter @cp/ui test:e2e:ci || {
+            echo "::error::E2E en échec. Si ce sont des écarts de rendu : régénérer le jeu CI : modifier la ligne 'demande:' de packages/ui/tests/e2e/.regenerate-ci-snapshots et pousser (workflow 'update-e2e-snapshots'; voir packages/ui/tests/e2e/README.md), sans relâcher maxDiffPixelRatio."
+            exit 1
+          }
+
+      - name: Artefacts d'échec (rapport, traces, diffs)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-design-system-${{ github.run_id }}
+          path: |
+            packages/ui/tests/e2e/playwright-report/
+            packages/ui/tests/e2e/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

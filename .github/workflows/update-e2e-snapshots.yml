@@ -1,0 +1,126 @@
+name: Update E2E snapshots
+
+# Régénère le jeu « CI » des références visuelles de packages/ui (dossiers `<projet>-ci`),
+# rendu avec le Chromium de Playwright installé ici. Deux déclencheurs :
+#   1. push d'une modification du fichier-marqueur (modifier la ligne `demande:`), sur toute branche sauf main/dev ;
+#      c'est le mode normal : GitHub n'enregistre un workflow_dispatch que s'il est sur la branche par défaut.
+#   2. workflow_dispatch (Actions > Run workflow), utilisable une fois ce fichier fusionné sur la branche par défaut.
+# Le commit du bot ne touche jamais le marqueur (pas de boucle) et un push par GITHUB_TOKEN ne déclenche pas de workflow.
+# Le jeu « session » (Chromium préinstallé) n'est jamais touché. Le seuil maxDiffPixelRatio n'est pas relâché.
+on:
+  push:
+    branches-ignore: [main, dev]
+    paths: ['packages/ui/tests/e2e/.regenerate-ci-snapshots']
+  workflow_dispatch:
+
+# Seul workflow du dépôt avec l'écriture : nécessaire pour pousser le commit de références.
+permissions:
+  contents: write
+
+concurrency:
+  group: update-e2e-snapshots-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Générer les références E2E (CI)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+    steps:
+      # Garde explicite : jamais de poussée sur les branches protégées.
+      - name: Refuser main et dev
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$REF_NAME" = "main" ] || [ "$REF_NAME" = "dev" ]; then
+            echo "::error::Refus de générer/pousser sur '$REF_NAME'. Lancer le workflow sur la branche de la PR."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: true # nécessaire au `git push` final
+
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Version de Playwright
+        id: pw
+        run: echo "version=$(pnpm --filter @cp/ui exec playwright --version | awk '{print $NF}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache du navigateur Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      # --with-deps (apt) à chaque fois : le cache ne couvre pas les bibliothèques système.
+      - name: Installer Chromium (Playwright)
+        run: pnpm --filter @cp/ui exec playwright install --with-deps chromium
+
+      - name: Générer les références (--update-snapshots)
+        run: >-
+          pnpm --filter @cp/ui exec playwright test
+          --config tests/e2e/playwright.config.ts
+          --project=desktop-light --project=mobile-light
+          --update-snapshots
+
+      # Preuve de déterminisme : un second rendu, comparé aux références fraîches, au seuil habituel.
+      - name: Vérifier sans --update-snapshots (déterminisme)
+        run: >-
+          pnpm --filter @cp/ui exec playwright test
+          --config tests/e2e/playwright.config.ts
+          --project=desktop-light --project=mobile-light
+
+      - name: Commit et push des références
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          PW_VERSION: ${{ steps.pw.outputs.version }}
+          # Le bot ne pousse que des PNG : les hooks lefthook de développeur (pre-commit/pre-push)
+          # n'ont rien à y vérifier et échouent sur le checkout superficiel de la CI (origin/main absent).
+          LEFTHOOK: '0'
+        run: |
+          if [ "$REF_NAME" = "main" ] || [ "$REF_NAME" = "dev" ]; then
+            echo "::error::Refus de pousser sur '$REF_NAME'."
+            exit 1
+          fi
+          git add packages/ui/tests/e2e/__screens__
+          {
+            echo "### Références E2E (jeu CI) — Chromium de Playwright ${PW_VERSION}"
+            echo
+            echo "Branche : \`${REF_NAME}\`"
+            echo
+            if git diff --cached --quiet; then
+              echo "Aucune référence modifiée : le jeu CI est déjà à jour (rien n'est poussé)."
+            else
+              echo '```'
+              git diff --cached --name-status -- packages/ui/tests/e2e/__screens__
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          if git diff --cached --quiet; then
+            echo "Rien à commiter."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(ui): références E2E générées en CI (Chromium de Playwright ${PW_VERSION})"
+          git push origin "HEAD:refs/heads/${REF_NAME}"
+          {
+            echo
+            echo "Commit poussé. Un push par GITHUB_TOKEN ne déclenche pas la CI de la PR :"
+            echo "relancer la CI en poussant un commit normal sur la branche, ou « Re-run all jobs » sur la PR."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Artefacts d'échec (rapport, traces, diffs)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-e2e-snapshots-${{ github.run_id }}
+          path: |
+            packages/ui/tests/e2e/playwright-report/
+            packages/ui/tests/e2e/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

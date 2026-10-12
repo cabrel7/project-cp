@@ -10,7 +10,9 @@ Les agents ci-dessous sont **impératifs** ; chaque livrable d'agent commence pa
 1. **Cadrage** — lis `PROJECT_STATE.md`, `PROJECT_CONTEXT.md` (tier), `docs/reference/00-index.md` et le lot dans
    `docs/reference/08-plan-construction.md`. Contradiction avec 06 ou information critique manquante → question AVANT tout.
 2. **architect** — spec complète + critères d'acceptation `CA-n` (Étant donné / Quand / Alors, couche de test indiquée).
-   Résumé 5 lignes ; attends ma validation si elle ajoute une table, une route publique ou une décision.
+   Résumé 5 lignes ; attends ma validation **seulement** si elle ajoute une table, une route publique ou une décision (D66) ;
+   sinon enchaîne sans t'arrêter jusqu'à la PR (jamais de fusion, jamais `main`). Sessions parallèles : ne touche pas au
+   périmètre d'un autre lot ; avant la PR, `git pull --rebase origin dev` puis relance les tests.
 3. **tester (RED)** — écrit les tests des `CA-n` (unitaires, intégration PostgreSQL/Redis réels, routes) et montre
    qu'ils échouent pour la bonne raison (sortie brute). Ajoute l'étape CI si un test d'intégration n'y tourne pas.
 4. **database (GREEN)** — si la spec change le schéma : tests SQL rouges → migration → vert, `drizzle-kit pull`, sortie brute.
