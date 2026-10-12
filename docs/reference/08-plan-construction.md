@@ -50,6 +50,7 @@
 | P3 | Crédits, plans, droits, paiements | P2 | Fondations |
 | P4 | Gateway IA, garde-fous, IA interne, chat | P3 | Fondations |
 | P5 | Connecteurs, MCP Builder, runtime MCP, OAuth | P4 | MCP Builder |
+| P5b | Connaissances (D65) | P4 (+ P2.8 stockage) | avec le chat, puis les agents |
 | P6 | SDK, capacités `ai.run`, clés d'accès, Prompt Studio | P5 | SDK + capacités |
 | P7 | Agent Studio | P6 | Agent Studio |
 | P8 | Exploitation, sécurité, performance, lancement | P7 | — |
@@ -204,9 +205,24 @@
 
 ---
 
-### P5b — Connaissances *(proposition D65 🟡 — non planifiée tant qu'elle n'est pas validée)*
-Bases de connaissances (documents des clients) pour le chat et les agents, en parallèle de P5, après P4. Lots K.0
-(spike Docling) à K.5 et critères : `docs/propositions/connaissances.md` §9.
+### P5b — Connaissances (D65) — *en parallèle de P5, après P4*
+**Objectif :** un commerçant dépose son catalogue (PDF, photo, Excel) et son assistant y répond en citant la page.
+
+| Lot | Contenu | Agents | Taille |
+|---|---|---|---|
+| K.0 | **Spike Docling** (peut se faire plus tôt, hors chemin critique) : 10 documents réels (facture scannée FR, catalogue PDF, liste de prix Excel, photo WhatsApp, CGV Word) → qualité OCR, tableaux, temps/page, RAM réelle ; verdict D65-b (OCR v1 ou non) | devops, backend | S |
+| K.1 | Domaine `knowledge` : migration, RLS, tests SQL (isolation 2 organisations), doc 04 | database | M |
+| K.2 | `docling-serve` en bac à sable (compose, limites, sans réseau) + worker d'ingestion + découpage + capacité d'embedding + contrôle d'injection | devops, backend, tester | L |
+| K.3 | Recherche hybride + citations + outils `search_knowledge` / `lookup_rows` ; branchement sur le chat (P4.6) | backend, tester | M |
+| K.4 | Écran Connaissances (G1 + G2) — **maquette validée d'abord** | frontend, ux-reviewer, e2e-tester | M |
+| K.5 | Accès par version d'agent (avec P7), exposition MCP et SDK (avec P6), débits de crédits infra | backend | M |
+
+**Critères de fin**
+- Une base avec les 10 documents du spike : réponses citées (document + page) sur un jeu de 30 questions, taux de bonnes réponses mesuré.
+- Document piégé (« ignore tes instructions… ») : signalé à l'ingestion, aucune action déclenchée (test).
+- Organisation A ne trouve jamais un passage de B (test sur PostgreSQL réel) ; agent sans accès → aucun passage.
+- Docling : aucune sortie réseau (test), mémoire sous la limite du compose sur le plus gros document du jeu.
+- Détail : `docs/propositions/connaissances.md`.
 
 ---
 

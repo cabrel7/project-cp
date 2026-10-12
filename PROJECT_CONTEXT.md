@@ -40,6 +40,7 @@ Control Plane (org → workspaces → environnements → projets, rôles, budget
 | Clés d'accès | Clés d'API |
 | À valider | Approbations |
 | Mode test | Environnements |
+| Connaissances | Bases de connaissances |
 Profils d'onboarding (D41) : « J'utilise l'IA pour mon activité », « Je crée des applications », « Je déploie l'IA dans mon entreprise ». Le profil ne donne **aucun droit** (les droits viennent du plan).
 
 ## Règles métier essentielles (détail : 02)

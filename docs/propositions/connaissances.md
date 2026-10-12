@@ -1,8 +1,7 @@
 # Proposition — Connaissances (bases de connaissances des agents et du chat)
 
-> **Statut : 🟡 proposition (D65), à valider par Dylan.** Rien n'est encore dans 01/02/04/05 ni dans le SQL.
-> Une fois validée, ce contenu est réparti dans 01 (produit), 02 (règles), 04 (schéma), 05 (garde-fous) et 08 (plan),
-> puis ce fichier est archivé.
+> **Statut : ✅ validée par Dylan (D65, 2026-10-12).** Résumé réparti dans 01 § 3.2 bis, 02 § 5 ter, 04 § 3 et § 7.7,
+> 05 § 7, 08 (P5b) et le glossaire. Ce fichier reste la **spécification détaillée** ; le SQL n'existe pas encore (lot K.1).
 > Date : 2026-10-12.
 
 ## 1. Le besoin

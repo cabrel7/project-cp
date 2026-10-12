@@ -22,6 +22,7 @@
 | Exécution | Run | |
 | Crédits | Crédits · tokens | Les tokens n'apparaissent qu'en Technique |
 | Profil Rapide / Équilibré / Expert | Flash / Smart / Max | |
+| Connaissances | Bases de connaissances | « Document » dans les deux modes ; une citation affiche toujours le document et la page |
 | Clé d'accès | Clé API | |
 | Votre propre clé IA | BYOK | |
 | Règles de sécurité | Politiques / garde-fous | |
