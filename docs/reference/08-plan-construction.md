@@ -122,7 +122,8 @@
 |---|---|---|---|
 | P2.1 | Inscription/connexion e-mail + mot de passe, sessions, déconnexion partout, mot de passe oublié | backend, frontend | M |
 | P2.2 | Téléphone + OTP SMS (fournisseur SMS derrière une interface, simulé en dev), règle « un compte gratuit par numéro vérifié » | backend, frontend | M |
-| P2.3 | Google + Apple (arctic), clés d'accès (WebAuthn), 2FA TOTP + codes de secours | backend, frontend | M |
+| P2.2c | Plafond global de SMS par jour et par pays (R1) — **obligatoire avant tout vrai fournisseur SMS** (D67) | backend | S |
+| P2.3 | **Google** (arctic) : connexion, inscription, liaison/déliaison, rattachement jamais automatique ; boutons Apple et clé d'accès masqués par feature flag (D67) | backend, frontend | M |
 | P2.4 | Organisations, workspaces, environnements (dont sandbox), rôles système, invitations, transfert d'Owner | backend, frontend | M |
 | P2.5 | Onboarding 3 étapes × 3 profils (D41), animations d'auth/onboarding (D36/D38) | frontend | M |
 | P2.6 | Admin : connexion équipe interne (session courte + minuteur), liste et fiche clients, audit | backend, frontend | M |
@@ -273,6 +274,7 @@
 | P8.4 | Performance : budgets de latence tenus, Lighthouse mobile 4G, charge de base (k6) | backend, frontend | M |
 | P8.5 | Admin restant : Pilotage, Support, Conformité, Déploiement progressif, Contenu et traductions | backend, frontend | L |
 | P8.7 | Admin « Stockage » (D52) : backends, espace utilisé et alertes, bascule du backend actif, migration des fichiers en tâche de fond (`apps/worker`, reprenable, vérification sha256) | backend, frontend | M |
+| P8.8 | **Sécurité du compte** (D67, spec `docs/review/P2.3-spec-architect.md` sous-lots a et b) : vérification en deux étapes (ticket sans session, TOTP, codes de secours, ré-authentification, page Sécurité), clés d'accès (WebAuthn), Apple, protection des numéros recyclés (R2) | backend, frontend | L |
 | P8.6 | Chantier D en ligne : CGU, DPA, confidentialité, consentements versionnés | frontend | S |
 
 **Critères de fin**
@@ -305,6 +307,7 @@ Planifiées en détail à la sortie de P8 (retours de la bêta d'abord).
 
 ## 6. Comment lancer le travail dans Claude Code
 
+- **Jusqu'à 3 sessions en parallèle (D66)**, une par lot indépendant et sur sa propre branche ; avant la PR : `git pull --rebase origin dev`, puis tests. L'agent ne s'arrête pour validation que si le lot ajoute une décision, une route publique ou une table.
 - Une session = un lot (ou une partie d'un lot L). Commande : `/feature P2.1 — <intitulé du lot>` ; l'architect lit ce document pour le périmètre et les critères.
 - En fin de lot : `PROJECT_STATE.md` à jour (lot en ✅ Done, suivant en 🔄 Active).
 - En fin de phase : `/audit-rules`, puis démonstration à Dylan avec les preuves des critères de fin ; la phase n'est cochée qu'après validation.
