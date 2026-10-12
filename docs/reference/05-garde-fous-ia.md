@@ -133,6 +133,7 @@ Les prompts v1 sont des **brouillons** (non verrouillés).
 |---|---|
 | Injection directe (« ignore tes instructions ») | Classifieur local + cadrage du prompt système + contrôle déterministe des actions |
 | Injection indirecte (email ou document piégé lu par un outil) | Marquage des données + classifieur sur les résultats d'outils + actions toujours soumises aux politiques |
+| Document piégé dans une base de connaissances (D65) | Contrôle d'injection **à l'ingestion** (document signalé), passages marqués (spotlighting) à chaque recherche, extraction Docling en bac à sable (sans réseau, non root, délais) |
 | Exfiltration de données | Isolation par client en base, liens autorisés, détection de fuite en sortie, secrets jamais dans le contexte |
 | Action destructrice | Suppression et paiement : approbation obligatoire (contrainte en base) ; SQL sans DELETE ; bornes des paramètres |
 | Emballement / boucle / facture qui explose | Itérations, durées, détection de boucle, budgets, réservation de crédits, arrêt d'urgence |

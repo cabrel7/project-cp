@@ -63,6 +63,12 @@ Le moteur est construit **API-first** : chaque fonction existe d'abord comme API
 - **Fonctions** (activation échelonnée par feature flags) : texte, outils, JSON structuré et embeddings d'abord ; vision et transcription audio ; puis synthèse vocale, images, vidéo. Le schéma gère dès maintenant toutes les unités de facturation (tokens, images, secondes, caractères, pages).
 - **Pas d'endpoint brut compatible OpenAI.** L'utilisateur passe par le SDK et nos capacités ; c'est l'usage « power products and services » autorisé par les fournisseurs.
 
+### 3.2 bis Connaissances (D65)
+- Le client ajoute ses **documents** (PDF texte ou scanné, Word, PowerPoint, Excel/CSV, photos, pages web) dans des **bases de connaissances** par workspace ; le chat et les agents y cherchent et **citent leurs sources** (document, page, section).
+- Extraction par **Docling** auto-hébergé (OCR compris), recherche hybride (sens + mots exacts), tableurs interrogeables ligne par ligne.
+- Un agent n'accède qu'aux bases qui lui sont accordées ; les documents restent dans la région de données du client et ne servent jamais à entraîner un modèle.
+- Détail et pipeline : `docs/propositions/connaissances.md` ; règles : `02-regles-metier.md` § 5 ter.
+
 ### 3.3 Action Runtime (connecteurs + MCP)
 - **8 chemins de connexion :** OpenAPI, API sans doc (mode guidé en français), base de données, Google Workspace, SaaS connus, fichiers, webhooks entrants, bridge local. Plus **Bring your own MCP** (MCP externes branchés derrière nos règles).
 - **Sémantisation :** l'IA transforme des opérations brutes en outils compréhensibles (`create_order`, pas `post_orders`) avec niveau de risque et effet (lecture, écriture, suppression, financier, message externe).
@@ -167,6 +173,8 @@ Offre Free protégée : un compte par numéro vérifié par OTP, rate limits, d�
 | Nombre d'agents | 1 | 3 | illimités | illimités | illimités |
 | Exécutions simultanées | 1 | 2 | 10 | 25 | personnalisé |
 | Mémoire long terme | ✗ | 30 j | 90 j | 180 j | personnalisée |
+| Connaissances (bases × documents) 🟡 | 1 × 20 | 3 × 200 | 10 × 2 000 | illimitées × 10 000 | personnalisé |
+| Lecture des scans et photos (OCR) 🟡 | ✗ | ✓ | ✓ | ✓ | ✓ |
 | Approbations | ✓ | ✓ | + délégation | + circuits | + circuits |
 | Profils de modèles | Flash | Flash + Smart | + Max | + Max | tous |
 | Choix d'un modèle précis | ✗ | ✗ | ✓ | ✓ | ✓ |
@@ -185,6 +193,8 @@ Offre Free protégée : un compte par numéro vérifié par OTP, rate limits, d�
 | Marketplace : installer | gratuit | ✓ | ✓ | ✓ | + catalogue privé |
 | Marketplace : publier | ✗ | Community | + Verified, Premium | idem | idem |
 | Support | documentation | email 48 h | email 24 h + chat | email 12 h + chat | dédié + SLA |
+
+🟡 Lignes « Connaissances » et « OCR » (D65) : valeurs provisoires, fixées avec le chantier A (marges et prix).
 
 Cette grille est stockée en base (`billing.features` × `billing.plan_features`) : la modifier ne demande aucun changement de code. Les surcharges par client passent par `billing.organization_feature_overrides`.
 

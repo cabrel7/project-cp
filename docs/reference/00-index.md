@@ -17,6 +17,7 @@
 | 05 | `reference/05-garde-fous-ia.md` | **Comment on garde le contrôle de l'IA** : pipeline, profils, arrêts d'urgence, IA interne | ✅ v1 |
 | 06 | `reference/06-journal-decisions.md` | **Qu'a-t-on décidé, quand, et qu'est-ce que ça remplace ?** | ✅ vivant |
 | 07 | `reference/07-ui-ux.md` | **À quoi ça ressemble** : décisions UI/UX, gabarits, composants, **navigation définitive**, studios — détail dans le design system et le canevas de maquettes Claude Design | ✅ v1.1 |
+| — | `propositions/connaissances.md` | **Connaissances (D65 ✅)** : spécification détaillée — extraction Docling, pipeline, recherche avec citations, domaine `knowledge`, lots K.0-K.5 | ✅ (D65) |
 | 08 | `reference/08-plan-construction.md` | **Dans quel ordre on construit** : phases P0 à P10, lots par agent, critères de fin, chantiers hors code | 🟡 v1 (D50) |
 
 **Code SQL** (`schema/`) : `project-cp-schema.sql` (structure), `project-cp-seed-reference.sql` et `project-cp-seed-ai-system.sql` (données initiales), `project-cp-tests.sql` (21 tests).

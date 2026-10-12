@@ -219,6 +219,17 @@ Un profil demandé hors plan est refusé (`PLATFORM_FEATURE_NOT_AVAILABLE`), jam
 
 ---
 
+## 5 ter. Connaissances (D65)
+- **Portée** : une base de connaissances appartient à un workspace. Le chat du workspace voit les bases du workspace ; un agent n'en voit que celles accordées **à sa version** (comme les accès MCP et capacités). `[DB]`
+- **Ingestion** asynchrone (worker, file dédiée, concurrence 1) : extraction Docling (formats simples en Node) → contrôle d'**injection indirecte** (05, étape 2) → découpage par sections avec page et section conservées → embeddings via une capacité interne → index vectoriel + texte plein. Statuts : en attente, en cours, prêt, erreur (message compréhensible en mode Simple, relance possible).
+- **Plafonds** par document : taille, nombre de pages, durée d'extraction ; au-delà → erreur explicite, aucun débit.
+- **Versions** : même empreinte (sha256) → pas de nouvelle ingestion ; nouvelle version → réindexation, l'ancienne reste citable jusqu'à la fin.
+- **Recherche** hybride (vectorielle + texte plein, fusion RRF), filtrée par droits ; chaque passage renvoyé porte **document, page, section** ; passages marqués comme données non fiables (spotlighting).
+- **Tableurs** : chaque ligne indexée avec ses en-têtes **et** conservée en ligne structurée ; l'outil `lookup_rows` filtre par valeurs exactes de colonnes, jamais de SQL libre.
+- **Usage** : outil `search_knowledge` (l'agent décide) par défaut ; recherche automatique avant chaque appel en option par agent.
+- **Facturation** : crédits infra par page ingérée (OCR plus cher), par Mo-mois stocké, par recherche (montants : chantier A) ; limites par plan (01 § 6.3).
+- **Données** : stockées dans la région de l'organisation ; jamais utilisées pour entraîner un modèle ; suppression d'un document = suppression du fichier, des morceaux et des lignes (§ 12).
+
 ## 6. Paiements et facturation
 
 - Plusieurs agrégateurs ; routage par pays et opérateur selon la priorité. **Aucun KYC demandé aux utilisateurs.**

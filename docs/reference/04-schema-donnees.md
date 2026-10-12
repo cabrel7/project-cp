@@ -70,6 +70,7 @@
 | `storage` | Métadonnées des fichiers (binaire en stockage objet) et backends de stockage (D52) | backends, files, backend_migrations |
 | `billing` | Plans, droits, abonnements, crédits, paiements, factures, budgets, promotions | plans, plan_prices, features, plan_features, organization_feature_overrides, subscriptions, subscription_events, credit_wallets, credit_grants, **credit_ledger\***, credit_reservations, credit_packs, credit_pack_prices, infra_meters, infra_meter_rates, payment_providers, payment_methods, payments, payment_events, refunds, invoice_sequences, invoices, invoice_lines, budgets, budget_periods, coupons, coupon_redemptions, referrals |
 | `ai` | Fournisseurs, modèles, prix, routage, BYOK, capacités, évaluations, **garde-fous** | guardrail_detectors, guardrail_profiles, guardrail_rules, guardrail_bindings, providers, provider_accounts, provider_account_snapshots, models, model_deployments, model_prices, routing_profiles, routing_rules, routing_rule_targets, byok_keys, capabilities, capability_versions, capability_releases, capability_release_variants, eval_datasets, eval_cases, eval_runs, eval_results |
+| `knowledge` *(D65, migration au lot K.1)* | Bases de connaissances : documents, versions, morceaux indexés, lignes de tableurs, ingestion | sources, documents, document_versions, chunks (vector + tsvector, HNSW + GIN), table_rows, ingestion_jobs ; + `agent.knowledge_grants` |
 | `mcp` | Connecteurs, actions, serveurs, versions, outils, jetons | connector_definitions, oauth_connections, bridges, connectors, connector_credentials, connector_sources, connector_actions, file_datasets, servers, server_versions, tools, tool_embeddings, resources, prompts, access_tokens, access_token_tools, health_checks |
 | `agent` | Agents, versions, droits, déclencheurs, approbations, mémoire, chat | agents, versions, tool_grants, **capability_grants**, triggers, approvals, memories, conversations, messages |
 | `usage` | Traçabilité et consommation | **runs\***, **run_steps\***, **llm_requests\***, **tool_calls\***, **guardrail_events\***, daily_rollups |
@@ -226,6 +227,12 @@ Chaque requête garde le déploiement utilisé, le coût fournisseur en USD, le 
 - `storage.files.backend_id` (obligatoire) : où se trouve le binaire ; unicité `(backend_id, bucket, storage_key)`.
 - `storage.backend_migrations` : progression d'une migration entre backends (compteurs, point de reprise `last_file_id`, motif obligatoire, auteur staff) ; une seule migration active par backend source ; invisible pour `app_rw`.
 - Données initiales (`950`) : `local` (SeaweedFS, actif, écriture) et `ovh_gra` (OVH, désactivé).
+
+### 7.7 Connaissances (D65 — à écrire au lot K.1)
+- Toutes les tables `knowledge.*` : `organization_id` + `workspace_id`, RLS, FK composites, `public_id` UUIDv7.
+- `chunks.embedding vector(1536)` + `embedding_model` (modèle fixé par index, réindexation par tâche si le modèle change) ; `tsv` en configuration `french`/`english` selon la langue détectée ; page, section, ordre.
+- `documents.file_id` → `storage.files` (backend D52) ; suppression en cascade vers versions, morceaux, lignes ; le fichier est supprimé par le worker.
+- `agent.knowledge_grants` : accès d'une **version** d'agent à une base (même modèle que `tool_grants` / `capability_grants`).
 
 ## 8. Données de référence (`950_seed_reference.sql`)
 
