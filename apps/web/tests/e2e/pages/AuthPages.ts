@@ -27,7 +27,53 @@ abstract class AuthPage {
   }
 }
 
+/** Formulaire « Recevoir un code » (AuthPhoneForm), partagé entre connexion et inscription. */
+export class PhoneForm {
+  constructor(readonly page: Page) {}
+  get root(): Locator {
+    return this.page.getByTestId('auth-phone-form')
+  }
+  get fullName(): Locator {
+    return this.root.getByLabel(labelRe(auth.register.fullName))
+  }
+  /**
+   * Champ du numéro. Repli sur le type `tel` : le champ n'a PAS de nom accessible (défaut D-a11y-1,
+   * voir `phoneByLabel` et le test rouge « le champ numéro a un nom accessible »).
+   */
+  get phone(): Locator {
+    return this.root.locator('input[type="tel"]')
+  }
+  /** Locator sémantique cible : devient utilisable quand le défaut d'identifiant dupliqué est corrigé. */
+  get phoneByLabel(): Locator {
+    return this.root.getByRole('textbox', { name: auth.phone.label })
+  }
+  get country(): Locator {
+    return this.root.getByRole('combobox', { name: auth.phone.country })
+  }
+  get terms(): Locator {
+    return this.root.getByRole('checkbox')
+  }
+  get submit(): Locator {
+    return this.page.getByTestId('auth-phone-submit')
+  }
+  get alert(): Locator {
+    return this.page.getByTestId('auth-phone-alert')
+  }
+  get offline(): Locator {
+    return this.page.getByTestId('auth-offline')
+  }
+  get useEmail(): Locator {
+    return this.alert.getByRole('link', { name: auth.code.useEmail })
+  }
+  /** Saisit le numéro national (le champ est actif une fois la bibliothèque de numéros chargée). */
+  async fillPhone(national: string): Promise<void> {
+    await this.phone.fill(national)
+  }
+}
+
 export class LoginPage extends AuthPage {
+  readonly phoneForm = new PhoneForm(this.page)
+  gotoPhone = () => gotoHydrated(this.page, '/auth/login?tab=phone')
   get email() {
     return this.page.getByLabel(labelRe(auth.login.email))
   }
@@ -63,6 +109,14 @@ export class LoginPage extends AuthPage {
 }
 
 export class RegisterPage extends AuthPage {
+  readonly phoneForm = new PhoneForm(this.page)
+  get tabEmail() {
+    return this.page.getByRole('tab', { name: auth.register.tabEmail })
+  }
+  get tabPhone() {
+    return this.page.getByRole('tab', { name: auth.register.tabPhone })
+  }
+  gotoPhone = () => gotoHydrated(this.page, '/auth/register?tab=phone')
   get fullName() {
     return this.page.getByLabel(labelRe(auth.register.fullName))
   }
@@ -155,4 +209,67 @@ export class VerifyEmailPage extends AuthPage {
   // Hydratation attendue : le jeton est soumis dans onMounted, donc seulement une fois Vue monté
   // (en dev, le premier chargement peut dépasser le timeout d'assertion par défaut).
   goto = (query = '') => gotoHydrated(this.page, `/auth/verify-email${query}`)
+}
+
+/** Écran du code SMS /auth/phone/code (maquette 06). */
+export class PhoneCodePage extends AuthPage {
+  get digits(): Locator {
+    return this.page.getByRole('textbox', {
+      name: new RegExp(`^${auth.code.digit.replace('{n}', '\\d')}$`),
+    })
+  }
+  digit(n: number): Locator {
+    return this.page.getByRole('textbox', {
+      name: auth.code.digit.replace('{n}', String(n)),
+      exact: true,
+    })
+  }
+  get back(): Locator {
+    return this.page.getByTestId('auth-code-back')
+  }
+  get sentTo(): Locator {
+    return this.page.getByTestId('auth-code-sent-to')
+  }
+  get change(): Locator {
+    return this.sentTo.getByRole('link', { name: auth.code.change })
+  }
+  get invalid(): Locator {
+    return this.page.getByTestId('auth-code-invalid')
+  }
+  get resendIn(): Locator {
+    return this.page.getByTestId('auth-code-resend-in')
+  }
+  get resend(): Locator {
+    return this.page.getByTestId('auth-code-resend')
+  }
+  get resent(): Locator {
+    return this.page.getByTestId('auth-code-resent')
+  }
+  get submit(): Locator {
+    return this.page.getByTestId('auth-code-submit')
+  }
+  get requestNew(): Locator {
+    return this.page.getByTestId('auth-code-request-new')
+  }
+  get codeAlert(): Locator {
+    return this.page.getByTestId('auth-code-alert')
+  }
+  get offline(): Locator {
+    return this.page.getByTestId('auth-offline')
+  }
+  get useEmail(): Locator {
+    return this.codeAlert.getByRole('link', { name: auth.code.useEmail })
+  }
+  goto = () => gotoHydrated(this.page, '/auth/phone/code')
+
+  /** Colle un code dans la première case (événement paste réel, comme un collage du SMS). */
+  async paste(code: string): Promise<void> {
+    await this.digits.first().evaluate((el, value) => {
+      const data = new DataTransfer()
+      data.setData('text/plain', value)
+      el.dispatchEvent(
+        new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
+      )
+    }, code)
+  }
 }

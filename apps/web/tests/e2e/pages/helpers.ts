@@ -39,7 +39,12 @@ export interface ApiCall {
 export async function mockAuthApi(
   page: Page,
   path: string,
-  response: { status: number; body?: unknown; delayMs?: number },
+  response: {
+    status: number
+    body?: unknown
+    delayMs?: number
+    headers?: Record<string, string>
+  },
 ): Promise<ApiCall[]> {
   const calls: ApiCall[] = []
   await page.route(`**/v1/auth/${path}`, async (route) => {
@@ -47,9 +52,48 @@ export async function mockAuthApi(
     if (response.delayMs) await new Promise((r) => setTimeout(r, response.delayMs))
     await route.fulfill({
       status: response.status,
+      headers: response.headers ?? {},
       contentType: 'application/json',
       body: JSON.stringify(response.body ?? {}),
     })
   })
   return calls
 }
+
+/** Corps d'erreur du catalogue (`{ error: { code, details } }`), tel que renvoyé par l'API. */
+export const apiError = (code: string, details: Record<string, unknown> = {}) => ({
+  error: { code, message: 'masqué', request_id: 'req-e2e', details },
+})
+
+/** Utilisateur renvoyé par verify-code (valeurs fictives). */
+export const phoneUser = {
+  id: '01900000-0000-7000-8000-000000000001',
+  email: null,
+  email_verified: false,
+  full_name: 'Test E2E',
+  locale: 'fr',
+  timezone: 'Africa/Douala',
+  created_at: '2026-10-12T10:00:00.000Z',
+  phone: '+237670000101',
+  phone_verified: true,
+  free_tier_eligible: true,
+}
+
+export const verifyOk = (isNew = false) => ({
+  user: phoneUser,
+  session: {
+    id: 's',
+    ip: '127.0.0.1',
+    user_agent: 'e2e',
+    device_label: null,
+    created_at: phoneUser.created_at,
+    last_seen_at: phoneUser.created_at,
+    is_current: true,
+  },
+  is_new_user: isNew,
+})
+
+export const requestOk = { ok: true, expires_in_seconds: 300, resend_after_seconds: 60 }
+
+/** Numéro mobile camerounais fictif (9 chiffres nationaux). */
+export const CM_NATIONAL = '670000101'

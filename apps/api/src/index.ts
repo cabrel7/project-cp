@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server'
+import pino from 'pino'
 import { createApp } from './app.js'
 import { getEnv } from './env.js'
 import { initOtel } from './otel.js'
@@ -25,7 +26,8 @@ async function main() {
 }
 
 main().catch((err) => {
-  // biome-ignore lint/suspicious/noConsole: pino not yet initialized at bootstrap failure
-  console.error('Fatal startup error:', err)
+  // Logger minimal sans getEnv() : la validation de l'environnement peut être la cause de l'échec.
+  // Les messages de env.ts ne contiennent aucune valeur (secrets).
+  pino({ name: 'api' }).fatal({ err }, 'Fatal startup error')
   process.exit(1)
 })

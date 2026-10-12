@@ -28,12 +28,12 @@ const ALL_CODES = Object.keys(ERROR_CODES) as ErrorCode[]
 const ALL_DEFS = Object.values(ERROR_CODES) as ErrorCodeDef[]
 
 describe('ERROR_CODES', () => {
-  it('doit contenir exactement 69 codes (57 initiaux + 5 garde-fous + 7 auth P2.1)', () => {
-    expect(ALL_CODES).toHaveLength(69)
+  it('doit contenir exactement 73 codes (57 initiaux + 5 garde-fous + 7 auth P2.1 + 4 auth P2.2)', () => {
+    expect(ALL_CODES).toHaveLength(73)
   })
 
   it('doit avoir des codes tous distincts', () => {
-    expect(new Set(ALL_DEFS.map((d) => d.code)).size).toBe(69)
+    expect(new Set(ALL_DEFS.map((d) => d.code)).size).toBe(73)
   })
 
   it.each(ALL_CODES)('doit faire correspondre la clé %s à sa propriété .code', (key) => {
@@ -144,6 +144,25 @@ describe('ERROR_CODES', () => {
     }
   })
 
+  it('doit contenir les 4 codes AUTH de la connexion par téléphone (P2.2, spec §3.3)', () => {
+    expect(ERROR_CODES).toHaveProperty('AUTH_OTP_INVALID')
+    expect(ERROR_CODES).toHaveProperty('AUTH_OTP_EXPIRED')
+    expect(ERROR_CODES).toHaveProperty('AUTH_OTP_ATTEMPTS_EXCEEDED')
+    expect(ERROR_CODES).toHaveProperty('AUTH_SMS_UNAVAILABLE')
+  })
+
+  it('doit utiliser 422 pour les erreurs de code et 503 relançable pour l’envoi de SMS (P2.2)', () => {
+    const defs = ERROR_CODES as unknown as Record<string, ErrorCodeDef | undefined>
+    for (const code of ['AUTH_OTP_INVALID', 'AUTH_OTP_EXPIRED', 'AUTH_OTP_ATTEMPTS_EXCEEDED']) {
+      expect(defs[code]?.httpStatus, code).toBe(422)
+      expect(defs[code]?.isRetryable, code).toBe(false)
+      expect(defs[code]?.refundsCredits, code).toBe(false)
+    }
+    expect(defs.AUTH_SMS_UNAVAILABLE?.httpStatus).toBe(503)
+    expect(defs.AUTH_SMS_UNAVAILABLE?.isRetryable).toBe(true)
+    expect(defs.AUTH_SMS_UNAVAILABLE?.refundsCredits).toBe(false)
+  })
+
   it('doit être typé de sorte que ErrorCode couvre toutes les clés', () => {
     expectTypeOf<ErrorCode>().toEqualTypeOf<keyof typeof ERROR_CODES>()
     expectTypeOf<'PLATFORM_CONFLICT'>().toExtend<ErrorCode>()
@@ -210,7 +229,7 @@ describe('isRetryable', () => {
     expect(isRetryable(code)).toBe(false)
   })
 
-  it('doit être cohérent avec la définition pour les 69 codes', () => {
+  it('doit être cohérent avec la définition pour les 73 codes', () => {
     for (const code of ALL_CODES) {
       expect(isRetryable(code)).toBe(ERROR_CODES[code].isRetryable)
     }

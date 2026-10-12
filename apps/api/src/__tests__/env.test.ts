@@ -19,6 +19,10 @@ describe('env.ts', () => {
 
   it('doit parser des valeurs personnalisées', async () => {
     vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('OTP_PEPPER', 'x'.repeat(32))
+    vi.stubEnv('SMS_PROVIDER', 'none')
+    vi.stubEnv('APP_URL', 'https://app.example.com')
+    vi.stubEnv('TRUSTED_PROXY_HOPS', '1') // exigé en production (revue PR #18, MINOR 2)
     vi.stubEnv('PORT', '3000')
     vi.stubEnv('LOG_LEVEL', 'error')
     vi.stubEnv('OTEL_ENABLED', 'true')
@@ -73,5 +77,235 @@ describe('env.ts', () => {
     const second = getEnv()
     expect(first).not.toBe(second)
     expect(second.PORT).toBe(5000)
+  })
+})
+
+/**
+ * P2.2 — CA-33 : SMS_PROVIDER et OTP_PEPPER (spec §3.5).
+ * Chaque test fixe explicitement NODE_ENV / SMS_PROVIDER / OTP_PEPPER (valeur `undefined` = variable
+ * absente) pour ne dépendre ni de l'environnement du shell (.env.example chargé) ni de la CI.
+ */
+describe('env.ts — SMS_PROVIDER et OTP_PEPPER (CA-33)', () => {
+  const PEPPER_32 = 'p'.repeat(32)
+  const PEPPER_31 = 'q'.repeat(31)
+
+  function stub(vars: {
+    NODE_ENV: string
+    SMS_PROVIDER?: string
+    OTP_PEPPER?: string
+    APP_URL?: string
+    TRUSTED_PROXY_HOPS?: string
+  }) {
+    vi.stubEnv('NODE_ENV', vars.NODE_ENV)
+    vi.stubEnv('SMS_PROVIDER', vars.SMS_PROVIDER)
+    vi.stubEnv('OTP_PEPPER', vars.OTP_PEPPER)
+    // APP_URL est obligatoire en production (origine CSRF) : valeur neutre, hors du sujet de ces tests
+    vi.stubEnv('APP_URL', vars.APP_URL ?? 'https://app.example.com')
+    // TRUSTED_PROXY_HOPS est obligatoire en production (nombre de proxys de confiance) : valeur neutre, hors sujet ici
+    vi.stubEnv('TRUSTED_PROXY_HOPS', vars.TRUSTED_PROXY_HOPS ?? '1')
+  }
+
+  async function load() {
+    vi.resetModules()
+    return (await import('../env.js')) as typeof import('../env.js')
+  }
+
+  function thrownBy(fn: () => unknown): Error {
+    try {
+      fn()
+    } catch (err) {
+      return err as Error
+    }
+    throw new Error('getEnv() devait lever une erreur')
+  }
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.resetModules()
+  })
+
+  it.each(['development', 'test'])(
+    'doit utiliser SMS_PROVIDER=simulated et un OTP_PEPPER de dev (>= 32 car.) par défaut en %s',
+    async (nodeEnv) => {
+      stub({ NODE_ENV: nodeEnv })
+      const { getEnv } = await load()
+      const env = getEnv()
+      expect(env.SMS_PROVIDER).toBe('simulated')
+      expect(env.OTP_PEPPER.length).toBeGreaterThanOrEqual(32)
+    },
+  )
+
+  it('doit refuser la production sans APP_URL (origine CSRF), sans fuite de valeur', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('SMS_PROVIDER', 'none')
+    vi.stubEnv('OTP_PEPPER', PEPPER_32)
+    vi.stubEnv('APP_URL', undefined)
+    vi.stubEnv('TRUSTED_PROXY_HOPS', '1')
+    const { getEnv } = await load()
+    const err = thrownBy(() => getEnv())
+    expect(err.message).toContain('APP_URL')
+    expect(err.message).not.toContain(PEPPER_32)
+  })
+
+  it('doit refuser SMS_PROVIDER=simulated en production, même avec un pepper valide', async () => {
+    stub({ NODE_ENV: 'production', SMS_PROVIDER: 'simulated', OTP_PEPPER: PEPPER_32 })
+    const { getEnv } = await load()
+    expect(() => getEnv()).toThrow()
+  })
+
+  it('doit refuser la production sans OTP_PEPPER (pas de valeur de dev par défaut)', async () => {
+    stub({ NODE_ENV: 'production', SMS_PROVIDER: 'none' })
+    const { getEnv } = await load()
+    expect(() => getEnv()).toThrow()
+  })
+
+  it('doit refuser en production un OTP_PEPPER de 31 caractères sans jamais citer sa valeur', async () => {
+    stub({ NODE_ENV: 'production', SMS_PROVIDER: 'none', OTP_PEPPER: PEPPER_31 })
+    const { getEnv } = await load()
+    const err = thrownBy(() => getEnv())
+    expect(`${err.message}\n${err.stack ?? ''}\n${JSON.stringify(err)}`).not.toContain(PEPPER_31)
+  })
+
+  it('doit accepter en production SMS_PROVIDER=none avec un OTP_PEPPER d’exactement 32 caractères', async () => {
+    stub({ NODE_ENV: 'production', SMS_PROVIDER: 'none', OTP_PEPPER: PEPPER_32 })
+    const { getEnv } = await load()
+    const env = getEnv()
+    expect(env.SMS_PROVIDER).toBe('none')
+    expect(env.OTP_PEPPER).toBe(PEPPER_32)
+  })
+
+  it('doit utiliser SMS_PROVIDER=none par défaut en production', async () => {
+    stub({ NODE_ENV: 'production', OTP_PEPPER: PEPPER_32 })
+    const { getEnv } = await load()
+    expect(getEnv().SMS_PROVIDER).toBe('none')
+  })
+
+  it('doit refuser un SMS_PROVIDER inconnu', async () => {
+    stub({ NODE_ENV: 'development', SMS_PROVIDER: 'twilio' })
+    const { getEnv } = await load()
+    expect(() => getEnv()).toThrow()
+  })
+
+  it('doit refuser un OTP_PEPPER de moins de 32 caractères même hors production', async () => {
+    stub({ NODE_ENV: 'development', OTP_PEPPER: PEPPER_31 })
+    const { getEnv } = await load()
+    expect(() => getEnv()).toThrow()
+  })
+
+  it('doit accepter SMS_PROVIDER=none en développement', async () => {
+    stub({ NODE_ENV: 'development', SMS_PROVIDER: 'none' })
+    const { getEnv } = await load()
+    expect(getEnv().SMS_PROVIDER).toBe('none')
+  })
+
+  it('ne doit jamais citer la valeur du pepper dans l’erreur « production + simulated »', async () => {
+    const secret = 's3cr3t-'.repeat(6)
+    stub({ NODE_ENV: 'production', SMS_PROVIDER: 'simulated', OTP_PEPPER: secret })
+    const { getEnv } = await load()
+    const err = thrownBy(() => getEnv())
+    expect(`${err.message}\n${err.stack ?? ''}`).not.toContain(secret)
+  })
+})
+
+/**
+ * Revue PR #18, MINOR 2 : `TRUSTED_PROXY_HOPS` (nombre de proxys de confiance devant l'API) doit être EXPLICITE en
+ * production, comme `OTP_PEPPER` / `APP_URL`. Un oubli ferait lire l'IP du proxy (0 saut par défaut) ou, à
+ * l'inverse, accorderait une confiance à `X-Forwarded-For` sans que personne ne l'ait décidé : limites par IP, blocklist
+ * et audit seraient faux sans aucune alerte. 0 est une valeur légitime (API exposée directement) mais doit être écrite.
+ */
+describe('env.ts — TRUSTED_PROXY_HOPS exigé en production (revue PR #18, MINOR 2)', () => {
+  const PEPPER = 'h'.repeat(40)
+
+  async function load(vars: Record<string, string | undefined>) {
+    vi.resetModules()
+    vi.stubEnv('SMS_PROVIDER', 'none')
+    vi.stubEnv('OTP_PEPPER', PEPPER)
+    vi.stubEnv('APP_URL', 'https://app.example.com')
+    for (const [k, v] of Object.entries(vars)) vi.stubEnv(k, v)
+    return (await import('../env.js')) as typeof import('../env.js')
+  }
+
+  function thrownBy(fn: () => unknown): Error {
+    try {
+      fn()
+    } catch (err) {
+      return err as Error
+    }
+    throw new Error('getEnv() devait lever une erreur')
+  }
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.resetModules()
+  })
+
+  it('doit refuser la production sans TRUSTED_PROXY_HOPS, en nommant la variable et sans citer aucune valeur secrète', async () => {
+    const { getEnv } = await load({ NODE_ENV: 'production', TRUSTED_PROXY_HOPS: undefined })
+    const err = thrownBy(() => getEnv())
+    const text = `${err.message}\n${err.stack ?? ''}\n${JSON.stringify(err)}`
+    expect(text).toContain('TRUSTED_PROXY_HOPS')
+    expect(text).not.toContain(PEPPER)
+  })
+
+  it('doit refuser la production sans TRUSTED_PROXY_HOPS même avec toutes les autres variables valides (c’est la seule cause)', async () => {
+    const { getEnv } = await load({ NODE_ENV: 'production', TRUSTED_PROXY_HOPS: undefined })
+    const err = thrownBy(() => getEnv())
+    expect(err.message).not.toContain('APP_URL')
+    expect(err.message).not.toContain('OTP_PEPPER')
+    expect(err.message).not.toContain('SMS_PROVIDER')
+  })
+
+  it.each([
+    ['0', 0],
+    ['1', 1],
+    ['2', 2],
+  ])(
+    'doit accepter la production avec TRUSTED_PROXY_HOPS=%s (valeur numérique conservée)',
+    async (raw, expected) => {
+      const { getEnv } = await load({ NODE_ENV: 'production', TRUSTED_PROXY_HOPS: raw })
+      expect(getEnv().TRUSTED_PROXY_HOPS).toBe(expected)
+    },
+  )
+
+  it.each(['-1', 'abc', '1.5'])(
+    'doit refuser la production avec un TRUSTED_PROXY_HOPS invalide (%s)',
+    async (raw) => {
+      const { getEnv } = await load({ NODE_ENV: 'production', TRUSTED_PROXY_HOPS: raw })
+      expect(() => getEnv()).toThrow()
+    },
+  )
+
+  it('doit refuser la production avec TRUSTED_PROXY_HOPS vide (une variable vide n’est pas une décision explicite, pas de repli silencieux sur 0)', async () => {
+    // Durcissement proposé : `z.coerce.number()` convertit '' en 0 ; `TRUSTED_PROXY_HOPS=` (docker compose, .env mal
+    // renseigné) ne doit pas valoir « 0 saut » en production sans que personne ne l'ait voulu.
+    const { getEnv } = await load({ NODE_ENV: 'production', TRUSTED_PROXY_HOPS: '' })
+    expect(() => getEnv()).toThrow()
+  })
+
+  it.each(['development', 'test'])(
+    'doit conserver hors production le défaut 0 quand TRUSTED_PROXY_HOPS est absent (%s)',
+    async (nodeEnv) => {
+      const { getEnv } = await load({ NODE_ENV: nodeEnv, TRUSTED_PROXY_HOPS: undefined })
+      expect(getEnv().TRUSTED_PROXY_HOPS).toBe(0)
+    },
+  )
+
+  it.each(['development', 'test'])(
+    'doit accepter hors production une valeur explicite de TRUSTED_PROXY_HOPS (%s)',
+    async (nodeEnv) => {
+      const { getEnv } = await load({ NODE_ENV: nodeEnv, TRUSTED_PROXY_HOPS: '2' })
+      expect(getEnv().TRUSTED_PROXY_HOPS).toBe(2)
+    },
+  )
+
+  it('doit cumuler les erreurs de production : APP_URL absent ET TRUSTED_PROXY_HOPS absent sont tous deux signalés', async () => {
+    const { getEnv } = await load({
+      NODE_ENV: 'production',
+      TRUSTED_PROXY_HOPS: undefined,
+      APP_URL: undefined,
+    })
+    const err = thrownBy(() => getEnv())
+    expect(err.message).toContain('APP_URL')
+    expect(err.message).toContain('TRUSTED_PROXY_HOPS')
   })
 })

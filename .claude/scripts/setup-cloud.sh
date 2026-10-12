@@ -46,7 +46,7 @@ if [ $QUICK -eq 0 ]; then
   command -v psql >/dev/null 2>&1 && ok "psql" || { apt_i postgresql-client && ok "psql installé" || warn "psql non installé"; }
   # dbmate / squawk
   command -v dbmate >/dev/null 2>&1 && ok "dbmate" || { npm i -g dbmate >/dev/null 2>&1 && ok "dbmate installé" || warn "dbmate non installé"; }
-  command -v squawk >/dev/null 2>&1 && ok "squawk" || { npm i -g squawk-cli >/dev/null 2>&1 && ok "squawk installé" || warn "squawk non installé"; }
+  command -v squawk >/dev/null 2>&1 && ok "squawk" || { npm i -g squawk-cli@2.68.0 >/dev/null 2>&1 && ok "squawk 2.68.0 installé" || warn "squawk non installé"; }
 fi
 
 # Dépendances du monorepo

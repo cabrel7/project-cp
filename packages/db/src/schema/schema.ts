@@ -1626,6 +1626,25 @@ export const oauthClientsInIam = iam.table("oauth_clients", {
 	check("oauth_clients_token_endpoint_auth_method_check", sql`token_endpoint_auth_method = ANY (ARRAY['none'::text, 'client_secret_basic'::text, 'client_secret_post'::text, 'private_key_jwt'::text])`),
 ]);
 
+export const blocklistEntriesInPlatform = platform.table("blocklist_entries", {
+	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "platform.blocklist_entries_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
+	kind: text().notNull(),
+	value: text().notNull(),
+	reason: text().notNull(),
+	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }),
+	createdByStaffId: bigint("created_by_staff_id", { mode: "bigint" }),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("blocklist_entries_staff_idx").using("btree", table.createdByStaffId.asc().nullsLast().op("int8_ops")),
+	foreignKey({
+			columns: [table.createdByStaffId],
+			foreignColumns: [staffUsersInPlatform.id],
+			name: "blocklist_entries_created_by_staff_id_fkey"
+		}).onDelete("set null"),
+	unique("blocklist_entries_kind_value_key").on(table.kind, table.value),
+	check("blocklist_entries_kind_check", sql`kind = ANY (ARRAY['email'::text, 'email_domain'::text, 'phone'::text, 'ip'::text, 'cidr'::text, 'device'::text, 'card_fingerprint'::text])`),
+]);
+
 export const usersInIam = iam.table("users", {
 	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "iam.users_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
 	publicId: uuid("public_id").default(sql`uuidv7()`).notNull(),
@@ -1673,26 +1692,8 @@ export const usersInIam = iam.table("users", {
 	unique("users_phone_e164_key").on(table.phoneE164),
 	check("users_contact_required", sql`(email IS NOT NULL) OR (phone_e164 IS NOT NULL)`),
 	check("users_phone_e164_check", sql`phone_e164 ~ '^\+[1-9][0-9]{6,14}$'::text`),
+	check("users_phone_requires_verification", sql`(phone_e164 IS NULL) OR (phone_verified_at IS NOT NULL)`),
 	check("users_status_check", sql`status = ANY (ARRAY['pending'::text, 'active'::text, 'suspended'::text, 'deleted'::text])`),
-]);
-
-export const blocklistEntriesInPlatform = platform.table("blocklist_entries", {
-	id: bigint({ mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity({ name: "platform.blocklist_entries_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807, cache: 1 }),
-	kind: text().notNull(),
-	value: text().notNull(),
-	reason: text().notNull(),
-	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }),
-	createdByStaffId: bigint("created_by_staff_id", { mode: "bigint" }),
-	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	index("blocklist_entries_staff_idx").using("btree", table.createdByStaffId.asc().nullsLast().op("int8_ops")),
-	foreignKey({
-			columns: [table.createdByStaffId],
-			foreignColumns: [staffUsersInPlatform.id],
-			name: "blocklist_entries_created_by_staff_id_fkey"
-		}).onDelete("set null"),
-	unique("blocklist_entries_kind_value_key").on(table.kind, table.value),
-	check("blocklist_entries_kind_check", sql`kind = ANY (ARRAY['email'::text, 'email_domain'::text, 'phone'::text, 'ip'::text, 'cidr'::text, 'device'::text, 'card_fingerprint'::text])`),
 ]);
 
 export const routingRulesInAi = ai.table("routing_rules", {

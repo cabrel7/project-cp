@@ -294,7 +294,9 @@
         "sentDetail": "If an account didn't already exist for this address, we sent you a verification email. Check your spam folder if you don't see it.",
         "goToLogin": "Sign in",
         "tagline": "Your account is ready in two minutes.",
-        "taglineSub": "Free to try, no credit card required. An assistant guides you step by step."
+        "taglineSub": "Free to try, no credit card required. An assistant guides you step by step.",
+        "tabEmail": "Email",
+        "tabPhone": "Phone"
       },
       "forgot": {
         "title": "Forgot password",
@@ -335,6 +337,21 @@
         "veryStrong": "Very strong",
         "minChars": "{n} characters minimum"
       },
+      "phone": {
+        "label": "Phone number",
+        "country": "Country",
+        "hintLogin": "We'll text you a code. No password to remember.",
+        "hintRegister": "We'll send you a code to verify it. One free account per number.",
+        "submit": "Get a code",
+        "errors": {
+          "tooShort": "One digit is missing: a number for this country has {n}. | {count} digits are missing: a number for this country has {n}.",
+          "tooLong": "This number has too many digits.",
+          "invalid": "This number isn't valid.",
+          "notMobile": "Enter a mobile number to receive the text.",
+          "countryNotSupported": "This country isn't available yet."
+        },
+        "loading": "Loading the phone field…"
+      },
       "language": "Language",
       "errorTitle": "Something went wrong",
       "genericError": "Something went wrong. Try again in a moment.",
@@ -342,7 +359,34 @@
       "accountSuspended": "This account is suspended. Contact support.",
       "signupClosed": "Sign-ups are closed for now.",
       "termsRequired": "Accept the terms to continue.",
-      "comingSoon": "Coming soon"
+      "comingSoon": "Coming soon",
+      "code": {
+        "back": "Back",
+        "title": "Enter the code we texted you",
+        "sentTo": "Sent to {phone}.",
+        "change": "Change",
+        "label": "6-digit code",
+        "digit": "Digit {n} of 6",
+        "resendIn": "Didn't get it? You can request a new code in {time}",
+        "resendReady": "You can now request a new code.",
+        "resend": "Resend code",
+        "resent": "New code sent.",
+        "validity": "The code is valid for {minutes} minutes. Don't share it with anyone, not even our team.",
+        "submit": "Verify",
+        "invalid": "Incorrect code. {count} attempt left. | Incorrect code. {count} attempts left.",
+        "expired": "This code has expired. Request a new one.",
+        "tooManyAttempts": "Too many attempts for this code. Request a new one.",
+        "requestNew": "Get a new code",
+        "smsUnavailable": "Text messages are temporarily unavailable. Sign in with your email.",
+        "useEmail": "Use my email"
+      },
+      "duration": {
+        "seconds": "{n} second | {n} seconds",
+        "minutes": "{n} minute | {n} minutes",
+        "minutesSeconds": "{m} min {s} s"
+      },
+      "rateLimitedIn": "Too many requests. Try again in {time}.",
+      "offline": "You're offline. Check your connection and try again."
     }
   }
 }
