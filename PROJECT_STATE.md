@@ -40,7 +40,7 @@ Updated: 2026-10-06 | Session: P2.2 auth téléphone
 ## 📋 Queue
 7. **P1 — Design system en code** ✅ (P1.0 à P1.5 + revue fidélité). Écarts mineurs restants en Known issues.
 7b. **P2.5** : rattachement d'un numéro à un compte e-mail + formulaire de la maquette 02 (téléphone dans le formulaire e-mail).
-8. **P2.3+** : Google/Apple, 2FA TOTP, clés d'accès WebAuthn, clés d'API.
+8. **P2.3** : Google seulement (D67). **P2.2c** : plafond global de SMS (avant tout vrai fournisseur). Apple, clés d'accès, 2FA TOTP, R2 → **P8.8** (avant la bêta publique).
 9. **P5b — Connaissances (D65 ✅)** : documents indexés pour le chat et les agents, extraction Docling ; spike K.0 possible plus tôt (hors chemin critique). Spécification : `docs/propositions/connaissances.md`.
 10. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.

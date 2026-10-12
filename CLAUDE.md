@@ -50,6 +50,8 @@ Session cloud : Chromium préinstallé → ne jamais lancer `playwright install`
    session (`pnpm infra:up`, mode natif sans Docker) ET existent dans la CI. Jamais « exécuté en CI » sans l'avoir vérifié.
 7. **Finale** : `PROJECT_STATE.md` à jour ; chaque erreur évitable de la session → une ligne dans `ISSUES.log`
    (`date | agent | symptôme | cause | règle proposée`) ; `/retrospective` transforme les répétitions en guard-rules ou skills.
+8. **Arrêts et parallélisme (D66)** : arrêt pour validation seulement si le lot ajoute une décision, une route publique ou une
+   table ; jusqu'à 3 sessions en parallèle, une par lot, chacune sur sa branche ; `git pull --rebase origin dev` avant la PR.
 Tout agent **conteste** un brief bancal avant d'exécuter (arbitrage : 06 > 02 > 01 > 03/04/05 ; SQL pour les données).
 
 ## État du projet
