@@ -160,7 +160,7 @@ jobs:
           fi
 
       - name: Install squawk
-        run: npm install -g squawk-cli
+        run: npm install -g squawk-cli@2.68.0  # version figée, identique à setup-cloud.sh
 
       - name: Squawk lint migrations
         if: github.event_name == 'pull_request'

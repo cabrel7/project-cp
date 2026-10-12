@@ -69,6 +69,8 @@ SET LOCAL statement_timeout = '30s';
 -- squawk-ignore ban-drop-function
 DROP FUNCTION IF EXISTS platform.free_tier_requires_phone_otp();
 
+-- Retour arrière de la contrainte créée par cette migration :
+-- squawk-ignore ban-drop-constraint
 ALTER TABLE iam.users DROP CONSTRAINT IF EXISTS users_phone_requires_verification;
 
 DELETE FROM platform.error_codes
