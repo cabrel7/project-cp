@@ -11,7 +11,7 @@
  * setPhoneConfig/resetPhoneConfig ; `sms/sms.factory.ts`: setSmsProvider/resetSmsProvider ;
  * `sms/sms.simulated.ts`: getSimulatedOutbox ; clés Redis `rl:auth:otp:*` du §3.4 avec HMAC-SHA256 hex).
  */
-import { createHmac } from 'node:crypto'
+import { createHmac, randomBytes } from 'node:crypto'
 import { getPoolAuth, getPoolRw, withOrgContext } from '@cp/db'
 import { sql } from 'drizzle-orm'
 import Redis from 'ioredis'
@@ -19,6 +19,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { createApp } from '../../../app.js'
 import { getEnv, resetEnvCache } from '../../../env.js'
 import { resetLimiters } from '../../../middlewares/rate-limit.js'
+import * as phoneRepo from '../auth.phone.repository.js'
 import {
   extractCode,
   loadSrc,
@@ -177,6 +178,23 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
     asAdmin((s) => s`SELECT id FROM iam.user_sessions WHERE user_id = ${userId}`)
   const orgsOf = (userId: string) =>
     asAdmin((s) => s`SELECT * FROM iam.organizations WHERE created_by_user_id = ${userId}`)
+
+  /** Paramètres minimaux de `phoneRepo.verifyOtpTx` (appel direct du repository, sans route ni limiteur). */
+  const repoParams = (
+    e164: string,
+    codeMatches: (stored: Buffer) => boolean,
+  ): Parameters<typeof phoneRepo.verifyOtpTx>[0] => ({
+    e164,
+    country: 'CM',
+    codeMatches,
+    fullName: null,
+    orgName: 'Organisation de test',
+    locale: 'fr',
+    dataRegionCode: 'eu-fr',
+    session: { tokenHash: randomBytes(32), expiresAt: new Date(Date.now() + 3600_000) },
+    ip: null,
+    userAgent: 'vitest-repo',
+  })
 
   async function withBlock(kind: string, value: string, expired: boolean, fn: () => Promise<void>) {
     await asAdmin(
@@ -617,6 +635,113 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       expect(await sessionsOf((users[0] as Json).id)).toHaveLength(1)
     })
 
+    it('CA-17 (compte existant) : deux vérifications simultanées avec le bon code → exactement un 200 et un 422 AUTH_OTP_INVALID ; une seule session créée, last_login_at mis à jour une fois, aucun utilisateur ni organisation créé', async () => {
+      const p = uniqueCmPhone()
+      await signup(p, 'Awa Existante')
+      const user = (await userByPhone(p.e164))[0] as Json
+      const orgsBefore = await orgsOf(user.id)
+      expect(orgsBefore).toHaveLength(1)
+      expect(await sessionsOf(user.id)).toHaveLength(1)
+
+      const ip = uniqueIp()
+      await redis.del(`rl:auth:otp:req:phone:${hmac(p.e164)}`)
+      expect((await requestCode(p, ip)).res.status).toBe(200)
+      const code = await lastCode(p.e164)
+
+      const [a, b] = await Promise.all([verify(p, code, ip), verify(p, code, ip)])
+
+      expect([a.res.status, b.res.status].sort()).toEqual([200, 422])
+      const winner = a.res.status === 200 ? a : b
+      const loser = a.res.status === 200 ? b : a
+      expect(winner.json.is_new_user).toBe(false)
+      expect(winner.json.user.id).toBe(user.public_id)
+      expect(winner.res.headers.get('set-cookie')).toContain('HttpOnly')
+      expect(loser.json.error.code).toBe('AUTH_OTP_INVALID')
+      expect(loser.res.headers.get('set-cookie')).toBeNull()
+
+      // Aucun utilisateur ni organisation créé ; une seule session de plus (la perdante n'en laisse aucune).
+      const users = await userByPhone(p.e164)
+      expect(users).toHaveLength(1)
+      expect((users[0] as Json).id).toBe(user.id)
+      expect(await orgsOf(user.id)).toHaveLength(1)
+      const sessions = await asAdmin(
+        (s) =>
+          s`SELECT id, created_at FROM iam.user_sessions WHERE user_id = ${user.id} ORDER BY id`,
+      )
+      expect(sessions).toHaveLength(2)
+
+      // last_login_at avancé exactement par la transaction gagnante : même horodatage que sa session (now() de la
+      // transaction), strictement postérieur à la connexion initiale.
+      const ms = (value: unknown) => new Date(value as string | Date).getTime()
+      const after = ms((users[0] as Json).last_login_at)
+      expect(after).toBeGreaterThan(ms(user.last_login_at))
+      expect(after).toBe(ms((sessions[1] as Json).created_at))
+
+      // Le jeton est consommé UNE fois : un seul essai compté, jamais incrémenté par la perdante.
+      const rows = await tokens(p.e164)
+      const last = rows[rows.length - 1] as Json
+      expect(last.consumed_at).not.toBeNull()
+      expect(last.attempts).toBe(1)
+    })
+
+    it('CA-17 (repository, compte existant) : 4 vérifications concurrentes du même code → exactement un « ok » ; les autres « invalid » sans effet de bord', async () => {
+      const p = uniqueCmPhone()
+      await signup(p, 'Awa Repo')
+      const user = (await userByPhone(p.e164))[0] as Json
+      const ip = uniqueIp()
+      await redis.del(`rl:auth:otp:req:phone:${hmac(p.e164)}`)
+      expect((await requestCode(p, ip)).res.status).toBe(200)
+
+      const outcomes = await Promise.all(
+        [1, 2, 3, 4].map(() => phoneRepo.verifyOtpTx(repoParams(p.e164, () => true))),
+      )
+
+      expect(outcomes.filter((o) => o.kind === 'ok')).toHaveLength(1)
+      expect(outcomes.filter((o) => o.kind === 'invalid')).toHaveLength(3)
+      const ok = outcomes.find((o) => o.kind === 'ok')
+      expect(ok?.kind === 'ok' && ok.isNewUser).toBe(false)
+      expect(await sessionsOf(user.id)).toHaveLength(2)
+      expect(await userByPhone(p.e164)).toHaveLength(1)
+      expect(await orgsOf(user.id)).toHaveLength(1)
+    })
+
+    it('repository : un jeton déjà consommé ne peut pas être re-consommé — consumed_at et attempts inchangés, aucune session ni connexion enregistrée', async () => {
+      const p = uniqueCmPhone()
+      await signup(p, 'Awa Consommé')
+      const user = (await userByPhone(p.e164))[0] as Json
+      const tokenBefore = (await tokens(p.e164))[0] as Json
+      expect(tokenBefore.consumed_at).not.toBeNull()
+      const sessionsBefore = await sessionsOf(user.id)
+
+      // Même avec un « bon code » (codeMatches toujours vrai), le jeton consommé est refusé.
+      const replay = await phoneRepo.verifyOtpTx(repoParams(p.e164, () => true))
+      expect(replay.kind).toBe('invalid')
+
+      const tokenAfter = (await tokens(p.e164))[0] as Json
+      expect(new Date(tokenAfter.consumed_at).getTime()).toBe(
+        new Date(tokenBefore.consumed_at).getTime(),
+      )
+      expect(tokenAfter.attempts).toBe(tokenBefore.attempts)
+      expect(await sessionsOf(user.id)).toHaveLength(sessionsBefore.length)
+      const userAfter = (await userByPhone(p.e164))[0] as Json
+      expect(new Date(userAfter.last_login_at).getTime()).toBe(
+        new Date(user.last_login_at).getTime(),
+      )
+    })
+
+    it('repository : le jeton consommé n’est pas non plus « réveillé » par un code faux (attempts inchangé)', async () => {
+      const p = uniqueCmPhone()
+      await signup(p, 'Awa Consommé 2')
+      const tokenBefore = (await tokens(p.e164))[0] as Json
+      const wrong = await phoneRepo.verifyOtpTx(repoParams(p.e164, () => false))
+      expect(wrong.kind).toBe('invalid')
+      const tokenAfter = (await tokens(p.e164))[0] as Json
+      expect(tokenAfter.attempts).toBe(tokenBefore.attempts)
+      expect(new Date(tokenAfter.consumed_at).getTime()).toBe(
+        new Date(tokenBefore.consumed_at).getTime(),
+      )
+    })
+
     it('CA-17 (variante) : deux codes faux simultanés → attempts +2 exactement (aucune mise à jour perdue)', async () => {
       const p = uniqueCmPhone()
       const ip = uniqueIp()
@@ -885,6 +1010,7 @@ describe.skipIf(!(hasDb && hasRedis))('Auth téléphone (PostgreSQL réel + Redi
       const unknown = uniqueCmPhone()
       vi.stubEnv('NODE_ENV', 'production')
       vi.stubEnv('APP_URL', 'https://app.example.test') // requis en production (CSRF) — ne pas dépendre de .env.example
+      vi.stubEnv('TRUSTED_PROXY_HOPS', '0') // exigé en production (revue PR #18, MINOR 2)
       vi.stubEnv('SMS_PROVIDER', 'none')
       resetEnvCache()
       ;(await factory()).resetSmsProvider()

@@ -17,13 +17,14 @@
  * production n'est pas corrigé (ne pas les affaiblir). Les tests « [CARACTÉRISATION] » épinglent un comportement
  * ACTUEL jugé défectueux : ils échoueront volontairement le jour de la correction et devront être inversés.
  */
-import { createHash, createHmac } from 'node:crypto'
+import { createHash, createHmac, randomInt } from 'node:crypto'
 import { getPoolAuth, getPoolRw, withOrgContext } from '@cp/db'
 import { sql } from 'drizzle-orm'
 import Redis from 'ioredis'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createApp } from '../../../app.js'
 import { getEnv, resetEnvCache } from '../../../env.js'
+import { ipRateLimitKey } from '../../../lib/client-ip.js'
 import { resetLimiters } from '../../../middlewares/rate-limit.js'
 import { resetPhoneConfig, setPhoneConfig } from '../auth.phone.config.js'
 import * as phoneRepo from '../auth.phone.repository.js'
@@ -337,27 +338,44 @@ describe.skipIf(!(hasDb && hasRedis))(
         expect(probe.json.error.code).toBe('AUTH_TOKEN_INVALID')
       })
 
-      it('[CARACTÉRISATION] compte supprimé (deleted_at renseigné) dont le numéro est conservé : la connexion par code échoue en 500 et le jeton n’est pas consommé (le numéro est bloqué à vie, risque R5)', async () => {
+      it('compte supprimé (deleted_at renseigné) dont le numéro est conservé : 403 AUTH_SIGNUP_CLOSED (en attendant l’anonymisation, R5), aucune session, aucun utilisateur créé, jeton consommé', async () => {
         // Le lookup ignore les comptes `deleted_at IS NOT NULL` ⇒ chemin d'inscription ⇒ INSERT ⇒ 23505 sur
-        // users_phone_e164_key ⇒ la tentative unique de rejeu échoue pareil ⇒ 500. L'anonymisation (02 §12) doit
-        // remettre phone_e164 à NULL ; en attendant, la personne reçoit un 500 opaque au lieu d'un refus explicite.
+        // users_phone_e164_key. Attendu (revue PR #18, MINOR 4) : refus explicite et non discriminant, comme pour un
+        // compte suspendu — jamais un 500 opaque. Le numéro redeviendra utilisable quand l'anonymisation (02 §12)
+        // remettra phone_e164 à NULL. Décision : le jeton est CONSOMMÉ (comme AUTH_ACCOUNT_SUSPENDED).
         const p = uniqueCmPhone()
         await signup(p)
         const u = (await userByPhone(p.e164))[0] as Json
         await asAdmin(
           (s) => s`UPDATE iam.users SET status = 'deleted', deleted_at = now() WHERE id = ${u.id}`,
         )
+        const sessionsBefore = (await sessionsOf(u.id)).length
+        const orgsBefore = (await orgsOf(u.id)).length
         await redis.del(resendKey(p.e164))
         const ip = uniqueIp()
         await requestCode(p, ip)
         const { res, json, text } = await verify(p, await lastCode(p.e164), ip, { full_name: 'X' })
-        expect(res.status).toBe(500)
-        expect(json.error.code).toBe('PLATFORM_INTERNAL_ERROR')
+        expect(res.status).toBe(403)
+        expect(json.error.code).toBe('AUTH_SIGNUP_CLOSED')
         expect(json.error.details).toEqual({})
+        expect(res.headers.get('set-cookie')).toBeNull()
         expect(text).not.toContain(p.e164)
+        expect(text).not.toContain(p.national)
+
+        // Aucune session de plus, aucun utilisateur ni organisation créé, le compte supprimé est inchangé.
+        expect((await sessionsOf(u.id)).length).toBe(sessionsBefore)
+        const users = await userByPhone(p.e164)
+        expect(users).toHaveLength(1)
+        expect((users[0] as Json).id).toBe(u.id)
+        expect((users[0] as Json).status).toBe('deleted')
+        expect((await orgsOf(u.id)).length).toBe(orgsBefore)
         const rows = await tokens(p.e164)
-        expect((rows[rows.length - 1] as Json).consumed_at).toBeNull()
-        expect(await userByPhone(p.e164)).toHaveLength(1)
+        expect((rows[rows.length - 1] as Json).consumed_at).not.toBeNull()
+
+        // Rejouer le même code ne donne rien de plus (jeton consommé) : 422, jamais un 500.
+        const replay = await verify(p, await lastCode(p.e164), ip, { full_name: 'X' })
+        expect(replay.res.status).toBe(422)
+        expect(replay.json.error.code).toBe('AUTH_OTP_INVALID')
       })
     })
 
@@ -724,6 +742,7 @@ describe.skipIf(!(hasDb && hasRedis))(
         const code = await lastCode(p.e164)
         vi.stubEnv('NODE_ENV', 'production')
         vi.stubEnv('APP_URL', 'https://app.example.test') // requis en production (CSRF) — ne pas dépendre de .env.example
+        vi.stubEnv('TRUSTED_PROXY_HOPS', '0') // exigé en production (revue PR #18, MINOR 2)
         vi.stubEnv('SMS_PROVIDER', 'none')
         resetEnvCache()
         const { res, json } = await verify(p, code, ip, { full_name: 'Awa Prod' })
@@ -1303,6 +1322,7 @@ describe.skipIf(!(hasDb && hasRedis))(
         const u = uniqueCmPhone()
         vi.stubEnv('NODE_ENV', 'production')
         vi.stubEnv('APP_URL', 'https://app.example.test') // requis en production (CSRF) — ne pas dépendre de .env.example
+        vi.stubEnv('TRUSTED_PROXY_HOPS', '0') // exigé en production (revue PR #18, MINOR 2)
         vi.stubEnv('SMS_PROVIDER', 'none')
         resetEnvCache()
         resetSmsProvider()
@@ -1415,6 +1435,200 @@ describe.skipIf(!(hasDb && hasRedis))(
         expect((await requestCode(uniqueCmPhone(), ip)).res.status).toBe(200)
         const second = await requestCode(uniqueCmPhone(), `::ffff:${ip}`)
         expect(second.res.status).toBe(429)
+      })
+    })
+
+    // ── 13. Limite par IP : préfixe /64 en IPv6 (revue PR #18, MAJOR) ───────────────────────
+
+    describe('limite par IP : préfixe /64 pour l’IPv6, adresse complète pour la blocklist et l’audit', () => {
+      // Un client IPv6 possède au moins un /64 : avec l'adresse complète comme clé il change d'adresse à chaque
+      // requête et ne rencontre jamais la limite. Hextets tirés dans 0x1000..0xffff : jamais de zéro de tête ni de
+      // groupe nul, donc la forme canonique de PostgreSQL (`host(inet)`) est identique à la saisie.
+      const hex4 = () => randomInt(0x1000, 0x10000).toString(16)
+      /** Préfixe /64 unique (2001:db8:<tag>:<sub>) : aucun compteur Redis partagé entre tests ou exécutions. */
+      const v6Net = () => `2001:db8:${hex4()}:${hex4()}`
+      const v6In = (net: string) => `${net}:${hex4()}:${hex4()}:${hex4()}:${hex4()}`
+      const distinctIn = (net: string, n: number): string[] => {
+        const out = new Set<string>()
+        while (out.size < n) out.add(v6In(net))
+        return [...out]
+      }
+      const lowBits = (ip: string) => ip.split(':').slice(4)
+
+      it('demande de code : N adresses DIFFÉRENTES du même /64 (numéros différents) épuisent UN seul quota — la N+1ᵉ est refusée en 429 + Retry-After ; un autre /64 passe', async () => {
+        setPhoneConfig({ requestPerIp: 3 })
+        resetLimiters()
+        const net = v6Net()
+        const addrs = distinctIn(net, 3)
+        for (const ip of addrs) {
+          const r = await requestCode(uniqueCmPhone(), ip)
+          expect(r.res.status, `demande depuis ${ip}`).toBe(200)
+        }
+
+        const fourthIp = v6In(net)
+        const fourth = await requestCode(uniqueCmPhone(), fourthIp)
+        expect(fourth.res.status).toBe(429)
+        expect(fourth.json.error.code).toBe('PLATFORM_RATE_LIMIT')
+        expect(Number(fourth.res.headers.get('retry-after'))).toBeGreaterThanOrEqual(1)
+
+        // UNE clé Redis pour tout le /64, construite sur le préfixe — jamais sur l'adresse complète.
+        const keys = await redis.keys(`rl:auth:otp:req:ip:${net}*`)
+        expect(keys).toHaveLength(1)
+        const key = keys[0] ?? ''
+        expect(key).toBe(`rl:auth:otp:req:ip:${ipRateLimitKey(addrs[0] ?? '')}`)
+        for (const ip of [...addrs, fourthIp]) {
+          expect(key).not.toContain(ip)
+          for (const part of lowBits(ip)) expect(key).not.toContain(part)
+        }
+        expect(await redis.ttl(key)).toBeGreaterThan(0)
+
+        // Une adresse d'un AUTRE /64 a son propre quota.
+        const other = await requestCode(uniqueCmPhone(), v6In(v6Net()))
+        expect(other.res.status).toBe(200)
+        // Une IPv4 aussi.
+        expect((await requestCode(uniqueCmPhone(), uniqueIp())).res.status).toBe(200)
+      })
+
+      it('demande de code : un X-Forwarded-For forgé ne contourne pas la limite du /64 (aucun proxy de confiance)', async () => {
+        setPhoneConfig({ requestPerIp: 2 })
+        resetLimiters()
+        const net = v6Net()
+        const [a, b, c] = distinctIn(net, 3) as [string, string, string]
+        expect((await requestCode(uniqueCmPhone(), a)).res.status).toBe(200)
+        expect((await requestCode(uniqueCmPhone(), b)).res.status).toBe(200)
+        const p = uniqueCmPhone()
+        usedPhones.add(p.e164)
+        const forged = await post(REQ, { phone: p.national, country: 'CM' }, c, {
+          'x-forwarded-for': `${v6In(v6Net())}, ${uniqueIp()}`,
+        })
+        expect(forged.res.status).toBe(429)
+      })
+
+      it('vérification : N adresses différentes du même /64 épuisent UN seul quota de vérification (429 + Retry-After à la N+1ᵉ) ; un autre /64 passe', async () => {
+        setPhoneConfig({ verifyPerIp: 2 })
+        resetLimiters()
+        const net = v6Net()
+        const addrs = distinctIn(net, 2)
+        for (const ip of addrs) {
+          // Aucun code demandé pour ce numéro : 422 AUTH_OTP_INVALID, mais la tentative est comptée.
+          const r = await verify(uniqueCmPhone(), '123456', ip)
+          expect(r.res.status, `vérification depuis ${ip}`).toBe(422)
+        }
+
+        const thirdIp = v6In(net)
+        const third = await verify(uniqueCmPhone(), '123456', thirdIp)
+        expect(third.res.status).toBe(429)
+        expect(third.json.error.code).toBe('PLATFORM_RATE_LIMIT')
+        expect(Number(third.res.headers.get('retry-after'))).toBeGreaterThanOrEqual(1)
+
+        const keys = await redis.keys(`rl:auth:otp:verify:ip:${net}*`)
+        expect(keys).toHaveLength(1)
+        const key = keys[0] ?? ''
+        expect(key).toBe(`rl:auth:otp:verify:ip:${ipRateLimitKey(addrs[0] ?? '')}`)
+        for (const ip of [...addrs, thirdIp]) {
+          for (const part of lowBits(ip)) expect(key).not.toContain(part)
+        }
+
+        const other = await verify(uniqueCmPhone(), '123456', v6In(v6Net()))
+        expect(other.res.status).toBe(422)
+      })
+
+      it('une même adresse IPv6 écrite sous deux formes (compressée / développée, casse) partage le quota du /64', async () => {
+        setPhoneConfig({ requestPerIp: 1 })
+        resetLimiters()
+        const tag = hex4()
+        const sub = hex4()
+        const compressed = `2001:db8:${tag}:${sub}::1`
+        const expanded = `2001:0DB8:${tag.toUpperCase()}:${sub.toUpperCase()}:0000:0000:0000:0002`
+        expect((await requestCode(uniqueCmPhone(), compressed)).res.status).toBe(200)
+        expect((await requestCode(uniqueCmPhone(), expanded)).res.status).toBe(429)
+      })
+
+      it('l’IPv4 est inchangée : deux IPv4 voisines (même /24) ont chacune leur quota, la clé Redis est l’adresse elle-même', async () => {
+        setPhoneConfig({ requestPerIp: 1 })
+        resetLimiters()
+        const o2 = randomInt(0, 256)
+        const o3 = randomInt(0, 256)
+        const a = `10.${o2}.${o3}.${randomInt(1, 120)}`
+        const b = `10.${o2}.${o3}.${randomInt(121, 250)}`
+        expect((await requestCode(uniqueCmPhone(), a)).res.status).toBe(200)
+        expect((await requestCode(uniqueCmPhone(), b)).res.status).toBe(200)
+        expect((await requestCode(uniqueCmPhone(), a)).res.status).toBe(429)
+        expect(await redis.exists(`rl:auth:otp:req:ip:${a}`)).toBe(1)
+        expect(await redis.exists(`rl:auth:otp:req:ip:${b}`)).toBe(1)
+      })
+
+      it('connexion e-mail (limite générique rl:auth:ip) : la clé de la limite par IP est aussi le /64, jamais l’adresse complète', async () => {
+        const net = v6Net()
+        const ip = v6In(net)
+        const res = await post(
+          '/v1/auth/login',
+          { email: `p22c-v6-${Date.now().toString(36)}@example.com`, password: 'StrongP@ss42!' },
+          ip,
+        )
+        expect([401, 422]).toContain(res.res.status)
+        const keys = await redis.keys(`rl:auth:ip:${net}*`)
+        expect(keys).toHaveLength(1)
+        expect(keys[0]).toBe(`rl:auth:ip:${ipRateLimitKey(ip)}`)
+        for (const part of lowBits(ip)) expect(keys[0]).not.toContain(part)
+      })
+
+      it('audit : l’adresse COMPLÈTE est stockée dans verification_tokens.ip et user_sessions.ip (jamais le préfixe)', async () => {
+        const net = v6Net()
+        const a = v6In(net)
+        const b = v6In(net)
+        const p = uniqueCmPhone()
+        const q = uniqueCmPhone()
+
+        const signed = await signup(p, 'Awa V6', a)
+        expect(signed.res.status).toBe(200)
+        expect(((await tokens(p.e164))[0] as Json).ip).toBe(a)
+        const u = (await userByPhone(p.e164))[0] as Json
+        expect(((await sessionsOf(u.id))[0] as Json).ip).toBe(a)
+        expect(signed.json.session.ip).toBe(a)
+
+        // Deuxième adresse du même /64 : sa propre adresse complète, pas celle de la première.
+        expect((await requestCode(q, b)).res.status).toBe(200)
+        expect(((await tokens(q.e164))[0] as Json).ip).toBe(b)
+      })
+
+      it('blocklist « ip » sur UNE adresse du /64 : blocage exact — cette adresse est bloquée (aucun SMS), les autres adresses du même /64 ne le sont pas', async () => {
+        const net = v6Net()
+        const [listed, neighbour] = distinctIn(net, 2) as [string, string]
+        const pListed = uniqueCmPhone()
+        const pNeighbour = uniqueCmPhone()
+        await withBlocks([['ip', listed]], async () => {
+          await expect(phoneRepo.isBlocked({ phone: pListed.e164, ip: listed })).resolves.toBe(true)
+          await expect(phoneRepo.isBlocked({ phone: pListed.e164, ip: neighbour })).resolves.toBe(
+            false,
+          )
+
+          expect((await requestCode(pListed, listed)).res.status).toBe(200)
+          expect(getSimulatedOutbox().filter((m) => m.to === pListed.e164)).toHaveLength(0)
+
+          expect((await requestCode(pNeighbour, neighbour)).res.status).toBe(200)
+          expect(getSimulatedOutbox().filter((m) => m.to === pNeighbour.e164)).toHaveLength(1)
+        })
+      })
+
+      it('blocklist « cidr » /64 : toutes les adresses du /64 sont bloquées (aucun SMS), un autre /64 ne l’est pas', async () => {
+        const net = v6Net()
+        const [a, b] = distinctIn(net, 2) as [string, string]
+        const outside = v6In(v6Net())
+        const [pa, pb, po] = [uniqueCmPhone(), uniqueCmPhone(), uniqueCmPhone()]
+        await withBlocks([['cidr', `${net}::/64`]], async () => {
+          await expect(phoneRepo.isBlocked({ phone: pa.e164, ip: a })).resolves.toBe(true)
+          await expect(phoneRepo.isBlocked({ phone: pb.e164, ip: b })).resolves.toBe(true)
+          await expect(phoneRepo.isBlocked({ phone: po.e164, ip: outside })).resolves.toBe(false)
+
+          expect((await requestCode(pa, a)).res.status).toBe(200)
+          expect((await requestCode(pb, b)).res.status).toBe(200)
+          expect(getSimulatedOutbox().filter((m) => m.to === pa.e164)).toHaveLength(0)
+          expect(getSimulatedOutbox().filter((m) => m.to === pb.e164)).toHaveLength(0)
+
+          expect((await requestCode(po, outside)).res.status).toBe(200)
+          expect(getSimulatedOutbox().filter((m) => m.to === po.e164)).toHaveLength(1)
+        })
       })
     })
 

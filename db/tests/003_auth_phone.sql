@@ -237,5 +237,72 @@ BEGIN
   RAISE NOTICE 'T24-10 OK : 4 codes AUTH_OTP_* / AUTH_SMS_UNAVAILABLE (statut, relançable, FR/EN, doc_path)';
 END $$;
 
+-- T24-11 : données de référence IDEMPOTENTES ET CONVERGENTES (cp-database §8 : INSERT … ON CONFLICT … DO UPDATE).
+-- Rejouer l'INSERT de la migration 0004 sur une base où un des 4 codes a été modifié (message, statut HTTP, relançable,
+-- chemin de doc) doit REMETTRE les valeurs de la migration ; avec « DO NOTHING » la correction du catalogue dans une
+-- migration ultérieure ou un rejeu ne converge jamais. L'instruction est extraite du fichier de migration lui-même
+-- (aucune copie à maintenir) : à lancer depuis la racine du dépôt (bash db/tests/run.sh), comme en CI.
+\set t24_insert `sed -n '/^INSERT INTO platform.error_codes/,/;[[:space:]]*$/p' db/migrations/*_0004_auth_phone.sql`
+
+-- Garde-fou de l'extraction : un bloc vide ou tronqué ferait « réussir » le test pour une mauvaise raison.
+CREATE FUNCTION pg_temp.t24_assert(ok boolean, msg text) RETURNS void LANGUAGE plpgsql AS $f$
+BEGIN IF NOT ok THEN RAISE EXCEPTION '%', msg; END IF; END $f$;
+SELECT pg_temp.t24_assert(
+         :'t24_insert' LIKE 'INSERT INTO platform.error_codes%'
+         AND :'t24_insert' LIKE '%AUTH_OTP_INVALID%' AND :'t24_insert' LIKE '%AUTH_SMS_UNAVAILABLE%'
+         AND :'t24_insert' LIKE '%ON CONFLICT (code) DO %',
+         'T24-11 ÉCHEC : bloc INSERT des codes d''erreur introuvable dans la migration 0004 (lancer depuis la racine du dépôt)');
+
+-- Un code voisin hors migration 0004 (P2.1) : il ne doit PAS être touché par le rejeu.
+CREATE TEMP TABLE t24_before AS
+  SELECT code, http_status, message, is_retryable, doc_path
+    FROM platform.error_codes WHERE code = 'AUTH_SIGNUP_CLOSED';
+
+-- Altération des 4 codes : message, statut HTTP, relançable, remboursement, catégorie, chemin de doc.
+UPDATE platform.error_codes
+   SET message = jsonb_build_object('fr', 'ALTÉRÉ', 'en', 'ALTERED'),
+       http_status = 400,
+       is_retryable = NOT is_retryable,
+       refunds_credits = true,
+       doc_path = '/errors/altere'
+ WHERE code IN ('AUTH_OTP_INVALID','AUTH_OTP_EXPIRED','AUTH_OTP_ATTEMPTS_EXCEEDED','AUTH_SMS_UNAVAILABLE');
+
+-- Rejeu de l'instruction de la migration (deux fois : idempotence).
+:t24_insert
+:t24_insert
+
+DO $$
+DECLARE n int;
+BEGIN
+  -- Convergence : les valeurs de la migration sont revenues (statut, relançable, remboursement, doc, messages FR/EN exacts).
+  SELECT count(*) INTO n FROM platform.error_codes e
+   WHERE e.category = 'AUTH' AND NOT e.refunds_credits
+     AND ((e.code = 'AUTH_OTP_INVALID'           AND e.http_status = 422 AND NOT e.is_retryable
+             AND e.message = '{"fr": "Code incorrect", "en": "Incorrect code"}'::jsonb)
+       OR (e.code = 'AUTH_OTP_EXPIRED'           AND e.http_status = 422 AND NOT e.is_retryable
+             AND e.message = '{"fr": "Ce code a expiré", "en": "This code has expired"}'::jsonb)
+       OR (e.code = 'AUTH_OTP_ATTEMPTS_EXCEEDED' AND e.http_status = 422 AND NOT e.is_retryable
+             AND e.message = '{"fr": "Trop d''essais pour ce code", "en": "Too many attempts for this code"}'::jsonb)
+       OR (e.code = 'AUTH_SMS_UNAVAILABLE'       AND e.http_status = 503 AND e.is_retryable
+             AND e.message = '{"fr": "Envoi de SMS indisponible", "en": "SMS delivery unavailable"}'::jsonb))
+     AND e.doc_path = '/errors/' || lower(e.code);
+  IF n <> 4 THEN
+    RAISE EXCEPTION 'T24-11 ÉCHEC : % code(s) revenu(s) aux valeurs de la migration après rejeu, 4 attendus (ON CONFLICT DO NOTHING ?)', n;
+  END IF;
+
+  -- Idempotence : pas de doublon.
+  SELECT count(*) INTO n FROM platform.error_codes
+   WHERE code IN ('AUTH_OTP_INVALID','AUTH_OTP_EXPIRED','AUTH_OTP_ATTEMPTS_EXCEEDED','AUTH_SMS_UNAVAILABLE');
+  IF n <> 4 THEN RAISE EXCEPTION 'T24-11 ÉCHEC : % ligne(s) pour 4 codes après deux rejeux', n; END IF;
+
+  -- Pas d'effet de bord : un code d'une autre migration est resté identique.
+  SELECT count(*) INTO n FROM platform.error_codes e JOIN t24_before b USING (code)
+   WHERE e.http_status = b.http_status AND e.message = b.message
+     AND e.is_retryable = b.is_retryable AND e.doc_path = b.doc_path;
+  IF n <> 1 THEN RAISE EXCEPTION 'T24-11 ÉCHEC : AUTH_SIGNUP_CLOSED modifié par le rejeu de 0004'; END IF;
+
+  RAISE NOTICE 'T24-11 OK : rejeu de l''INSERT de 0004 = valeurs de la migration rétablies, aucun doublon, aucun effet sur les autres codes';
+END $$;
+
 -- Nettoyage : tout ce qui précède (utilisateurs, paramètre modifié, ...) est annulé.
 ROLLBACK;

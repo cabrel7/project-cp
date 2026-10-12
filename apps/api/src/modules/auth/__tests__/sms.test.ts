@@ -92,9 +92,13 @@ describe('SimulatedSmsProvider — boîte mémoire et garde de production (CA-34
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('SMS_PROVIDER', undefined)
     vi.stubEnv('OTP_PEPPER', PEPPER)
+    // Toutes les variables obligatoires en production : sinon getEnv() lèverait lui-même et le test passerait pour
+    // une mauvaise raison (la garde du constructeur ne serait jamais atteinte).
+    vi.stubEnv('APP_URL', 'https://app.example.com')
+    vi.stubEnv('TRUSTED_PROXY_HOPS', '1')
     vi.resetModules()
     const { SimulatedSmsProvider } = await loadSimulated()
-    expect(() => new SimulatedSmsProvider()).toThrow()
+    expect(() => new SimulatedSmsProvider()).toThrow(/must never be used/)
   })
 
   it('doit journaliser en info {phone_masked, code} avec un avertissement « dev only » en development', async () => {

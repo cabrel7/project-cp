@@ -47,6 +47,7 @@ describe('OTP_PEPPER en production — valeurs publiques refusées', () => {
         NODE_ENV: 'production',
         SMS_PROVIDER: 'none',
         APP_URL: 'https://app.example.com',
+        TRUSTED_PROXY_HOPS: '1',
         OTP_PEPPER: pepper,
       })
       let error: Error | undefined
@@ -68,6 +69,7 @@ describe('OTP_PEPPER en production — valeurs publiques refusées', () => {
       NODE_ENV: 'production',
       SMS_PROVIDER: 'none',
       APP_URL: 'https://app.example.com',
+      TRUSTED_PROXY_HOPS: '1',
       OTP_PEPPER: secret,
     })
     expect(getEnv().OTP_PEPPER).toBe(secret)
