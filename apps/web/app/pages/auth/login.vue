@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Connexion par e-mail (maquette 01). Téléphone, clé d'accès, Google et Apple : P2.2+ (désactivés).
+// Connexion par e-mail ou par téléphone + code SMS (maquettes 01 et 05). Clé d'accès, Google et Apple : désactivés.
 definePageMeta({ layout: false })
 
 const { t } = useI18n()
@@ -11,10 +11,10 @@ const rememberMe = ref(true)
 const errorKey = ref<string | null>(null)
 
 const tabs = computed(() => [
-  { label: t('cp.auth.login.tabEmail'), value: 'email', icon: 'i-lucide-mail' },
-  { label: t('cp.auth.login.tabPhone'), value: 'phone', icon: 'i-lucide-phone', disabled: true },
+  { label: t('cp.auth.login.tabEmail'), value: 'email' },
+  { label: t('cp.auth.login.tabPhone'), value: 'phone' },
 ])
-const tab = ref('email')
+const tab = useAuthTab()
 
 async function onSubmit() {
   errorKey.value = null
@@ -40,47 +40,50 @@ useHead({ title: () => t('cp.auth.login.title') })
       </p>
     </header>
 
-    <UTabs v-model="tab" :items="tabs" :content="false" variant="pill" color="primary" class="w-full" />
+    <AuthMethodTabs v-model="tab" :items="tabs" />
 
-    <UAlert
-      v-if="errorKey"
-      color="error"
-      variant="subtle"
-      icon="i-lucide-circle-alert"
-      :title="t(errorKey)"
-      role="alert"
-    />
+    <template v-if="tab === 'email'">
+      <UAlert
+        v-if="errorKey"
+        color="error"
+        variant="subtle"
+        icon="i-lucide-circle-alert"
+        :title="t(errorKey)"
+        role="alert"
+      />
 
-    <form class="flex flex-col gap-5" novalidate @submit.prevent="onSubmit">
-      <CpTextField
-        v-model="email"
-        type="email"
-        :label="t('cp.auth.login.email')"
-        autocomplete="email"
-        required
-      />
-      <AuthPasswordField
-        v-model="password"
-        :label="t('cp.auth.login.password')"
-        autocomplete="current-password"
-        required
-      >
-        <template #hint>
-          <NuxtLink to="/auth/forgot-password" class="text-cp-primary underline-offset-2 hover:underline">
-            {{ t('cp.auth.login.forgotPassword') }}
-          </NuxtLink>
-        </template>
-      </AuthPasswordField>
-      <UCheckbox v-model="rememberMe" :label="t('cp.auth.login.rememberMe')" />
-      <UButton
-        type="submit"
-        size="xl"
-        block
-        :loading="isLoading"
-        :disabled="!email || !password"
-        :label="t('cp.auth.login.submit')"
-      />
-    </form>
+      <form class="flex flex-col gap-5" novalidate @submit.prevent="onSubmit">
+        <CpTextField
+          v-model="email"
+          type="email"
+          :label="t('cp.auth.login.email')"
+          autocomplete="email"
+          required
+        />
+        <AuthPasswordField
+          v-model="password"
+          :label="t('cp.auth.login.password')"
+          autocomplete="current-password"
+          required
+        >
+          <template #hint>
+            <NuxtLink to="/auth/forgot-password" class="text-cp-primary underline-offset-2 hover:underline">
+              {{ t('cp.auth.login.forgotPassword') }}
+            </NuxtLink>
+          </template>
+        </AuthPasswordField>
+        <AuthCheckbox v-model="rememberMe">{{ t('cp.auth.login.rememberMe') }}</AuthCheckbox>
+        <UButton
+          type="submit"
+          size="lg"
+          block
+          :loading="isLoading"
+          :disabled="!email || !password"
+          :label="t('cp.auth.login.submit')"
+        />
+      </form>
+    </template>
+    <LazyAuthPhoneForm v-else mode="login" />
 
     <USeparator :label="t('cp.auth.login.or')" />
 
@@ -88,7 +91,7 @@ useHead({ title: () => t('cp.auth.login.title') })
       <UButton
         color="neutral"
         variant="outline"
-        size="xl"
+        size="lg"
         block
         disabled
         icon="i-lucide-key-round"
@@ -96,8 +99,8 @@ useHead({ title: () => t('cp.auth.login.title') })
         :title="t('cp.auth.comingSoon')"
       />
       <div class="grid grid-cols-2 gap-3">
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
       </div>
     </div>
 

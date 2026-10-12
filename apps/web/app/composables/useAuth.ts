@@ -19,6 +19,10 @@ export class AuthError extends Error {
     public readonly code: string,
     public readonly status: number,
     public readonly requestId?: string,
+    /** Détails structurés du catalogue (ex. `remaining_attempts`, `reason`) — jamais affichés tels quels. */
+    public readonly details: Record<string, unknown> = {},
+    /** En-tête `Retry-After` (secondes) d'un 429. */
+    public readonly retryAfterSeconds?: number,
   ) {
     super(code)
     this.name = 'AuthError'
@@ -26,15 +30,23 @@ export class AuthError extends Error {
 }
 
 interface ApiErrorPayload {
-  error?: { code?: string; request_id?: string }
+  error?: { code?: string; request_id?: string; details?: Record<string, unknown> }
 }
 
-function toAuthError(e: unknown): AuthError {
-  const err = e as { statusCode?: number; status?: number; data?: ApiErrorPayload }
+export function toAuthError(e: unknown): AuthError {
+  const err = e as {
+    statusCode?: number
+    status?: number
+    data?: ApiErrorPayload
+    response?: { headers?: { get?: (name: string) => string | null } }
+  }
+  const retryAfter = Number(err.response?.headers?.get?.('retry-after'))
   return new AuthError(
     err.data?.error?.code ?? 'UNKNOWN',
     err.statusCode ?? err.status ?? 0,
     err.data?.error?.request_id,
+    err.data?.error?.details ?? {},
+    Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : undefined,
   )
 }
 

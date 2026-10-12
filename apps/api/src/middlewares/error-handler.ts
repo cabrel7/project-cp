@@ -33,6 +33,9 @@ export const onError: ErrorHandler<AppEnv> = (err, c) => {
       logger?.warn({ code: err.code, details: err.details, requestId }, err.code)
     }
     const details = err.httpStatus >= 500 ? undefined : err.details
+    if (err.retryAfterSeconds !== undefined) {
+      c.header('Retry-After', String(Math.max(1, Math.ceil(err.retryAfterSeconds))))
+    }
     return c.json(errorBody(err.code, err.message, requestId, details), err.httpStatus as 400)
   }
 
@@ -44,6 +47,13 @@ export const onError: ErrorHandler<AppEnv> = (err, c) => {
       return c.json(
         errorBody('AUTH_TOKEN_INVALID', 'Invalid authentication token.', requestId),
         401,
+      )
+    }
+    if (status === 403) {
+      // Rejet CSRF (hono/csrf) ou équivalent : code du catalogue, aucun détail sur la règle appliquée.
+      return c.json(
+        errorBody('AUTH_INSUFFICIENT_PERMISSIONS', 'Insufficient permissions.', requestId),
+        403,
       )
     }
     if (status === 404) {

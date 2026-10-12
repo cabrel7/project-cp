@@ -8,6 +8,10 @@ export function toMeResponse(user: {
   locale: string
   timezone: string
   createdAt: string
+  phoneE164: string | null
+  phoneVerifiedAt: string | null
+  /** Calculé par le service (paramètre `free_tier.require_phone_otp` + numéro vérifié). */
+  freeTierEligible: boolean
 }): MeResponse {
   return {
     id: user.publicId,
@@ -17,6 +21,9 @@ export function toMeResponse(user: {
     locale: user.locale,
     timezone: user.timezone,
     created_at: user.createdAt,
+    phone: user.phoneE164,
+    phone_verified: user.phoneVerifiedAt !== null,
+    free_tier_eligible: user.freeTierEligible,
   }
 }
 

@@ -140,3 +140,61 @@ describe("onError (gestionnaire d'erreurs global)", () => {
     expect(body.error.details).toEqual({})
   })
 })
+
+/**
+ * P2.2 — spec §3.4 : `AppError` reçoit l'option `retryAfterSeconds` ; `onError` en fait l'en-tête
+ * `Retry-After` (cp-api-contract §8 : toute 429 porte `Retry-After`).
+ */
+describe('onError — Retry-After (AppError.retryAfterSeconds)', () => {
+  let app: ReturnType<typeof createApp>['app']
+
+  beforeAll(() => {
+    app = createApp().app
+    app.get('/test/retry-429', () => {
+      throw new AppError('PLATFORM_RATE_LIMIT', { scope: 'otp' }, { retryAfterSeconds: 42 })
+    })
+    app.get('/test/retry-503', () => {
+      throw new AppError('PLATFORM_MAINTENANCE', undefined, { retryAfterSeconds: 30 })
+    })
+    app.get('/test/no-retry-429', () => {
+      throw new AppError('PLATFORM_RATE_LIMIT')
+    })
+    app.get('/test/retry-422', () => {
+      throw new AppError('PLATFORM_VALIDATION_ERROR', { field: 'phone' })
+    })
+  })
+
+  it('doit exposer retryAfterSeconds sur l’erreur et conserver la cause', () => {
+    const cause = new Error('boom')
+    const err = new AppError('PLATFORM_RATE_LIMIT', undefined, { retryAfterSeconds: 42, cause })
+    expect(err.retryAfterSeconds).toBe(42)
+    expect(err.cause).toBe(cause)
+  })
+
+  it('doit poser Retry-After=42 sur une 429 quand retryAfterSeconds=42', async () => {
+    const res = await app.request('/test/retry-429')
+    expect(res.status).toBe(429)
+    expect(res.headers.get('retry-after')).toBe('42')
+    const body: Json = await res.json()
+    expect(body.error.code).toBe('PLATFORM_RATE_LIMIT')
+    expect(body.error.details).toEqual({ scope: 'otp' })
+  })
+
+  it('doit poser Retry-After sur toute réponse qui le demande (ex. 503 de maintenance)', async () => {
+    const res = await app.request('/test/retry-503')
+    expect(res.status).toBe(503)
+    expect(res.headers.get('retry-after')).toBe('30')
+  })
+
+  it('ne doit pas inventer de Retry-After quand l’erreur n’en porte pas', async () => {
+    const res = await app.request('/test/no-retry-429')
+    expect(res.status).toBe(429)
+    expect(res.headers.get('retry-after')).toBeNull()
+    const res422 = await app.request('/test/retry-422')
+    expect(res422.status).toBe(422)
+    expect(res422.headers.get('retry-after')).toBeNull()
+    const body: Json = await res422.json()
+    expect(body.error.code).toBe('PLATFORM_VALIDATION_ERROR')
+    expect(body.error.details).toEqual({ field: 'phone' })
+  })
+})

@@ -10,8 +10,9 @@ BEGIN;
 
 -- ------------------------------------------------------------ jeu de données
 -- Référentiels, rôles système et plans : fournis par 950_seed_reference.sql
-INSERT INTO iam.users (email, phone_e164, full_name) VALUES
-  ('a@acme.cm', '+237690000001', 'Alice'), ('b@beta.ci', '+225070000002', 'Bruno');
+-- Numéros vérifiés : la CHECK users_phone_requires_verification (0004, P2.2) refuse un numéro non vérifié.
+INSERT INTO iam.users (email, phone_e164, phone_verified_at, full_name) VALUES
+  ('a@acme.cm', '+237690000001', now(), 'Alice'), ('b@beta.ci', '+225070000002', now(), 'Bruno');
 INSERT INTO iam.organizations (name, slug, country_code, default_currency, default_locale, data_region_id, created_by_user_id, is_internal) VALUES
   ('Kòmerce (test)', 'komerce', 'CM', 'XAF', 'fr', (SELECT id FROM ref.data_regions WHERE code='eu-fr'), 1, true),
   ('Beta SARL', 'beta', 'CI', 'XOF', 'fr', (SELECT id FROM ref.data_regions WHERE code='eu-fr'), 2, false);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Inscription par e-mail (maquette 02). Le champ téléphone et Google/Apple arrivent en P2.2+.
+// Inscription par e-mail ou par téléphone (maquette 02, D63 : onglets). Google/Apple : désactivés.
 definePageMeta({ layout: false })
 
 const { t } = useI18n()
@@ -11,6 +11,11 @@ const password = ref('')
 const acceptTerms = ref(false)
 const errorKey = ref<string | null>(null)
 const sent = ref(false)
+const tabs = computed(() => [
+  { label: t('cp.auth.register.tabEmail'), value: 'email' },
+  { label: t('cp.auth.register.tabPhone'), value: 'phone' },
+])
+const tab = useAuthTab()
 
 const canSubmit = computed(() => !!email.value && password.value.length >= 8 && acceptTerms.value)
 
@@ -40,6 +45,8 @@ useHead({ title: () => t('cp.auth.register.title') })
       </p>
     </header>
 
+    <AuthMethodTabs v-if="!sent" v-model="tab" :items="tabs" />
+
     <template v-if="sent">
       <UAlert
         color="success"
@@ -49,10 +56,10 @@ useHead({ title: () => t('cp.auth.register.title') })
         :description="t('cp.auth.register.sentDetail')"
         role="status"
       />
-      <UButton to="/auth/login" size="xl" block :label="t('cp.auth.register.goToLogin')" />
+      <UButton to="/auth/login" size="lg" block :label="t('cp.auth.register.goToLogin')" />
     </template>
 
-    <template v-else>
+    <template v-else-if="tab === 'email'">
       <UAlert
         v-if="errorKey"
         color="error"
@@ -74,8 +81,7 @@ useHead({ title: () => t('cp.auth.register.title') })
           />
           <CpPasswordStrength :password="password" />
         </div>
-        <UCheckbox v-model="acceptTerms">
-          <template #label>
+        <AuthCheckbox v-model="acceptTerms">
             <i18n-t keypath="cp.auth.register.terms" tag="span">
               <template #terms>
                 <NuxtLink to="/legal/terms" class="text-cp-primary hover:underline">{{ t('cp.auth.register.termsLink') }}</NuxtLink>
@@ -84,23 +90,26 @@ useHead({ title: () => t('cp.auth.register.title') })
                 <NuxtLink to="/legal/privacy" class="text-cp-primary hover:underline">{{ t('cp.auth.register.privacyLink') }}</NuxtLink>
               </template>
             </i18n-t>
-          </template>
-        </UCheckbox>
+          </AuthCheckbox>
         <UButton
           type="submit"
-          size="xl"
+          size="lg"
           block
           :loading="isLoading"
           :disabled="!canSubmit"
           :label="t('cp.auth.register.submit')"
         />
       </form>
+    </template>
 
+    <LazyAuthPhoneForm v-else mode="register" />
+
+    <template v-if="!sent">
       <USeparator :label="t('cp.auth.register.orWith')" />
 
       <div class="grid grid-cols-2 gap-3">
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
-        <UButton color="neutral" variant="outline" size="xl" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
+        <UButton color="neutral" variant="outline" size="lg" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
       </div>
     </template>
   </CpLayoutLogin>
