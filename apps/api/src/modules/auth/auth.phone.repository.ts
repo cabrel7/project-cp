@@ -2,7 +2,7 @@
  * Accès aux données de l'authentification par téléphone (P2.2).
  *
  * Rôles : lectures de résolution (blocklist, paramètre du compte gratuit) via `app_auth` ; toutes les écritures
- * en transaction `app_rw`. Jamais `app_admin`. `iam.users`, `verification_tokens` et `user_sessions` n'ont pas
+ * en transaction `app_rw`. Jamais le pool d'administration. `iam.users`, `verification_tokens` et `user_sessions` n'ont pas
  * d'`organization_id` (tables d'identité globales, pas de RLS : modèle de P2.1) ; la création de l'organisation
  * passe par la fonction SECURITY DEFINER `iam.create_personal_organization` (migration 0003).
  */

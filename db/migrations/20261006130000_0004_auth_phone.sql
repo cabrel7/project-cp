@@ -48,11 +48,14 @@ END $$;
 --    * search_path figé (pg_catalog) ; tout est qualifié.
 --    * clé absente => true (défaut sûr : on exige la vérification du numéro).
 --    * accepte un jsonb booléen (true/false) ou chaîne ("true"/"false").
+--    * valeur invalide (saisie admin erronée) => true, jamais d'erreur 22P02 : un cast ::boolean ferait
+--      tomber /me et la connexion e-mail en 500 pour tout le monde.
 --    * EXECUTE retiré à PUBLIC, accordé à app_auth et app_rw seulement.
 CREATE OR REPLACE FUNCTION platform.free_tier_requires_phone_otp() RETURNS boolean
   LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog AS $$
-  SELECT COALESCE((SELECT (s.value #>> '{}')::boolean FROM platform.settings s
-                   WHERE s.key = 'free_tier.require_phone_otp'), true) $$;
+  SELECT COALESCE((SELECT CASE lower(s.value #>> '{}') WHEN 'false' THEN false WHEN 'true' THEN true END
+                     FROM platform.settings s
+                    WHERE s.key = 'free_tier.require_phone_otp'), true) $$;
 
 REVOKE ALL ON FUNCTION platform.free_tier_requires_phone_otp() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION platform.free_tier_requires_phone_otp() TO app_auth, app_rw;

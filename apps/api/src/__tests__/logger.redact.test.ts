@@ -91,6 +91,22 @@ describe('configuration redact de createLogger (CA-37, unitaire)', () => {
     expect(out).toContain('probe')
   })
 
+  it("doit masquer le `detail` d'une erreur PostgreSQL (23505/23514 recopient la valeur : numéro, e-mail)", () => {
+    // Forme réelle d'un PostgresError (postgres.js) : `detail` est une propriété énumérable.
+    const err = Object.assign(new Error('duplicate key value violates unique constraint'), {
+      name: 'PostgresError',
+      code: '23505',
+      constraint_name: 'users_phone_e164_key',
+      detail: 'Key (phone_e164)=(+237690123442) already exists.',
+    })
+    const logger = createLogger()
+    logger.error({ err, requestId: 'r1' }, 'PLATFORM_INTERNAL_ERROR')
+    const out = all()
+    expect(out).not.toContain('690123442')
+    expect(out).toContain('users_phone_e164_key')
+    expect(out).toContain('PLATFORM_INTERNAL_ERROR')
+  })
+
   it('doit masquer req.headers.cookie et req.headers.authorization', () => {
     const logger = createLogger()
     logger.info(

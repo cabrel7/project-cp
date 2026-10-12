@@ -21,9 +21,11 @@ const REDIS_RETRY_COOLDOWN_MS = 2000
 
 let redisClient: Redis | undefined
 let redisUnavailableUntil = 0
+let readyWait: Promise<'ready' | 'timeout' | 'failed'> | undefined
 const limiters = new Map<string, RateLimiterRedis>()
 
-function getRedisClient(): Redis {
+/** @internal exporté pour les tests (écouteurs, état de connexion). */
+export function getRedisClient(): Redis {
   if (redisClient) return redisClient
   const client = new Redis(getEnv().REDIS_URL, {
     maxRetriesPerRequest: 1,
@@ -50,24 +52,42 @@ export async function ensureRedisReady(): Promise<void> {
   const client = getRedisClient()
   if (client.status === 'ready') return
 
-  let timer: NodeJS.Timeout | undefined
-  const timeout = new Promise<'timeout'>((resolve) => {
-    timer = setTimeout(() => resolve('timeout'), REDIS_READY_WAIT_MS)
+  // Une seule attente partagée par toutes les requêtes concurrentes ; l'écouteur `ready` est TOUJOURS retiré
+  // (sinon chaque requête pendant une panne laisserait un écouteur orphelin : fuite mémoire).
+  readyWait ??= waitForReady(client).finally(() => {
+    readyWait = undefined
   })
-  const connecting: Promise<'ready' | 'failed'> =
-    client.status === 'connecting' ||
-    client.status === 'connect' ||
-    client.status === 'reconnecting'
-      ? new Promise((resolve) => {
-          client.once('ready', () => resolve('ready'))
-        })
-      : client.connect().then(
-          () => 'ready' as const,
-          () => 'failed' as const,
-        )
-  const outcome = await Promise.race([connecting, timeout])
-  if (timer) clearTimeout(timer)
+  const outcome = await readyWait
   if (outcome !== 'ready') redisUnavailableUntil = Date.now() + REDIS_RETRY_COOLDOWN_MS
+}
+
+function waitForReady(client: Redis): Promise<'ready' | 'timeout' | 'failed'> {
+  return new Promise((resolve) => {
+    let settled = false
+    let listening = false
+    const onReady = () => finish('ready')
+    const finish = (outcome: 'ready' | 'timeout' | 'failed') => {
+      if (settled) return
+      settled = true
+      clearTimeout(timer)
+      if (listening) client.off('ready', onReady)
+      resolve(outcome)
+    }
+    const timer = setTimeout(() => finish('timeout'), REDIS_READY_WAIT_MS)
+    const inProgress =
+      client.status === 'connecting' ||
+      client.status === 'connect' ||
+      client.status === 'reconnecting'
+    if (inProgress) {
+      listening = true
+      client.once('ready', onReady)
+    } else {
+      client.connect().then(
+        () => finish('ready'),
+        () => finish('failed'),
+      )
+    }
+  })
 }
 
 /**
@@ -132,6 +152,7 @@ export async function checkEmailRateLimit(email: string): Promise<void> {
 export function resetLimiters(): void {
   limiters.clear()
   redisUnavailableUntil = 0
+  readyWait = undefined
   redisClient?.disconnect()
   redisClient = undefined
 }

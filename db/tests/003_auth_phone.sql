@@ -176,6 +176,15 @@ UPDATE platform.settings SET value = 'true'::jsonb WHERE key = 'free_tier.requir
 SET LOCAL ROLE app_rw;   INSERT INTO t24_vals (step, rw) VALUES ('true_bool', platform.free_tier_requires_phone_otp()::text);
 RESET ROLE;
 
+-- (d') valeur invalide (saisie admin erronée) : défaut sûr = true, jamais une erreur 22P02
+--      (sinon /me et la connexion e-mail tomberaient en 500 pour tout le monde)
+UPDATE platform.settings SET value = '"maybe"'::jsonb WHERE key = 'free_tier.require_phone_otp';
+SET LOCAL ROLE app_rw;   INSERT INTO t24_vals (step, rw) VALUES ('invalid_str', platform.free_tier_requires_phone_otp()::text);
+RESET ROLE;
+UPDATE platform.settings SET value = '{"x":1}'::jsonb WHERE key = 'free_tier.require_phone_otp';
+SET LOCAL ROLE app_auth; INSERT INTO t24_vals (step, auth) VALUES ('invalid_obj', platform.free_tier_requires_phone_otp()::text);
+RESET ROLE;
+
 -- (e) clé absente : défaut sûr = true
 DELETE FROM platform.settings WHERE key = 'free_tier.require_phone_otp';
 SET LOCAL ROLE app_rw;   INSERT INTO t24_vals (step, rw) VALUES ('absent', platform.free_tier_requires_phone_otp()::text);
@@ -198,6 +207,10 @@ BEGIN
   IF r.rw IS DISTINCT FROM 'false' THEN RAISE EXCEPTION 'T24-9 ÉCHEC : "false" (chaîne) lu comme %', r.rw; END IF;
   SELECT * INTO r FROM t24_vals WHERE step = 'true_bool';
   IF r.rw IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'T24-9 ÉCHEC : true lu comme %', r.rw; END IF;
+  SELECT * INTO r FROM t24_vals WHERE step = 'invalid_str';
+  IF r.rw IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'T24-9 ÉCHEC : valeur invalide "maybe" lue comme % (attendu true)', r.rw; END IF;
+  SELECT * INTO r FROM t24_vals WHERE step = 'invalid_obj';
+  IF r.auth IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'T24-9 ÉCHEC : objet JSON lu comme % (attendu true)', r.auth; END IF;
   SELECT * INTO r FROM t24_vals WHERE step = 'absent';
   IF r.rw IS DISTINCT FROM 'true' OR r.auth IS DISTINCT FROM 'true' THEN
     RAISE EXCEPTION 'T24-9 ÉCHEC : clé absente => (rw=%, auth=%) au lieu de true (défaut sûr)', r.rw, r.auth;

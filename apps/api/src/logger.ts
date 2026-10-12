@@ -16,6 +16,8 @@ export const LOG_REDACT_PATHS = [
   '*.apiKey',
   '*.cookie',
   '*.authorization',
+  // PostgresError.detail recopie la ligne ou la clé fautive (« Key (phone_e164)=(+237…) ») : PII.
+  '*.detail',
   'phone',
   'phone_e164',
   'password',
