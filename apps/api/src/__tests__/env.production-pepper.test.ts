@@ -46,6 +46,7 @@ describe('OTP_PEPPER en production — valeurs publiques refusées', () => {
       const { getEnv } = await loadEnv({
         NODE_ENV: 'production',
         SMS_PROVIDER: 'none',
+        APP_URL: 'https://app.example.com',
         OTP_PEPPER: pepper,
       })
       let error: Error | undefined
@@ -66,6 +67,7 @@ describe('OTP_PEPPER en production — valeurs publiques refusées', () => {
     const { getEnv } = await loadEnv({
       NODE_ENV: 'production',
       SMS_PROVIDER: 'none',
+      APP_URL: 'https://app.example.com',
       OTP_PEPPER: secret,
     })
     expect(getEnv().OTP_PEPPER).toBe(secret)

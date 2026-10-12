@@ -325,7 +325,11 @@ describe('POST /v1/auth/phone/verify-code — nominal', () => {
   })
 
   it('doit ajouter Secure au cookie en production', async () => {
-    stubBaseEnv({ NODE_ENV: 'production', SMS_PROVIDER: 'none' })
+    stubBaseEnv({
+      NODE_ENV: 'production',
+      SMS_PROVIDER: 'none',
+      APP_URL: 'https://app.example.com',
+    })
     const { res } = await post(VERIFY_PATH, body)
     expect(res.headers.get('set-cookie') ?? '').toContain('Secure')
   })

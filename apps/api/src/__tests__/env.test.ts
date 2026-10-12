@@ -21,6 +21,7 @@ describe('env.ts', () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('OTP_PEPPER', 'x'.repeat(32))
     vi.stubEnv('SMS_PROVIDER', 'none')
+    vi.stubEnv('APP_URL', 'https://app.example.com')
     vi.stubEnv('PORT', '3000')
     vi.stubEnv('LOG_LEVEL', 'error')
     vi.stubEnv('OTEL_ENABLED', 'true')
@@ -87,10 +88,17 @@ describe('env.ts — SMS_PROVIDER et OTP_PEPPER (CA-33)', () => {
   const PEPPER_32 = 'p'.repeat(32)
   const PEPPER_31 = 'q'.repeat(31)
 
-  function stub(vars: { NODE_ENV: string; SMS_PROVIDER?: string; OTP_PEPPER?: string }) {
+  function stub(vars: {
+    NODE_ENV: string
+    SMS_PROVIDER?: string
+    OTP_PEPPER?: string
+    APP_URL?: string
+  }) {
     vi.stubEnv('NODE_ENV', vars.NODE_ENV)
     vi.stubEnv('SMS_PROVIDER', vars.SMS_PROVIDER)
     vi.stubEnv('OTP_PEPPER', vars.OTP_PEPPER)
+    // APP_URL est obligatoire en production (origine CSRF) : valeur neutre, hors du sujet de ces tests
+    vi.stubEnv('APP_URL', vars.APP_URL ?? 'https://app.example.com')
   }
 
   async function load() {
@@ -122,6 +130,17 @@ describe('env.ts — SMS_PROVIDER et OTP_PEPPER (CA-33)', () => {
       expect(env.OTP_PEPPER.length).toBeGreaterThanOrEqual(32)
     },
   )
+
+  it('doit refuser la production sans APP_URL (origine CSRF), sans fuite de valeur', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('SMS_PROVIDER', 'none')
+    vi.stubEnv('OTP_PEPPER', PEPPER_32)
+    vi.stubEnv('APP_URL', undefined)
+    const { getEnv } = await load()
+    const err = thrownBy(() => getEnv())
+    expect(err.message).toContain('APP_URL')
+    expect(err.message).not.toContain(PEPPER_32)
+  })
 
   it('doit refuser SMS_PROVIDER=simulated en production, même avec un pepper valide', async () => {
     stub({ NODE_ENV: 'production', SMS_PROVIDER: 'simulated', OTP_PEPPER: PEPPER_32 })
