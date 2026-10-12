@@ -78,6 +78,9 @@ jobs:
         env:
           REF_NAME: ${{ github.ref_name }}
           PW_VERSION: ${{ steps.pw.outputs.version }}
+          # Le bot ne pousse que des PNG : les hooks lefthook de développeur (pre-commit/pre-push)
+          # n'ont rien à y vérifier et échouent sur le checkout superficiel de la CI (origin/main absent).
+          LEFTHOOK: '0'
         run: |
           if [ "$REF_NAME" = "main" ] || [ "$REF_NAME" = "dev" ]; then
             echo "::error::Refus de pousser sur '$REF_NAME'."
@@ -108,7 +111,7 @@ jobs:
           {
             echo
             echo "Commit poussé. Un push par GITHUB_TOKEN ne déclenche pas la CI de la PR :"
-            echo "relancer la CI (commit vide poussé par un humain, ou « Re-run all jobs »/close-reopen de la PR)."
+            echo "relancer la CI en poussant un commit normal sur la branche, ou « Re-run all jobs » sur la PR."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Artefacts d'échec (rapport, traces, diffs)

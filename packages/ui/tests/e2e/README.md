@@ -8,4 +8,4 @@ Fixture Nuxt minimale (`fixture/`) + Playwright. Lancer : `pnpm --filter @cp/ui 
 
 Régénérer le jeu CI : modifier la ligne `demande:` de `.regenerate-ci-snapshots` et pousser (workflow `update-e2e-snapshots`, ignoré sur `main`/`dev`). `workflow_dispatch` n'est disponible qu'une fois le workflow sur la branche par défaut.
 Le workflow génère, revérifie sans `--update-snapshots`, commite puis pousse. Le push par `GITHUB_TOKEN` ne déclenche pas
-la CI : la relancer (push d'un commit vide par un humain, ou fermer/rouvrir la PR). Ne jamais relâcher `maxDiffPixelRatio`.
+la CI : la relancer (pousser un commit normal sur la branche, ou « Re-run all jobs » sur la PR). Ne jamais relâcher `maxDiffPixelRatio`.
