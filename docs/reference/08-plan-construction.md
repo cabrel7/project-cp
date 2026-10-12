@@ -204,6 +204,12 @@
 
 ---
 
+### P5b — Connaissances *(proposition D65 🟡 — non planifiée tant qu'elle n'est pas validée)*
+Bases de connaissances (documents des clients) pour le chat et les agents, en parallèle de P5, après P4. Lots K.0
+(spike Docling) à K.5 et critères : `docs/propositions/connaissances.md` §9.
+
+---
+
 ### P6 — SDK, capacités `ai.run`, clés d'accès, Prompt Studio
 **Objectif :** un créateur d'apps ajoute l'IA à son application avec une clé et une capacité, sans gérer l'intégration (D41, D42).
 

@@ -38,7 +38,8 @@ Updated: 2026-10-06 | Session: P2.1 auth e-mail
 ## 📋 Queue
 7. **P1 — Design system en code** ✅ (P1.0 à P1.5 + revue fidélité). Écarts mineurs restants en Known issues.
 8. **P2.2+** : téléphone + OTP, Google/Apple, 2FA TOTP, clés d'accès WebAuthn, clés d'API.
-9. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
+9. **Proposition D65 🟡 — Connaissances** (documents indexés pour le chat et les agents, extraction Docling) : `docs/propositions/connaissances.md`, en attente de validation.
+10. Chantiers hors code : A. marges et prix (avant fin P3) · B. prompts v2 + évaluations des 14 capacités internes (avant fin P4) · C. POC OAuth 2.1 (lot P2.7) · D. CGU / DPA / confidentialité (avant bêta publique).
 Détail, ordre et critères de fin : `docs/reference/08-plan-construction.md`.
 
 ## 🏗️ Decisions
