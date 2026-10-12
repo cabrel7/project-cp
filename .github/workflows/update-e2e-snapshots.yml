@@ -1,10 +1,16 @@
 name: Update E2E snapshots
 
 # Régénère le jeu « CI » des références visuelles de packages/ui (dossiers `<projet>-ci`),
-# rendu avec le Chromium de Playwright installé ici. Déclenchement MANUEL uniquement :
-#   Actions > « Update E2E snapshots » > Run workflow, en choisissant la branche de la PR.
+# rendu avec le Chromium de Playwright installé ici. Deux déclencheurs :
+#   1. push d'une modification du fichier-marqueur (modifier la ligne `demande:`), sur toute branche sauf main/dev ;
+#      c'est le mode normal : GitHub n'enregistre un workflow_dispatch que s'il est sur la branche par défaut.
+#   2. workflow_dispatch (Actions > Run workflow), utilisable une fois ce fichier fusionné sur la branche par défaut.
+# Le commit du bot ne touche jamais le marqueur (pas de boucle) et un push par GITHUB_TOKEN ne déclenche pas de workflow.
 # Le jeu « session » (Chromium préinstallé) n'est jamais touché. Le seuil maxDiffPixelRatio n'est pas relâché.
 on:
+  push:
+    branches-ignore: [main, dev]
+    paths: ['packages/ui/tests/e2e/.regenerate-ci-snapshots']
   workflow_dispatch:
 
 # Seul workflow du dépôt avec l'écriture : nécessaire pour pousser le commit de références.
