@@ -13,6 +13,7 @@ SET LOCAL statement_timeout = '30s';
 -- =============================================================================
 
 -- 1) Codes d'erreur — même motif que 0002 : doc_path = '/errors/' || lower(code), catégorie = 1er segment.
+--    Idempotent ET convergent (cp-database §8) : DO UPDATE rétablit les valeurs de référence au rejeu.
 INSERT INTO platform.error_codes (code, category, http_status, message, is_retryable, refunds_credits, doc_path)
 SELECT c, split_part(c, '_', 1), h, jsonb_build_object('fr', fr, 'en', en), rt, rf, '/errors/' || lower(c)
 FROM (VALUES
@@ -21,7 +22,13 @@ FROM (VALUES
   ('AUTH_OTP_ATTEMPTS_EXCEEDED',422,'Trop d''essais pour ce code','Too many attempts for this code',false,false),
   ('AUTH_SMS_UNAVAILABLE',503,'Envoi de SMS indisponible','SMS delivery unavailable',true,false)
 ) AS e(c, h, fr, en, rt, rf)
-ON CONFLICT (code) DO NOTHING;
+ON CONFLICT (code) DO UPDATE SET
+  category = EXCLUDED.category,
+  http_status = EXCLUDED.http_status,
+  message = EXCLUDED.message,
+  is_retryable = EXCLUDED.is_retryable,
+  refunds_credits = EXCLUDED.refunds_credits,
+  doc_path = EXCLUDED.doc_path;
 
 -- 2) Un numéro n'est enregistré que vérifié (empêche de « squatter » le numéro d'un tiers : le UNIQUE
 --    sur phone_e164 bloquerait ensuite son propriétaire légitime).

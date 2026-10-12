@@ -35,7 +35,17 @@ const apiEnvSchema = z
     SESSION_MAX_AGE_SECONDS: z.coerce.number().int().positive().default(86400),
     SESSION_REMEMBER_MAX_AGE_SECONDS: z.coerce.number().int().positive().default(604800),
 
-    TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).default(0),
+    // Nombre de proxys de confiance devant l'API (Nginx = 1, exposition directe = 0). Entier >= 0. Obligatoire en
+    // production ; vide = absent (pas de repli silencieux sur 0 par coercition de '').
+    TRUSTED_PROXY_HOPS: z
+      .union([
+        z.literal('').transform(() => undefined),
+        z
+          .string()
+          .regex(/^\d{1,3}$/)
+          .transform(Number),
+      ])
+      .optional(),
 
     REDIS_URL: z.string().url().default('redis://localhost:6379'),
 
@@ -58,6 +68,13 @@ const apiEnvSchema = z
         code: 'custom',
         path: ['APP_URL'],
         message: 'APP_URL is required when NODE_ENV=production',
+      })
+    }
+    if (raw.TRUSTED_PROXY_HOPS === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['TRUSTED_PROXY_HOPS'],
+        message: 'TRUSTED_PROXY_HOPS is required when NODE_ENV=production (integer >= 0)',
       })
     }
     // Messages volontairement sans aucune valeur (le pepper est un secret).
@@ -86,6 +103,7 @@ const apiEnvSchema = z
   .transform((raw) => ({
     ...raw,
     APP_URL: raw.APP_URL ?? 'http://localhost:3000',
+    TRUSTED_PROXY_HOPS: raw.TRUSTED_PROXY_HOPS ?? 0,
     SMS_PROVIDER: raw.SMS_PROVIDER ?? (raw.NODE_ENV === 'production' ? 'none' : 'simulated'),
     OTP_PEPPER: raw.OTP_PEPPER ?? DEV_OTP_PEPPER,
   }))

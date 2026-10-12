@@ -4,7 +4,7 @@ import Redis from 'ioredis'
 import { RateLimiterMemory, RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible'
 import type { AppEnv } from '../context.js'
 import { getEnv } from '../env.js'
-import { getClientIp } from '../lib/client-ip.js'
+import { getClientIp, ipRateLimitKey } from '../lib/client-ip.js'
 import { AppError } from '../lib/errors.js'
 
 /** Quota d'un limiteur : `points` requêtes par fenêtre de `duration` secondes. */
@@ -131,7 +131,8 @@ export function ipRateLimit(spec: LimiterSpec | (() => LimiterSpec)) {
   return createMiddleware<AppEnv>(async (c, next) => {
     const ip = getClientIp(c)
     // Un quota fourni par fonction est relu à chaque requête (valeurs injectables, voir auth.phone.config.ts).
-    if (ip) await consumeLimit(typeof spec === 'function' ? spec() : spec, ip)
+    // Clé = IPv4, ou préfixe /64 pour l'IPv6 (sinon un client IPv6 change d'adresse à chaque requête).
+    if (ip) await consumeLimit(typeof spec === 'function' ? spec() : spec, ipRateLimitKey(ip))
     await next()
   })
 }

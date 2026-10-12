@@ -216,7 +216,12 @@ export async function verifyOtpTx(params: VerifyOtpParams): Promise<VerifyOtpOut
       return { kind: 'invalid', remainingAttempts: Math.max(0, remaining) }
     }
 
-    await tx`UPDATE iam.verification_tokens SET attempts = attempts + 1, consumed_at = now() WHERE id = ${token.id}::bigint`
+    // Défense en profondeur sous le FOR UPDATE : un jeton déjà consommé n'ouvre jamais de session (pas d'exception).
+    const consumed = await tx`
+      UPDATE iam.verification_tokens SET attempts = attempts + 1, consumed_at = now()
+       WHERE id = ${token.id}::bigint AND consumed_at IS NULL
+      RETURNING id`
+    if (consumed.length === 0) return { kind: 'invalid' }
     return signInOrSignUp(tx, params)
   })
 }
@@ -234,6 +239,12 @@ async function signInOrSignUp(tx: SqlLike, params: VerifyOtpParams): Promise<Ver
     await tx`UPDATE iam.users SET last_login_at = now() WHERE id = ${found.id}::bigint`
     return { kind: 'ok', isNewUser: false, user: toPhoneUser(found), session }
   }
+
+  // Compte supprimé (deleted_at) dont le numéro est conservé jusqu'à l'anonymisation : `phone_e164` reste unique, donc
+  // l'inscription échouerait en 23505 (500). Refus explicite et non discriminant ; le jeton reste consommé (commit).
+  const retired =
+    await tx`SELECT 1 FROM iam.users WHERE phone_e164 = ${params.e164} AND deleted_at IS NOT NULL LIMIT 1`
+  if (retired.length > 0) return { kind: 'signup_closed' }
 
   const rules = await tx`
     SELECT is_signup_allowed, default_currency FROM ref.countries WHERE code = ${params.country}`
