@@ -78,10 +78,10 @@ test.describe('Connexion par téléphone /auth/login (CA-42)', () => {
     await expect(login.submit).toHaveCount(0)
     await expect(login.email).toHaveCount(0)
     await expect(login.password).toHaveCount(0)
-    // Méthodes secondaires toujours désactivées (« bientôt disponible »).
-    await expect(login.google).toBeDisabled()
-    await expect(login.apple).toBeDisabled()
-    await expect(login.passkey).toBeDisabled()
+    // Sans réponse de /methods (API absente) : aucun bouton social (échec fermé, CA-25).
+    await expect(login.google).toHaveCount(0)
+    await expect(login.apple).toHaveCount(0)
+    await expect(login.passkey).toHaveCount(0)
   })
 
   // DÉFAUT D-a11y-1 (test rouge attendu tant que non corrigé) : le sélecteur de pays et le champ du numéro

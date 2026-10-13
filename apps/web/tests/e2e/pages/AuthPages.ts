@@ -17,10 +17,10 @@ abstract class AuthPage {
     return this.page.locator('[data-cp-login-panel]')
   }
   get google(): Locator {
-    return this.page.getByRole('button', { name: 'Google' })
+    return this.page.getByTestId('auth-google')
   }
   get apple(): Locator {
-    return this.page.getByRole('button', { name: 'Apple' })
+    return this.page.getByTestId('auth-apple')
   }
   get showPasswordToggle(): Locator {
     return this.page.getByRole('button', { name: auth.password.show }).first()
@@ -93,7 +93,7 @@ export class LoginPage extends AuthPage {
     return this.page.getByRole('tab', { name: auth.login.tabPhone })
   }
   get passkey() {
-    return this.page.getByRole('button', { name: auth.login.passkey })
+    return this.page.getByTestId('auth-passkey')
   }
   get registerLink() {
     return this.page.getByRole('link', { name: auth.login.createAccount })

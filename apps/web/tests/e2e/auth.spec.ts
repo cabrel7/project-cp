@@ -6,7 +6,15 @@ import {
   ResetPasswordPage,
   VerifyEmailPage,
 } from './pages/AuthPages'
-import { auth, authText, gotoHydrated, isDark, isMobile, mockAuthApi } from './pages/helpers'
+import {
+  auth,
+  authText,
+  gotoHydrated,
+  isDark,
+  isMobile,
+  mockAuthApi,
+  mockMethods,
+} from './pages/helpers'
 
 // P2.1 — pages d'authentification, front seul. L'API est absente : /v1/auth/** est simulé par page.route.
 // Les tests s'exécutent dans 4 projets (desktop/mobile x clair/sombre) ; les assertions propres à un
@@ -17,7 +25,7 @@ const HIDE_DEVTOOLS =
   '#nuxt-devtools-anchor, #nuxt-devtools-container, nuxt-devtools-inspect-panel, #vue-tracer-overlay { display: none !important }'
 
 test.describe('Connexion /auth/login', () => {
-  test('affiche titre, champs, case « rester connecté », onglets et boutons sociaux désactivés', async ({
+  test('affiche titre, champs, case « rester connecté », onglets et aucun bouton social sans /methods', async ({
     page,
   }) => {
     const login = new LoginPage(page)
@@ -36,9 +44,10 @@ test.describe('Connexion /auth/login', () => {
     await expect(login.tabPhone).toBeEnabled()
     await expect(login.tabPhone).toHaveAttribute('aria-selected', 'false')
 
-    await expect(login.google).toBeDisabled()
-    await expect(login.apple).toBeDisabled()
-    await expect(login.passkey).toBeDisabled()
+    // Sans réponse de /methods (API absente), aucun bouton social : échec fermé (CA-25).
+    await expect(login.google).toHaveCount(0)
+    await expect(login.apple).toHaveCount(0)
+    await expect(login.passkey).toHaveCount(0)
   })
 
   test('bouton désactivé tant que e-mail ET mot de passe ne sont pas saisis', async ({ page }) => {
@@ -143,7 +152,9 @@ test.describe('Connexion /auth/login', () => {
 })
 
 test.describe('Inscription /auth/register', () => {
-  test('affiche titre, champs, conditions et boutons sociaux désactivés', async ({ page }) => {
+  test('affiche titre, champs, conditions et aucun bouton social sans /methods', async ({
+    page,
+  }) => {
     const reg = new RegisterPage(page)
     await reg.goto()
 
@@ -154,8 +165,8 @@ test.describe('Inscription /auth/register', () => {
     await expect(reg.password).toBeVisible()
     await expect(reg.terms).toBeVisible()
     await expect(reg.terms).not.toBeChecked()
-    await expect(reg.google).toBeDisabled()
-    await expect(reg.apple).toBeDisabled()
+    await expect(reg.google).toHaveCount(0)
+    await expect(reg.apple).toHaveCount(0)
     await expect(reg.submit).toBeDisabled()
   })
 
@@ -491,12 +502,15 @@ test.describe('Mode clair / sombre', () => {
   }
 
   test('régression visuelle : connexion et inscription', async ({ page }) => {
+    await mockMethods(page)
     const login = new LoginPage(page)
     await login.goto()
+    await expect(login.google).toBeVisible()
     await expect(page).toHaveScreenshot('login.png', { fullPage: true, style: HIDE_DEVTOOLS })
 
     const reg = new RegisterPage(page)
     await reg.goto()
+    await expect(reg.google).toBeVisible()
     await expect(page).toHaveScreenshot('register.png', { fullPage: true, style: HIDE_DEVTOOLS })
   })
 })
