@@ -15,6 +15,7 @@ import { consumeLimit } from '../../middlewares/rate-limit.js'
 import { getPhoneConfig, OTP_TTL_SECONDS } from './auth.phone.config.js'
 import { defaultOrgName, otpSmsText } from './auth.phone.messages.js'
 import * as repo from './auth.phone.repository.js'
+import { listUserIdentities } from './auth.repository.js'
 import { toMeResponse, toSessionResponse } from './auth.resource.js'
 import { generateSessionToken } from './auth.token.js'
 import { getSmsProvider } from './sms/sms.factory.js'
@@ -219,7 +220,12 @@ export async function verifyPhoneCode(params: {
       return {
         authResponse: {
           // Numéro vérifié ⇒ éligible quelle que soit la valeur du paramètre (règle D59, spec §4.4).
-          user: toMeResponse({ ...outcome.user, freeTierEligible: true }),
+          user: toMeResponse({
+            ...outcome.user,
+            freeTierEligible: true,
+            hasPassword: outcome.user.hasPassword === true,
+            identities: await listUserIdentities(outcome.user.id),
+          }),
           session: toSessionResponse(
             {
               publicId: outcome.session.publicId,

@@ -16,6 +16,13 @@ const AUTH_ERROR_KEYS: Record<string, string> = {
   AUTH_OTP_EXPIRED: 'cp.auth.code.expired',
   AUTH_OTP_ATTEMPTS_EXCEEDED: 'cp.auth.code.tooManyAttempts',
   AUTH_SMS_UNAVAILABLE: 'cp.auth.code.smsUnavailable',
+  // Connexion Google (P2.3) : messages dans cp.errors.<CODE>
+  AUTH_SOCIAL_FLOW_INVALID: 'cp.errors.AUTH_SOCIAL_FLOW_INVALID',
+  AUTH_SOCIAL_EMAIL_UNVERIFIED: 'cp.errors.AUTH_SOCIAL_EMAIL_UNVERIFIED',
+  AUTH_SOCIAL_PROVIDER_UNAVAILABLE: 'cp.errors.AUTH_SOCIAL_PROVIDER_UNAVAILABLE',
+  AUTH_ACCOUNT_NOT_VERIFIED: 'cp.errors.AUTH_ACCOUNT_NOT_VERIFIED',
+  AUTH_LAST_SIGN_IN_METHOD: 'cp.errors.AUTH_LAST_SIGN_IN_METHOD',
+  AUTH_REAUTH_REQUIRED: 'cp.errors.AUTH_REAUTH_REQUIRED',
   PLATFORM_RATE_LIMIT: 'cp.auth.rateLimited',
   RATE_LIMITED: 'cp.auth.rateLimited',
 }
@@ -36,6 +43,12 @@ export function authErrorKey(error: unknown): string {
       return phoneReasonKey(typeof reason === 'string' ? reason : undefined)
     }
     if (error.status === 429) return 'cp.auth.rateLimited'
+    if (error.code === 'AUTH_IDENTITY_ALREADY_LINKED') {
+      const reason = error.details.reason
+      return reason === 'sub_linked_elsewhere' || reason === 'provider_already_linked'
+        ? `cp.errors.AUTH_IDENTITY_ALREADY_LINKED.${reason}`
+        : 'cp.errors.AUTH_IDENTITY_ALREADY_LINKED'
+    }
     return Object.hasOwn(AUTH_ERROR_KEYS, error.code)
       ? (AUTH_ERROR_KEYS[error.code] ?? 'cp.auth.genericError')
       : 'cp.auth.genericError'

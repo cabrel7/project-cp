@@ -12,6 +12,8 @@ export function toMeResponse(user: {
   phoneVerifiedAt: string | null
   /** Calculé par le service (paramètre `free_tier.require_phone_otp` + numéro vérifié). */
   freeTierEligible: boolean
+  hasPassword: boolean
+  identities: { provider: 'google'; email: string | null; linkedAt: string }[]
 }): MeResponse {
   return {
     id: user.publicId,
@@ -24,6 +26,12 @@ export function toMeResponse(user: {
     phone: user.phoneE164,
     phone_verified: user.phoneVerifiedAt !== null,
     free_tier_eligible: user.freeTierEligible,
+    has_password: user.hasPassword,
+    identities: user.identities.map((i) => ({
+      provider: i.provider,
+      email: i.email,
+      linked_at: i.linkedAt,
+    })),
   }
 }
 

@@ -12,6 +12,11 @@ const PUBLIC_OTP_PEPPERS: ReadonlySet<string> = new Set([
   'ci-only-otp-pepper-0123456789abcdef-not-a-secret',
 ])
 
+/** Chaîne vide = variable absente (un `.env` qui déclare `GOOGLE_CLIENT_ID=` désactive Google, sans erreur). */
+const emptyAsUndefined = (value: unknown): unknown => (value === '' ? undefined : value)
+
+const GOOGLE_CLIENT_ID_SUFFIX = '.apps.googleusercontent.com'
+
 const apiEnvSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -60,8 +65,29 @@ const apiEnvSchema = z
     SMS_PROVIDER: z.enum(['simulated', 'none']).optional(),
     // [S] secret (Infisical). Défaut de dev appliqué hors production uniquement.
     OTP_PEPPER: z.string().min(32).optional(),
+
+    // Connexion Google (P2.3). Les deux ou aucune ; vide = absente. Les messages citent le NOM, jamais la valeur.
+    GOOGLE_CLIENT_ID: z.preprocess(
+      emptyAsUndefined,
+      z
+        .string()
+        .endsWith(GOOGLE_CLIENT_ID_SUFFIX, `must end with ${GOOGLE_CLIENT_ID_SUFFIX}`)
+        .optional(),
+    ),
+    // [S] secret (Infisical).
+    GOOGLE_CLIENT_SECRET: z.preprocess(emptyAsUndefined, z.string().min(16).optional()),
   })
   .superRefine((raw, ctx) => {
+    if ((raw.GOOGLE_CLIENT_ID === undefined) !== (raw.GOOGLE_CLIENT_SECRET === undefined)) {
+      const missing =
+        raw.GOOGLE_CLIENT_ID === undefined ? 'GOOGLE_CLIENT_ID' : 'GOOGLE_CLIENT_SECRET'
+      ctx.addIssue({
+        code: 'custom',
+        path: [missing],
+        message:
+          'GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set together (or both left empty)',
+      })
+    }
     if (raw.NODE_ENV !== 'production') return
     if (raw.APP_URL === undefined) {
       ctx.addIssue({
@@ -97,6 +123,19 @@ const apiEnvSchema = z
         code: 'custom',
         path: ['OTP_PEPPER'],
         message: 'OTP_PEPPER is required when NODE_ENV=production',
+      })
+    }
+    // La redirect_uri de Google dérive d'APP_URL : en production, elle doit être en https.
+    if (
+      raw.GOOGLE_CLIENT_ID !== undefined &&
+      raw.GOOGLE_CLIENT_SECRET !== undefined &&
+      raw.APP_URL !== undefined &&
+      !raw.APP_URL.toLowerCase().startsWith('https://')
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['APP_URL'],
+        message: 'APP_URL must use https when Google sign-in is configured and NODE_ENV=production',
       })
     }
   })

@@ -33,6 +33,7 @@ export interface PhoneUser {
   phoneE164: string | null
   phoneVerifiedAt: string | null
   status: string
+  hasPassword: boolean
 }
 
 export type VerifyOtpOutcome =
@@ -79,6 +80,7 @@ function toPhoneUser(row: Record<string, unknown>): PhoneUser {
     phoneE164: (row.phone_e164 as string | null) ?? null,
     phoneVerifiedAt: iso(row.phone_verified_at),
     status: row.status as string,
+    hasPassword: (row.has_password as boolean | undefined) ?? false,
   }
 }
 
@@ -87,7 +89,7 @@ function toPhoneUser(row: Record<string, unknown>): PhoneUser {
 export async function findUserByPhone(e164: string): Promise<PhoneUser | null> {
   const rows = await getPoolAuth()`
     SELECT id, public_id, email, email_verified_at, full_name, locale, timezone, created_at,
-           phone_e164, phone_verified_at, status
+           phone_e164, phone_verified_at, status, password_hash IS NOT NULL AS has_password
       FROM iam.users WHERE phone_e164 = ${e164} AND deleted_at IS NULL LIMIT 1`
   return rows[0] ? toPhoneUser(rows[0]) : null
 }
@@ -229,7 +231,7 @@ export async function verifyOtpTx(params: VerifyOtpParams): Promise<VerifyOtpOut
 async function signInOrSignUp(tx: SqlLike, params: VerifyOtpParams): Promise<VerifyOtpOutcome> {
   const existing = await tx`
     SELECT id, public_id, email, email_verified_at, full_name, locale, timezone, created_at,
-           phone_e164, phone_verified_at, status
+           phone_e164, phone_verified_at, status, password_hash IS NOT NULL AS has_password
       FROM iam.users
      WHERE phone_e164 = ${params.e164} AND deleted_at IS NULL FOR UPDATE`
   const found = existing[0]
@@ -268,7 +270,7 @@ async function signInOrSignUp(tx: SqlLike, params: VerifyOtpParams): Promise<Ver
   const rows = await tx`
     UPDATE iam.users SET last_login_at = now() WHERE id = ${created.userId.toString()}::bigint
     RETURNING id, public_id, email, email_verified_at, full_name, locale, timezone, created_at,
-              phone_e164, phone_verified_at, status`
+              phone_e164, phone_verified_at, status, password_hash IS NOT NULL AS has_password`
   const row = rows[0]
   if (!row) throw new Error('failed to load created user')
   return { kind: 'ok', isNewUser: true, user: toPhoneUser(row), session }

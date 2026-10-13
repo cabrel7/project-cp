@@ -295,6 +295,9 @@ describe('schémas zod du téléphone (spec §3.1)', () => {
       locale: 'fr',
       timezone: 'Africa/Douala',
       created_at: '2026-10-06T10:00:00.000Z',
+      // Ajouts additifs de P2.3 (réponse : toujours présents)
+      has_password: false,
+      identities: [],
     }
     const parsed = authSchemas.meResponseSchema.parse({
       ...base,
@@ -329,6 +332,8 @@ describe('schémas zod du téléphone (spec §3.1)', () => {
       phone: '+237690123442',
       phone_verified: true,
       free_tier_eligible: true,
+      has_password: false,
+      identities: [],
     }
     const session = {
       id: '0190a000-0000-7000-8000-0000000000aa',

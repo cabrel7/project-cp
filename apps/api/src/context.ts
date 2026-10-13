@@ -5,6 +5,8 @@ export type AuthContext = {
   userPublicId: string
   sessionId: bigint
   sessionPublicId: string
+  /** Création de la session (ISO) : fraîcheur exigée pour lier/délier (P-1). */
+  sessionCreatedAt: string
 }
 
 export type AppEnv = {

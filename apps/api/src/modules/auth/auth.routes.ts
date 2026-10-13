@@ -28,6 +28,7 @@ import {
 import { getPhoneConfig } from './auth.phone.config.js'
 import * as phoneService from './auth.phone.service.js'
 import * as service from './auth.service.js'
+import { oauthRoutes } from './oauth/oauth.routes.js'
 
 export const authRoutes = new OpenAPIHono<AppEnv>()
 
@@ -513,3 +514,6 @@ authRoutes.openapi(meRoute, async (c) => {
   const user = await service.getMe(auth.userId)
   return c.json(user, 200)
 })
+
+// Google (P2.3) : monté après le `csrf()` ci-dessus, qui couvre donc tous ses POST/DELETE.
+authRoutes.route('/', oauthRoutes)

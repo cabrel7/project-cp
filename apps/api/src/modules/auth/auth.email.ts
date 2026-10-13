@@ -59,6 +59,44 @@ export async function sendPasswordResetEmail(
   })
 }
 
+/** Alerte de sécurité (P2.3) : liaison ou déliaison d'un compte Google. Aucun jeton ; lien vers la page Sécurité. */
+async function sendIdentityAlert(
+  kind: 'linked' | 'unlinked',
+  to: string,
+  locale: string,
+): Promise<void> {
+  const env = getEnv()
+  const link = `${env.APP_URL}/account/security`
+  const when = `${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC`
+  const fr = locale === 'fr'
+  const subject =
+    kind === 'linked'
+      ? fr
+        ? 'Un compte Google a été lié à votre compte'
+        : 'A Google account was linked to your account'
+      : fr
+        ? 'Un compte Google a été délié de votre compte'
+        : 'A Google account was unlinked from your account'
+  const text = fr
+    ? `Fournisseur : Google\nDate : ${when}\n\n${
+        kind === 'linked'
+          ? 'Vous pouvez désormais vous connecter à votre compte avec Google.'
+          : 'Vous ne pouvez plus vous connecter à votre compte avec Google.'
+      }\n\nSi vous n'êtes pas à l'origine de cette action, vérifiez vos moyens de connexion :\n${link}`
+    : `Provider: Google\nDate: ${when}\n\n${
+        kind === 'linked'
+          ? 'You can now sign in to your account with Google.'
+          : 'You can no longer sign in to your account with Google.'
+      }\n\nIf you did not do this, review your sign-in methods:\n${link}`
+  await getTransport().sendMail({ from: env.SMTP_FROM, to, subject, text })
+}
+
+export const sendIdentityLinkedEmail = (to: string, locale: string) =>
+  sendIdentityAlert('linked', to, locale)
+
+export const sendIdentityUnlinkedEmail = (to: string, locale: string) =>
+  sendIdentityAlert('unlinked', to, locale)
+
 export function resetTransport(): void {
   transporter = undefined
 }

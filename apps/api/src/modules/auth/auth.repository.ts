@@ -38,6 +38,7 @@ export async function findSessionByTokenHash(hash: Uint8Array) {
       expiresAt: userSessionsInIam.expiresAt,
       revokedAt: userSessionsInIam.revokedAt,
       lastSeenAt: userSessionsInIam.lastSeenAt,
+      createdAt: userSessionsInIam.createdAt,
     })
     .from(userSessionsInIam)
     .where(eq(userSessionsInIam.tokenHash, sql`decode(${hexHash}, 'hex')`))
@@ -60,6 +61,7 @@ export async function findUserById(userId: bigint) {
       createdAt: usersInIam.createdAt,
       phoneE164: usersInIam.phoneE164,
       phoneVerifiedAt: usersInIam.phoneVerifiedAt,
+      hasPassword: sql<boolean>`${usersInIam.passwordHash} IS NOT NULL`,
     })
     .from(usersInIam)
     .where(and(eq(usersInIam.id, userId), isNull(usersInIam.deletedAt)))
@@ -92,6 +94,8 @@ export async function createUserWithOrgTx(
     phoneE164: string | null
     /** Un numéro n'est enregistré que vérifié (CHECK `users_phone_requires_verification`). */
     phoneVerified: boolean
+    /** Additif P2.3 : l'e-mail est déjà vérifié (Google fait autorité). Défaut : non. */
+    emailVerified?: boolean
     status: 'pending' | 'active'
     fullName: string | null
     orgName: string
@@ -105,9 +109,10 @@ export async function createUserWithOrgTx(
 ): Promise<SignupResult> {
   const userRows = await tx`
     INSERT INTO iam.users
-      (email, password_hash, phone_e164, phone_verified_at, full_name, locale, country_code, status)
+      (email, email_verified_at, password_hash, phone_e164, phone_verified_at, full_name, locale, country_code, status)
     VALUES
-      (${params.email}, ${params.passwordHash}, ${params.phoneE164},
+      (${params.email}, CASE WHEN ${params.emailVerified ?? false}::boolean THEN now() END,
+       ${params.passwordHash}, ${params.phoneE164},
        CASE WHEN ${params.phoneVerified}::boolean THEN now() END, ${params.fullName}, ${params.locale},
        ${params.userCountryCode}, ${params.status})
     RETURNING id, public_id
@@ -376,4 +381,18 @@ export async function markEmailVerified(userId: bigint): Promise<void> {
 export async function updateLastLogin(userId: bigint): Promise<void> {
   const db = getDbRw()
   await db.update(usersInIam).set({ lastLoginAt: sql`now()` }).where(eq(usersInIam.id, userId))
+}
+
+/** Identités sociales d'un utilisateur (app_rw, toujours filtré par `user_id` ; ni `sub` ni id exposés). */
+export async function listUserIdentities(
+  userId: bigint,
+): Promise<{ provider: 'google'; email: string | null; linkedAt: string }[]> {
+  const rows = await getPoolRw()`
+    SELECT provider, email, created_at FROM iam.user_identities
+     WHERE user_id = ${userId.toString()}::bigint AND provider = 'google' ORDER BY id`
+  return rows.map((r) => ({
+    provider: 'google' as const,
+    email: (r.email as string | null) ?? null,
+    linkedAt: new Date(r.created_at as string | Date).toISOString(),
+  }))
 }

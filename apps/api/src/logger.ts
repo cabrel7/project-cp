@@ -18,6 +18,15 @@ export const LOG_REDACT_PATHS = [
   '*.authorization',
   // PostgresError.detail recopie la ligne ou la clé fautive (« Key (phone_e164)=(+237…) ») : PII.
   '*.detail',
+  // Connexion Google (P2.3) : aucune donnée du flux OAuth ni identité dans les journaux.
+  '*.id_token',
+  '*.access_token',
+  '*.refresh_token',
+  '*.code_verifier',
+  '*.state',
+  '*.nonce',
+  '*.email',
+  '*.sub',
   'phone',
   'phone_e164',
   'password',

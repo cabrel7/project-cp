@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { userIdentitySchema } from './auth-social-schemas.js'
 import { phoneCountrySchema } from './phone.js'
 import { publicIdSchema } from './schemas.js'
 
@@ -69,6 +70,10 @@ export const meResponseSchema = z.object({
   phone: z.string().nullable(),
   phone_verified: z.boolean(),
   free_tier_eligible: z.boolean(),
+  /** Additif P2.3 : un mot de passe est défini (faux pour un compte créé par Google ou par téléphone). */
+  has_password: z.boolean(),
+  /** Additif P2.3 : identités sociales liées. */
+  identities: z.array(userIdentitySchema),
 })
 
 export type MeResponse = z.infer<typeof meResponseSchema>

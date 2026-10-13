@@ -33,6 +33,9 @@ catalog:
   "@opentelemetry/exporter-trace-otlp-http": "^0.222.0"
   # Validation
   zod: "^4.6.5"
+  # Connexion sociale Google (P2.3) : arctic (OAuth, PKCE) + jose (vérification de l'id_token)
+  arctic: "^3.7.0"
+  jose: "^6.2.12"
   # Téléphone (E.164)
   libphonenumber-js: "^1.13.14"
   # Database

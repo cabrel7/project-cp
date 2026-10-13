@@ -25,6 +25,25 @@ export {
   verifyEmailBodySchema,
 } from './auth-schemas.js'
 export {
+  type AuthMethodsResponse,
+  authMethodsResponseSchema,
+  identityParamsSchema,
+  type LinkPendingResponse,
+  linkPendingResponseSchema,
+  type OauthCallbackQuery,
+  type OauthLinkBody,
+  type OauthLinkResponse,
+  type OauthStartQuery,
+  oauthCallbackQuerySchema,
+  oauthLinkBodySchema,
+  oauthLinkResponseSchema,
+  oauthStartQuerySchema,
+  type SocialProvider,
+  socialProviderSchema,
+  type UserIdentity,
+  userIdentitySchema,
+} from './auth-social-schemas.js'
+export {
   ERROR_CODES,
   type ErrorCategory,
   type ErrorCode,
@@ -43,6 +62,7 @@ export {
   phoneCountrySchema,
   SUPPORTED_PHONE_COUNTRIES,
 } from './phone.js'
+export { safeNextPath } from './safe-next.js'
 export {
   type ErrorResponse,
   errorResponseSchema,

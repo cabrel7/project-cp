@@ -53,6 +53,7 @@ export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
     userPublicId: user.publicId,
     sessionId: session.id,
     sessionPublicId: session.publicId,
+    sessionCreatedAt: session.createdAt,
   })
 
   // Expiration glissante sans jamais raccourcir une session « se souvenir de moi ».

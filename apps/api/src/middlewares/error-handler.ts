@@ -32,7 +32,10 @@ export const onError: ErrorHandler<AppEnv> = (err, c) => {
     } else {
       logger?.warn({ code: err.code, details: err.details, requestId }, err.code)
     }
-    const details = err.httpStatus >= 500 ? undefined : err.details
+    // 5xx sans détail interne, sauf le 503 du fournisseur social dont `details.reason` est une valeur contrôlée
+    // (`not_configured` | `unavailable` | `timeout`) que l'interface utilise.
+    const exposeDetails = err.httpStatus < 500 || err.code === 'AUTH_SOCIAL_PROVIDER_UNAVAILABLE'
+    const details = exposeDetails ? err.details : undefined
     if (err.retryAfterSeconds !== undefined) {
       c.header('Retry-After', String(Math.max(1, Math.ceil(err.retryAfterSeconds))))
     }

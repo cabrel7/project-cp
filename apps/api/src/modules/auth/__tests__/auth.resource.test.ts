@@ -12,6 +12,8 @@ const baseUser = {
   phoneE164: null as string | null,
   phoneVerifiedAt: null as string | null,
   freeTierEligible: false,
+  hasPassword: true,
+  identities: [] as { provider: 'google'; email: string | null; linkedAt: string }[],
 }
 
 describe('toMeResponse', () => {
@@ -27,6 +29,8 @@ describe('toMeResponse', () => {
       phone: null,
       phone_verified: false,
       free_tier_eligible: false,
+      has_password: true,
+      identities: [],
     })
   })
 
@@ -68,7 +72,9 @@ describe('toMeResponse', () => {
       'email_verified',
       'free_tier_eligible',
       'full_name',
+      'has_password',
       'id',
+      'identities',
       'locale',
       'phone',
       'phone_verified',

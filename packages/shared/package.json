@@ -9,7 +9,9 @@
     "./schemas": "./src/schemas.ts",
     "./glossary": "./src/glossary.ts",
     "./auth-schemas": "./src/auth-schemas.ts",
-    "./phone": "./src/phone.ts"
+    "./phone": "./src/phone.ts",
+    "./auth-social-schemas": "./src/auth-social-schemas.ts",
+    "./safe-next": "./src/safe-next.ts"
   },
   "scripts": {
     "build": "tsup",

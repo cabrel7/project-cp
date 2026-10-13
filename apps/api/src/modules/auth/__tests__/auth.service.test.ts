@@ -19,6 +19,7 @@ vi.mock('../auth.repository.js', () => ({
   updateLastLogin: vi.fn(),
   resetPasswordTx: vi.fn(),
   getFreeTierRequiresPhoneOtp: vi.fn().mockResolvedValue(true),
+  listUserIdentities: vi.fn().mockResolvedValue([]),
 }))
 
 vi.mock('../auth.email.js', () => ({
@@ -615,6 +616,8 @@ describe('getMe', () => {
       phone: null,
       phone_verified: false,
       free_tier_eligible: false,
+      has_password: false,
+      identities: [],
     })
     expect(JSON.stringify(me)).not.toContain('"1"')
   })

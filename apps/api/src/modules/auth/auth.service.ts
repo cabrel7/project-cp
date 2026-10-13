@@ -128,7 +128,12 @@ export async function login(params: {
 
   return {
     authResponse: {
-      user: toMeResponse({ ...user, freeTierEligible: await isFreeTierEligible(user) }),
+      user: toMeResponse({
+        ...user,
+        freeTierEligible: await isFreeTierEligible(user),
+        hasPassword: true,
+        identities: await repo.listUserIdentities(user.id),
+      }),
       session: toSessionResponse(
         {
           publicId: session.publicId,
@@ -262,5 +267,10 @@ export async function resendVerification(params: {
 export async function getMe(userId: bigint): Promise<MeResponse> {
   const user = await repo.findUserById(userId)
   if (!user) throw new AppError('AUTH_INVALID_CREDENTIALS')
-  return toMeResponse({ ...user, freeTierEligible: await isFreeTierEligible(user) })
+  return toMeResponse({
+    ...user,
+    freeTierEligible: await isFreeTierEligible(user),
+    hasPassword: user.hasPassword === true,
+    identities: await repo.listUserIdentities(user.id),
+  })
 }

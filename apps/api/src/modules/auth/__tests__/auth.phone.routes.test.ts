@@ -128,6 +128,8 @@ function verifyResult(overrides: Record<string, unknown> = {}) {
         phone: '+237690123442',
         phone_verified: true,
         free_tier_eligible: true,
+        has_password: false,
+        identities: [],
       },
       session: {
         id: '0190a000-0000-7000-8000-0000000000aa',
