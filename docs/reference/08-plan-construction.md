@@ -85,6 +85,7 @@
 | P0.5 | `packages/shared` : codes d'erreur (enum synchronisé avec `platform.error_codes` + test d'égalité), schémas zod de base (UUID, pagination, erreur), constantes du glossaire | backend | S |
 | P0.6 | `apps/api` minimal : `env.ts`, pino, request-id, OTel, `onError` au format unique, `/health`, `/openapi.json`, `/docs` | backend | S |
 | P0.7 | CI GitHub Actions : install → biome → typecheck → tests → base neuve + migrations + tests SQL → `pull` identique → squawk → build | devops | M |
+| P0.8 | **Staging + CD (D80)** : `staging-project-cp.komerce.store` sur le petit VPS existant, isolé (utilisateur dédié, Docker rootless, plafonds systemd, ports loopback) ; script d'amorçage relu et lancé une fois par Dylan ; images construites en CI → GHCR ; déploiement à chaque fusion dans `dev` (SSH à commande forcée, migrations, santé, retour arrière) ; données de démo, Mailpit, SMS simulés, mot de passe, `noindex` | devops | M |
 
 **Critères de fin**
 - `pnpm install && pnpm turbo run build typecheck test` vert en local et en CI.
@@ -92,6 +93,7 @@
 - CI rouge si `drizzle-kit pull` diffère du commit.
 - `GET /health` 200 ; une erreur provoquée renvoie le format unique avec `request_id`.
 - Session cloud : `/setup` prépare tout, hooks actifs (une écriture violant un invariant est bloquée).
+- P0.8 : une fusion dans `dev` met à jour le staging sans intervention ; un déploiement volontairement cassé revient seul à la version précédente ; le site voisin du VPS n'est ni ralenti ni accessible depuis les conteneurs (preuves : sorties brutes).
 
 ---
 

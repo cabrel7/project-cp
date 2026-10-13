@@ -48,6 +48,8 @@ Session cloud : Chromium préinstallé → ne jamais lancer `playwright install`
 6. **Preuves** : toute affirmation « ça marche » est accompagnée de la sortie brute. **Un test sauté n'est pas réussi** :
    compte rendu `passés / échoués / sautés` + raison de chaque saut. Les tests PostgreSQL/Redis se lancent dans la
    session (`pnpm infra:up`, mode natif sans Docker) ET existent dans la CI. Jamais « exécuté en CI » sans l'avoir vérifié.
+   **Lot avec interface** : vidéo des parcours (Playwright + ffmpeg, MP4 ≤ 10 Mo) + captures mobile/desktop clair/sombre
+   **envoyées à Dylan dans la conversation**, et section « Comment tester » dans la PR (sur le staging, D80).
 7. **Finale** : `PROJECT_STATE.md` à jour ; chaque erreur évitable de la session → une ligne dans `ISSUES.log`
    (`date | agent | symptôme | cause | règle proposée`) ; `/retrospective` transforme les répétitions en guard-rules ou skills.
 8. **Arrêts et parallélisme (D66)** : arrêt pour validation seulement si le lot ajoute une décision, une route publique ou une

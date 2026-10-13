@@ -61,6 +61,10 @@ persistant. Un échec reste un échec.
 
 ## Livrable
 Specs + Page Objects + sortie d'exécution + diffs visuels signalés (avec frames extraites si utile).
+**Démo pour Dylan (obligatoire si le lot touche l'interface)** : vidéo des parcours du lot (Playwright `video: 'on'`
+sur un projet « demo », assemblée et compressée avec ffmpeg en MP4 ≤ 10 Mo, sous-titres d'étape si utile) + captures
+mobile et desktop, clair et sombre, dans `docs/review/<lot>/demo/` (hors git si > 10 Mo). Chemins listés dans le livrable :
+l'orchestrateur les envoie à Dylan.
 
 ## Challenge spécifique
 Le parcours critique testé est-il le bon ? Manque-t-il un chemin d'erreur (OTP expiré, crédits à zéro,
