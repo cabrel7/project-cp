@@ -28,12 +28,12 @@ const ALL_CODES = Object.keys(ERROR_CODES) as ErrorCode[]
 const ALL_DEFS = Object.values(ERROR_CODES) as ErrorCodeDef[]
 
 describe('ERROR_CODES', () => {
-  it('doit contenir exactement 73 codes (57 initiaux + 5 garde-fous + 7 auth P2.1 + 4 auth P2.2)', () => {
-    expect(ALL_CODES).toHaveLength(73)
+  it('doit contenir exactement 80 codes (57 initiaux + 5 garde-fous + 7 auth P2.1 + 4 auth P2.2 + 7 auth P2.3)', () => {
+    expect(ALL_CODES).toHaveLength(80)
   })
 
   it('doit avoir des codes tous distincts', () => {
-    expect(new Set(ALL_DEFS.map((d) => d.code)).size).toBe(73)
+    expect(new Set(ALL_DEFS.map((d) => d.code)).size).toBe(80)
   })
 
   it.each(ALL_CODES)('doit faire correspondre la clé %s à sa propriété .code', (key) => {
@@ -163,6 +163,33 @@ describe('ERROR_CODES', () => {
     expect(defs.AUTH_SMS_UNAVAILABLE?.refundsCredits).toBe(false)
   })
 
+  // P2.3 (spec §2.2, CA-1) : migration de données 0005. Seul AUTH_SOCIAL_PROVIDER_UNAVAILABLE est relançable.
+  it.each([
+    ['AUTH_SOCIAL_FLOW_INVALID', 422, false],
+    ['AUTH_SOCIAL_EMAIL_UNVERIFIED', 422, false],
+    ['AUTH_SOCIAL_PROVIDER_UNAVAILABLE', 503, true],
+    ['AUTH_IDENTITY_ALREADY_LINKED', 409, false],
+    ['AUTH_ACCOUNT_NOT_VERIFIED', 403, false],
+    ['AUTH_LAST_SIGN_IN_METHOD', 409, false],
+    ['AUTH_REAUTH_REQUIRED', 403, false],
+  ])(
+    'doit définir le code P2.3 %s (HTTP %d, relançable %s, sans remboursement)',
+    (code, status, retryable) => {
+      const defs = ERROR_CODES as unknown as Record<string, ErrorCodeDef | undefined>
+      expect(defs[code]).toEqual({
+        code,
+        category: 'AUTH',
+        httpStatus: status,
+        isRetryable: retryable,
+        refundsCredits: false,
+      })
+    },
+  )
+
+  it('ne doit pas créer AUTH_SOCIAL_ACCOUNT_EXISTS (le compte existant n’est pas une erreur, spec §2.2)', () => {
+    expect(ERROR_CODES).not.toHaveProperty('AUTH_SOCIAL_ACCOUNT_EXISTS')
+  })
+
   it('doit être typé de sorte que ErrorCode couvre toutes les clés', () => {
     expectTypeOf<ErrorCode>().toEqualTypeOf<keyof typeof ERROR_CODES>()
     expectTypeOf<'PLATFORM_CONFLICT'>().toExtend<ErrorCode>()
@@ -229,7 +256,7 @@ describe('isRetryable', () => {
     expect(isRetryable(code)).toBe(false)
   })
 
-  it('doit être cohérent avec la définition pour les 73 codes', () => {
+  it('doit être cohérent avec la définition pour les 80 codes', () => {
     for (const code of ALL_CODES) {
       expect(isRetryable(code)).toBe(ERROR_CODES[code].isRetryable)
     }

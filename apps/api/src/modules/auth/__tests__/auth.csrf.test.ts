@@ -78,3 +78,41 @@ describe('csrf des routes /v1/auth', () => {
     expect(r.status).toBe(401)
   })
 })
+
+// P2.3 (CA-13, CA-30) : le CSRF s'applique aux POST de la connexion Google ; le rappel GET n'est jamais bloqué.
+describe('csrf des routes Google (P2.3)', () => {
+  const req = async (method: string, path: string, headers: Record<string, string>) => {
+    const { createApp } = await import('../../../app.js')
+    const { app } = createApp()
+    const res = await app.request(`http://api.example.com${path}`, { method, headers })
+    return { status: res.status, json: (await res.json().catch(() => null)) as Json }
+  }
+
+  it.each(['/v1/auth/oauth/google/link', '/v1/auth/link/confirm'])(
+    'doit refuser en 403 AUTH_INSUFFICIENT_PERMISSIONS un POST %s depuis une origine étrangère',
+    async (path) => {
+      const r = await req('POST', path, { origin: 'https://evil.example.net' })
+      expect(r.status).toBe(403)
+      expect(r.json.error.code).toBe('AUTH_INSUFFICIENT_PERMISSIONS')
+    },
+  )
+
+  it.each(['/v1/auth/oauth/google/link', '/v1/auth/link/confirm'])(
+    'doit laisser passer le CSRF pour %s depuis APP_URL : arrêt en 401 (session requise)',
+    async (path) => {
+      const r = await req('POST', path, { origin: 'https://app.example.com' })
+      expect(r.status).toBe(401)
+    },
+  )
+
+  it('ne doit pas bloquer le rappel GET même avec une origine étrangère', async () => {
+    const { createApp } = await import('../../../app.js')
+    const res = await createApp().app.request(
+      'http://api.example.com/v1/auth/oauth/google/callback?code=x&state=y',
+      {
+        headers: { origin: 'https://accounts.google.com' },
+      },
+    )
+    expect(res.status).toBe(302)
+  })
+})

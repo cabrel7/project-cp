@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/nodemailer": "^6.4.17",
+    "msw": "catalog:",
     "pino-pretty": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",

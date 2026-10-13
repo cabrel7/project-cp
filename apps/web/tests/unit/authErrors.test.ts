@@ -57,6 +57,60 @@ describe('authErrorKey — codes du catalogue', () => {
   )
 })
 
+// P2.3 (spec §4.2 et §4.4) : 7 nouveaux codes → clés `cp.errors.<CODE>` ; AUTH_IDENTITY_ALREADY_LINKED décliné
+// selon `details.reason`. Les codes existants (AUTH_ACCOUNT_SUSPENDED, AUTH_SIGNUP_CLOSED, PLATFORM_RATE_LIMIT)
+// gardent leurs clés P2.2.
+describe('authErrorKey — connexion Google (P2.3)', () => {
+  it.each([
+    ['AUTH_SOCIAL_FLOW_INVALID', 422],
+    ['AUTH_SOCIAL_EMAIL_UNVERIFIED', 422],
+    ['AUTH_SOCIAL_PROVIDER_UNAVAILABLE', 503],
+    ['AUTH_ACCOUNT_NOT_VERIFIED', 403],
+    ['AUTH_LAST_SIGN_IN_METHOD', 409],
+    ['AUTH_REAUTH_REQUIRED', 403],
+  ])('%s (%d) → clé cp.errors.<code>', (code, status) => {
+    expect(authErrorKey(err(code, status))).toBe(`cp.errors.${code}`)
+  })
+
+  it.each([['sub_linked_elsewhere'], ['provider_already_linked']])(
+    'AUTH_IDENTITY_ALREADY_LINKED avec reason=%s → clé déclinée',
+    (reason) => {
+      expect(authErrorKey(err('AUTH_IDENTITY_ALREADY_LINKED', 409, { reason }))).toBe(
+        `cp.errors.AUTH_IDENTITY_ALREADY_LINKED.${reason}`,
+      )
+    },
+  )
+
+  it.each([
+    [{ reason: '<script>alert(1)</script>' }],
+    [{ reason: '__proto__' }],
+    [{ reason: 42 }],
+    [{}],
+  ])(
+    'AUTH_IDENTITY_ALREADY_LINKED avec des détails hostiles ou absents (%j) ne doit jamais produire une clé contenant la valeur reçue',
+    (details) => {
+      const key = authErrorKey(err('AUTH_IDENTITY_ALREADY_LINKED', 409, details))
+      expect(key.startsWith('cp.')).toBe(true)
+      expect(key).not.toContain('<script>')
+      expect(key).not.toContain('__proto__')
+    },
+  )
+
+  it('doit conserver les clés existantes pour AUTH_ACCOUNT_SUSPENDED, AUTH_SIGNUP_CLOSED et le 429', () => {
+    expect(authErrorKey(err('AUTH_ACCOUNT_SUSPENDED', 403))).toBe('cp.auth.accountSuspended')
+    expect(authErrorKey(err('AUTH_SIGNUP_CLOSED', 403))).toBe('cp.auth.signupClosed')
+    expect(authErrorKey(err('PLATFORM_RATE_LIMIT', 429))).toBe('cp.auth.rateLimited')
+  })
+
+  it('doit laisser le 429 prioritaire sur un code Google', () => {
+    expect(authErrorKey(err('AUTH_SOCIAL_FLOW_INVALID', 429))).toBe('cp.auth.rateLimited')
+  })
+
+  it('doit renvoyer la clé générique pour un code Google inconnu (jamais le code brut)', () => {
+    expect(authErrorKey(err('AUTH_SOCIAL_SOMETHING_ELSE', 422))).toBe('cp.auth.genericError')
+  })
+})
+
 describe('authErrorKey — validation du numéro (422 field=phone)', () => {
   const phone = (reason?: string, extra: Record<string, unknown> = {}) =>
     err('PLATFORM_VALIDATION_ERROR', 422, {
