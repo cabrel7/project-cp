@@ -11,7 +11,7 @@ const password = ref('')
 const acceptTerms = ref(false)
 const route = useRoute()
 const errorKey = ref<string | null>(null)
-const queryError = computed(() => queryErrorKey(route.query.error, route.query.reason))
+const queryError = computed(() => queryErrorKey(route.query.error, route.query.reason, 'register'))
 const sent = ref(false)
 const tabs = computed(() => [
   { label: t('cp.auth.register.tabEmail'), value: 'email' },
@@ -49,7 +49,7 @@ useHead({ title: () => t('cp.auth.register.title') })
 
     <CpAlert
       v-if="queryError && !sent"
-      variant="danger"
+      :variant="queryError === 'cp.auth.social.cancelled' ? 'info' : 'danger'"
       :title="t(queryError)"
       data-testid="auth-query-error"
     />

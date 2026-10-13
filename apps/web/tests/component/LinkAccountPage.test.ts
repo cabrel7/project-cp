@@ -74,21 +74,32 @@ describe('/auth/link-account (G8)', () => {
     expect(mocks.navigateTo).toHaveBeenCalledWith('/')
   })
 
-  it('« Annuler » doit seulement naviguer, sans appel API', async () => {
+  it('doit rappeler « Nous ne lions jamais un compte sans votre accord »', async () => {
     const wrapper = await mountPage()
-    await wrapper.get('[data-cp-cancel]').trigger('click')
-    expect(mocks.navigateTo).toHaveBeenCalledWith('/')
-    expect(mocks.confirmLink).not.toHaveBeenCalled()
+    expect(wrapper.get('[data-testid="link-consent"]').text()).toBe(
+      'Nous ne lions jamais un compte sans votre accord.',
+    )
   })
 
-  it('404 : « Cette demande a expiré » et une seule action « Continuer »', async () => {
-    mocks.linkPending.mockRejectedValue(err('PLATFORM_RESOURCE_NOT_FOUND', 404))
+  it('« Annuler » : sans appel API, message « Google n’a pas été lié » puis « Continuer »', async () => {
     const wrapper = await mountPage()
-    expect(wrapper.text()).toContain('Cette demande a expiré')
+    await wrapper.get('[data-cp-cancel]').trigger('click')
+    expect(mocks.confirmLink).not.toHaveBeenCalled()
+    expect(wrapper.text()).toContain("Google n'a pas été lié à votre compte.")
     expect(confirm(wrapper).text()).toBe('Continuer')
     expect(wrapper.find('[data-cp-cancel]').exists()).toBe(false)
     await confirm(wrapper).trigger('click')
     expect(mocks.navigateTo).toHaveBeenCalledWith('/')
+  })
+
+  it('404 : « Cette demande a expiré » et une seule action « Retour à la connexion »', async () => {
+    mocks.linkPending.mockRejectedValue(err('PLATFORM_RESOURCE_NOT_FOUND', 404))
+    const wrapper = await mountPage()
+    expect(wrapper.text()).toContain('Cette demande a expiré')
+    expect(confirm(wrapper).text()).toBe('Retour à la connexion')
+    expect(wrapper.find('[data-cp-cancel]').exists()).toBe(false)
+    await confirm(wrapper).trigger('click')
+    expect(mocks.navigateTo).toHaveBeenCalledWith('/auth/login')
   })
 
   it('AUTH_REAUTH_REQUIRED : explication + « Se reconnecter » (déconnexion puis connexion avec link=google)', async () => {
@@ -109,7 +120,7 @@ describe('/auth/link-account (G8)', () => {
       err('AUTH_ACCOUNT_NOT_VERIFIED', 403, { reason: 'pending' }),
     )
     const wrapper = await mountPage()
-    expect(wrapper.text()).toContain('Vérifiez d’abord votre adresse e-mail'.replace('’', "'"))
+    expect(wrapper.text()).toContain("Ouvrez l'e-mail de vérification")
     expect(confirm(wrapper).text()).toBe("Renvoyer l'e-mail de vérification")
     await confirm(wrapper).trigger('click')
     await flushPromises()
@@ -118,16 +129,19 @@ describe('/auth/link-account (G8)', () => {
   })
 
   it.each([
-    ['sub_linked_elsewhere', 'déjà lié à un autre compte'],
+    ['sub_linked_elsewhere', 'Utilisez un autre compte Google'],
     ['provider_already_linked', 'Un compte Google est déjà lié au vôtre'],
-  ])('AUTH_IDENTITY_ALREADY_LINKED (%s) : message précis + « Continuer »', async (reason, text) => {
-    const wrapper = await mountPage()
-    mocks.confirmLink.mockRejectedValue(err('AUTH_IDENTITY_ALREADY_LINKED', 409, { reason }))
-    await confirm(wrapper).trigger('click')
-    await flushPromises()
-    expect(wrapper.text()).toContain(text)
-    expect(confirm(wrapper).text()).toBe('Continuer')
-  })
+  ])(
+    'AUTH_IDENTITY_ALREADY_LINKED (%s) : message précis + « Retour à la connexion »',
+    async (reason, text) => {
+      const wrapper = await mountPage()
+      mocks.confirmLink.mockRejectedValue(err('AUTH_IDENTITY_ALREADY_LINKED', 409, { reason }))
+      await confirm(wrapper).trigger('click')
+      await flushPromises()
+      expect(wrapper.text()).toContain(text)
+      expect(confirm(wrapper).text()).toBe('Retour à la connexion')
+    },
+  )
 
   it('401 sur /link/pending : redirection vers /auth/login?link=google', async () => {
     mocks.linkPending.mockRejectedValue(err('AUTH_TOKEN_INVALID', 401))

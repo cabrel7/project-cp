@@ -102,3 +102,14 @@ describe('CpLayoutSettings', () => {
     expect(render().find('[data-cp-layout-settings]').exists()).toBe(true)
   })
 })
+
+describe('CpLayoutSettings — section unique', () => {
+  it('masque la barre de sections quand il n’y a qu’une entrée', () => {
+    const wrapper = mount(LayoutSettings, {
+      props: { title: 'Sécurité', section: 'a', sections: [{ value: 'a', label: 'A' }] },
+      slots: { default: 'Contenu' },
+    })
+    expect(wrapper.find('nav').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Contenu')
+  })
+})

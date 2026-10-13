@@ -38,10 +38,10 @@ const { t } = useI18n()
       </div>
       <footer class="flex flex-col gap-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
-          <UButton v-if="!hideCancel" variant="outline" data-cp-cancel @click="emit('cancel')">
+          <UButton v-if="!hideCancel" variant="outline" size="lg" data-cp-cancel @click="emit('cancel')">
             {{ cancelLabel ?? t('cp.layout.deny') }}
           </UButton>
-          <UButton :loading="confirmLoading" data-cp-confirm @click="emit('confirm')">
+          <UButton :loading="confirmLoading" size="lg" data-cp-confirm @click="emit('confirm')">
             {{ confirmLabel ?? t('cp.layout.allow') }}
           </UButton>
         </div>

@@ -60,7 +60,7 @@ useHead({ title: () => t('cp.auth.login.title') })
     />
     <CpAlert
       v-if="queryError"
-      variant="danger"
+      :variant="queryError === 'cp.auth.social.cancelled' ? 'info' : 'danger'"
       :title="t(queryError)"
       data-testid="auth-query-error"
     />

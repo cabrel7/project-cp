@@ -64,6 +64,28 @@ describe('queryErrorKey', () => {
     expect(queryErrorKey('AUTH_SIGNUP_CLOSED', 'cancelled')).toBe('cp.auth.signupClosed')
   })
 
+  it('AUTH_SOCIAL_EMAIL_UNVERIFIED : phrase propre à la page (connexion / inscription)', () => {
+    expect(queryErrorKey('AUTH_SOCIAL_EMAIL_UNVERIFIED')).toBe(
+      'cp.errors.AUTH_SOCIAL_EMAIL_UNVERIFIED',
+    )
+    expect(queryErrorKey('AUTH_SOCIAL_EMAIL_UNVERIFIED', undefined, 'register')).toBe(
+      'cp.errors.AUTH_SOCIAL_EMAIL_UNVERIFIED_SIGNUP',
+    )
+    expect(resolves(fr as unknown as Tree, 'cp.errors.AUTH_SOCIAL_EMAIL_UNVERIFIED_SIGNUP')).toBe(
+      true,
+    )
+    expect(resolves(en as unknown as Tree, 'cp.errors.AUTH_SOCIAL_EMAIL_UNVERIFIED_SIGNUP')).toBe(
+      true,
+    )
+  })
+
+  it('les messages d’erreur disent quoi faire (consigne) et évitent « garantir »', () => {
+    const f = fr as unknown as { cp: { errors: Record<string, string | Record<string, string>> } }
+    expect(f.cp.errors.AUTH_LAST_SIGN_IN_METHOD).toContain('mot de passe ou un téléphone')
+    expect(f.cp.errors.AUTH_ACCOUNT_NOT_VERIFIED).toContain('e-mail de vérification')
+    expect(f.cp.errors.AUTH_SOCIAL_EMAIL_UNVERIFIED).not.toContain('garantir')
+  })
+
   it('AUTH_IDENTITY_ALREADY_LINKED sans raison → clé « default » (une clé ne peut être à la fois texte et groupe)', () => {
     expect(queryErrorKey('AUTH_IDENTITY_ALREADY_LINKED')).toBe(
       'cp.errors.AUTH_IDENTITY_ALREADY_LINKED.default',

@@ -98,11 +98,18 @@ const QUERY_ERROR_CODES: readonly string[] = [
  * Clé i18n du message d'un retour `?error=<CODE>[&reason=cancelled]`. `null` si le paramètre est absent ;
  * clé générique pour toute valeur hors liste blanche (jamais le paramètre brut).
  */
-export function queryErrorKey(error: unknown, reason?: unknown): string | null {
+export function queryErrorKey(
+  error: unknown,
+  reason?: unknown,
+  page: 'login' | 'register' = 'login',
+): string | null {
   const value = Array.isArray(error) ? error[0] : error
   if (value === undefined || value === null || value === '') return null
   if (typeof value !== 'string' || !QUERY_ERROR_CODES.includes(value)) return 'cp.auth.genericError'
   const why = Array.isArray(reason) ? reason[0] : reason
   if (value === 'AUTH_SOCIAL_FLOW_INVALID' && why === 'cancelled') return 'cp.auth.social.cancelled'
+  if (value === 'AUTH_SOCIAL_EMAIL_UNVERIFIED' && page === 'register') {
+    return 'cp.errors.AUTH_SOCIAL_EMAIL_UNVERIFIED_SIGNUP'
+  }
   return authErrorKey(new AuthError(value, 0))
 }

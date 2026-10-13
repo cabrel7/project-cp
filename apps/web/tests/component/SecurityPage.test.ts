@@ -146,7 +146,7 @@ describe('/account/security — section « Moyens de connexion »', () => {
     await wrapper.get('[data-cp-confirm]').trigger('click')
     await flushPromises()
     const failure = wrapper.get('[data-testid="security-failure"]')
-    expect(failure.text()).toContain('Ajoutez un autre moyen de connexion avant de délier Google.')
+    expect(failure.text()).toContain("Ajoutez d'abord un mot de passe ou un téléphone")
     const action = failure.findAll('button').find((b) => b.text() === 'Définir un mot de passe')
     expect(action).toBeDefined()
     await action?.trigger('click')
@@ -176,7 +176,7 @@ describe('/account/security — section « Moyens de connexion »', () => {
       'déjà lié au vôtre',
     ],
     ['PLATFORM_RATE_LIMIT', 429, {}, 'Trop de tentatives'],
-    ['AUTH_ACCOUNT_NOT_VERIFIED', 403, { reason: 'pending' }, "Vérifiez d'abord"],
+    ['AUTH_ACCOUNT_NOT_VERIFIED', 403, { reason: 'pending' }, "Ouvrez l'e-mail de vérification"],
   ])('lier : %s → message i18n, jamais le code', async (code, status, details, text) => {
     mocks.startLinkFromSession.mockRejectedValue(err(code, status, details))
     const wrapper = await mountPage()

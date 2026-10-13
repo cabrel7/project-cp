@@ -6,7 +6,7 @@
 
 import { readFileSync } from 'node:fs'
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import AuthGoogleButton from '../../app/components/AuthGoogleButton.vue'
 import AuthSocialButtons from '../../app/components/AuthSocialButtons.vue'
 import { i18n } from './i18n'
@@ -86,6 +86,36 @@ describe('AuthGoogleButton', () => {
         .find('[name="i-lucide-loader-circle"], [data-icon="i-lucide-loader-circle"]')
         .exists(),
     ).toBe(true)
+  })
+
+  it('doit annoncer la redirection (aria-busy + texte pour lecteur d’écran) au clic', async () => {
+    const wrapper = render()
+    expect(wrapper.get('a').attributes('aria-busy')).toBe('false')
+    await wrapper.get('a').trigger('click')
+    expect(wrapper.get('a').attributes('aria-busy')).toBe('true')
+    expect(wrapper.get('p.sr-only').text()).toBe('Redirection vers Google en cours…')
+  })
+
+  it('doit redevenir utilisable au retour depuis le cache (pageshow persisted)', async () => {
+    const wrapper = render()
+    await wrapper.get('a').trigger('click')
+    expect(wrapper.find('img').exists()).toBe(false)
+    const event = new Event('pageshow') as Event & { persisted: boolean }
+    event.persisted = true
+    window.dispatchEvent(event)
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('img').exists()).toBe(true)
+    expect(wrapper.get('a').attributes('aria-busy')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('doit redevenir utilisable après 10 s sans navigation (garde de délai)', async () => {
+    vi.useFakeTimers()
+    const wrapper = render()
+    await wrapper.get('a').trigger('click')
+    await vi.advanceTimersByTimeAsync(10_001)
+    expect(wrapper.find('img').exists()).toBe(true)
+    vi.useRealTimers()
   })
 
   it('ne doit contenir aucune couleur en dur (tokens du design system)', () => {

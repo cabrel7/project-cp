@@ -24,13 +24,33 @@ const href = computed(() => {
   return `/v1/auth/oauth/google/start?${query.toString()}`
 })
 
+// Garde de délai : si la navigation n'aboutit pas (réseau, Google lent), le bouton redevient utilisable.
+const REDIRECT_TIMEOUT_MS = 10_000
+let resetTimer: ReturnType<typeof setTimeout> | undefined
+
+function reset() {
+  clearTimeout(resetTimer)
+  redirecting.value = false
+}
+
 function onClick(event: MouseEvent) {
   if (!isOnline.value || redirecting.value) {
     event.preventDefault()
     return
   }
   redirecting.value = true
+  resetTimer = setTimeout(reset, REDIRECT_TIMEOUT_MS)
 }
+
+// Retour arrière depuis Google : la page revient du cache (bfcache) avec l'état « redirection » figé.
+function onPageShow(event: PageTransitionEvent) {
+  if (event.persisted) reset()
+}
+onMounted(() => window.addEventListener('pageshow', onPageShow))
+onBeforeUnmount(() => {
+  window.removeEventListener('pageshow', onPageShow)
+  clearTimeout(resetTimer)
+})
 </script>
 
 <template>
@@ -45,6 +65,7 @@ function onClick(event: MouseEvent) {
       :disabled="!isOnline"
       :title="isOnline ? undefined : t('cp.auth.social.offline')"
       :aria-describedby="isOnline ? undefined : 'cp-google-offline'"
+      :aria-busy="redirecting"
       class="min-h-11 bg-cp-surface text-cp-ink ring-cp-line hover:bg-cp-surface-sunken"
       data-testid="auth-google"
       @click="onClick"
@@ -60,6 +81,7 @@ function onClick(event: MouseEvent) {
       </template>
       {{ t('cp.auth.social.continueWithGoogle') }}
     </UButton>
+    <p v-if="redirecting" class="sr-only" role="status">{{ t('cp.auth.social.redirecting') }}</p>
     <p
       v-if="!isOnline"
       id="cp-google-offline"

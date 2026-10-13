@@ -98,7 +98,8 @@ const failureTitle = computed(() => {
     />
 
     <ul class="flex flex-col divide-y divide-cp-line">
-      <li class="flex min-h-14 flex-wrap items-center gap-3 py-3" data-testid="method-password">
+      <li class="flex min-h-14 flex-col items-stretch gap-3 py-3 sm:flex-row sm:items-center" data-testid="method-password">
+        <div class="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
         <UIcon name="i-lucide-key-round" class="size-5 shrink-0 text-cp-ink-muted" aria-hidden="true" />
         <div class="flex min-w-0 flex-1 flex-col">
           <span class="text-label text-cp-ink">{{ t('cp.account.security.methods.password') }}</span>
@@ -107,18 +108,20 @@ const failureTitle = computed(() => {
             {{ user.has_password ? t('cp.account.security.methods.passwordSet') : t('cp.account.security.methods.passwordUnset') }}
           </span>
         </div>
+        </div>
         <UButton
           v-if="!user.has_password"
           to="/auth/forgot-password"
           color="neutral"
           variant="outline"
           size="lg"
-          class="min-h-11"
+          class="min-h-11 w-full sm:w-auto"
           :label="t('cp.account.security.methods.setPassword')"
         />
       </li>
 
-      <li class="flex min-h-14 flex-wrap items-center gap-3 py-3" data-testid="method-phone">
+      <li class="flex min-h-14 flex-col items-stretch gap-3 py-3 sm:flex-row sm:items-center" data-testid="method-phone">
+        <div class="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
         <UIcon name="i-lucide-smartphone" class="size-5 shrink-0 text-cp-ink-muted" aria-hidden="true" />
         <div class="flex min-w-0 flex-1 flex-col">
           <span class="text-label text-cp-ink">{{ t('cp.account.security.methods.phone') }}</span>
@@ -126,24 +129,27 @@ const failureTitle = computed(() => {
             {{ user.phone && user.phone_verified ? user.phone : t('cp.account.security.methods.phoneNone') }}
           </span>
         </div>
+        </div>
       </li>
 
-      <li class="flex min-h-14 flex-wrap items-center gap-3 py-3" data-testid="method-google">
+      <li class="flex min-h-14 flex-col items-stretch gap-3 py-3 sm:flex-row sm:items-center" data-testid="method-google">
+        <div class="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
         <img src="/brands/google-g.svg" alt="" width="20" height="20" class="size-5 shrink-0" />
         <div class="flex min-w-0 flex-1 flex-col">
           <span class="text-label text-cp-ink">{{ t('cp.account.security.methods.google') }}</span>
-          <span v-if="google" class="flex items-center gap-1 break-all text-body-sm text-cp-success">
+          <span v-if="google" class="flex items-center gap-1 break-words text-body-sm text-cp-success">
             <UIcon name="i-lucide-circle-check" class="size-4 shrink-0" aria-hidden="true" />
             {{ t('cp.account.security.methods.linked', { email: google.email ?? '' }) }}
           </span>
           <span v-else class="text-body-sm text-cp-ink-muted">{{ t('cp.account.security.methods.notLinked') }}</span>
+        </div>
         </div>
         <UButton
           v-if="google"
           color="neutral"
           variant="outline"
           size="lg"
-          class="min-h-11"
+          class="min-h-11 w-full sm:w-auto"
           icon="i-lucide-unlink"
           :label="t('cp.account.security.methods.unlink')"
           :disabled="busy !== null"
@@ -153,7 +159,7 @@ const failureTitle = computed(() => {
         <UButton
           v-else-if="canLink"
           size="lg"
-          class="min-h-11"
+          class="min-h-11 w-full sm:w-auto"
           icon="i-lucide-link-2"
           :label="t('cp.account.security.methods.link')"
           :loading="busy === 'link'"

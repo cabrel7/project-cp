@@ -33,7 +33,7 @@ function select(value: string): void {
   <div class="mx-auto flex max-w-content-max flex-col gap-6" data-cp-layout-settings>
     <CpPageHeader :title="title" :description="description" />
     <div class="flex flex-col gap-6 lg:flex-row">
-      <nav class="w-full lg:w-56 lg:shrink-0" :aria-label="t('cp.layout.settingsNav')">
+      <nav v-if="sections.length > 1" class="w-full lg:w-56 lg:shrink-0" :aria-label="t('cp.layout.settingsNav')">
         <ul class="flex flex-col gap-1">
           <li v-for="section in sections" :key="section.value">
             <button

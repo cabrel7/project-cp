@@ -390,8 +390,9 @@
       "social": {
         "continueWithGoogle": "Continue with Google",
         "accountExists": "An account already exists with this email. Sign in to link Google.",
-        "cancelled": "Google sign-in cancelled.",
-        "offline": "An internet connection is needed to continue with Google."
+        "cancelled": "Google sign-in cancelled. You can try again or use your email.",
+        "offline": "An internet connection is needed to continue with Google.",
+        "redirecting": "Redirecting to Google…"
       },
       "link": {
         "title": "Link your Google account",
@@ -403,7 +404,10 @@
         "reconnect": "Sign in again",
         "resendVerification": "Resend verification email",
         "verificationSent": "Verification email sent. Open it, then come back here.",
-        "retry": "Try again"
+        "retry": "Try again",
+        "backToLogin": "Back to sign in",
+        "cancelled": "Google wasn't linked to your account.",
+        "consent": "We never link an account without your approval."
       }
     },
     "account": {
@@ -432,22 +436,23 @@
           "linkedSuccess": "Google is now linked to your account.",
           "unlinkedSuccess": "Google is no longer linked to your account."
         },
-        "lastMethod": "Add another sign-in method before unlinking Google.",
+        "lastMethod": "Add a password or a phone number first, then unlink Google.",
         "reauth": "For your security, sign in again and retry."
       }
     },
     "errors": {
       "AUTH_SOCIAL_FLOW_INVALID": "Sign-in expired or is invalid. Try again.",
-      "AUTH_SOCIAL_EMAIL_UNVERIFIED": "Google can't vouch for this email address. Sign up with your email.",
+      "AUTH_SOCIAL_EMAIL_UNVERIFIED": "Google couldn't confirm this email address. Sign in with your email or phone.",
       "AUTH_SOCIAL_PROVIDER_UNAVAILABLE": "Sign-in with Google is temporarily unavailable. Use your email or phone.",
       "AUTH_IDENTITY_ALREADY_LINKED": {
-        "default": "This account is already linked.",
-        "sub_linked_elsewhere": "This Google account is already linked to another account.",
-        "provider_already_linked": "A Google account is already linked to yours."
+        "default": "This account is already linked. Sign in to the account it's linked to, or choose another Google account.",
+        "sub_linked_elsewhere": "This Google account is already linked to another account. Use another Google account, or sign in to the account it's linked to.",
+        "provider_already_linked": "A Google account is already linked to yours. Unlink it first to link another one."
       },
-      "AUTH_ACCOUNT_NOT_VERIFIED": "Verify your email address first.",
-      "AUTH_LAST_SIGN_IN_METHOD": "You can't remove your last sign-in method.",
-      "AUTH_REAUTH_REQUIRED": "For your security, sign in again and retry."
+      "AUTH_ACCOUNT_NOT_VERIFIED": "Open the verification email we sent you, or ask for a new one.",
+      "AUTH_LAST_SIGN_IN_METHOD": "Add a password or a phone number first, then try again.",
+      "AUTH_REAUTH_REQUIRED": "For your security, sign in again and retry.",
+      "AUTH_SOCIAL_EMAIL_UNVERIFIED_SIGNUP": "Google couldn't confirm this email address. Create your account with your email or phone."
     }
   }
 }

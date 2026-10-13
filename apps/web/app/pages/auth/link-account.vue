@@ -7,7 +7,15 @@ import { authErrorKey } from '../../utils/authErrors'
 
 definePageMeta({ layout: false, middleware: 'auth' })
 
-type Phase = 'loading' | 'ready' | 'expired' | 'reauth' | 'notVerified' | 'alreadyLinked' | 'error'
+type Phase =
+  | 'loading'
+  | 'ready'
+  | 'cancelled'
+  | 'expired'
+  | 'reauth'
+  | 'notVerified'
+  | 'alreadyLinked'
+  | 'error'
 
 const { t } = useI18n()
 const { resendVerification, logout } = useAuth()
@@ -38,6 +46,15 @@ function phaseFor(e: unknown): Phase {
 
 function goHome() {
   return navigateTo('/')
+}
+
+function goLogin() {
+  return navigateTo('/auth/login')
+}
+
+// « Annuler » : aucun appel (la demande expire seule) ; on confirme à l'utilisateur que rien n'a été lié.
+function onCancel() {
+  phase.value = 'cancelled'
 }
 
 async function toLogin() {
@@ -100,13 +117,18 @@ const primary = computed<{ label: string; run: () => unknown }>(() => {
       return { label: t('cp.auth.link.resendVerification'), run: onResend }
     case 'error':
       return { label: t('cp.auth.link.retry'), run: load }
+    case 'expired':
+    case 'alreadyLinked':
+      return { label: t('cp.auth.link.backToLogin'), run: goLogin }
     default:
-      return { label: t('cp.auth.link.continue'), run: () => navigateTo('/') }
+      return { label: t('cp.auth.link.continue'), run: goHome }
   }
 })
 
 const message = computed<string | null>(() => {
   switch (phase.value) {
+    case 'cancelled':
+      return t('cp.auth.link.cancelled')
     case 'expired':
       return t('cp.auth.link.expired')
     case 'reauth':
@@ -123,7 +145,11 @@ const message = computed<string | null>(() => {
 })
 
 const variant = computed(() =>
-  phase.value === 'alreadyLinked' ? 'info' : phase.value === 'error' ? 'danger' : 'warning',
+  phase.value === 'alreadyLinked' || phase.value === 'cancelled'
+    ? 'info'
+    : phase.value === 'error'
+      ? 'danger'
+      : 'warning',
 )
 
 onMounted(load)
@@ -141,10 +167,13 @@ useHead({ title: () => t('cp.auth.link.title') })
     :confirm-loading="confirming || phase === 'loading'"
     :hide-cancel="phase !== 'ready' && phase !== 'loading'"
     @confirm="phase === 'loading' ? undefined : primary.run()"
-    @cancel="goHome"
+    @cancel="onCancel"
   >
     <CpSkeleton v-if="phase === 'loading' && showSkeleton" shape="line" :count="2" />
-    <CpAlert v-else-if="message" :variant="variant" :title="message" />
+    <p v-else-if="phase === 'ready'" class="text-center text-body-sm text-cp-ink-muted" data-testid="link-consent">
+      {{ t('cp.auth.link.consent') }}
+    </p>
+    <CpAlert v-if="message" :variant="variant" :title="message" />
     <CpAlert
       v-if="verificationSent"
       variant="success"

@@ -269,7 +269,9 @@ test.describe('CA-27 — G8 /auth/link-account', () => {
     expect(calls).toHaveLength(1)
   })
 
-  test('« Annuler » : navigation seule, aucun appel API', async ({ page }) => {
+  test('« Annuler » : aucun appel API, message « Google n’a pas été lié », puis Continuer', async ({
+    page,
+  }) => {
     await mockLinkPending(page, {
       status: 200,
       body: { provider: 'google', email_masked: 'a***@gmail.com' },
@@ -281,6 +283,8 @@ test.describe('CA-27 — G8 /auth/link-account', () => {
     })
     await gotoHydrated(page, '/auth/link-account')
     await page.getByRole('button', { name: linkText('cancel') }).click()
+    await expect(page.getByText(linkText('cancelled'))).toBeVisible()
+    await page.getByRole('button', { name: linkText('continue') }).click()
     await expect(page).toHaveURL(/localhost:3000\/$/)
     expect(confirmCalled).toBe(false)
   })
@@ -289,7 +293,7 @@ test.describe('CA-27 — G8 /auth/link-account', () => {
     await mockLinkPending(page, { status: 404, body: apiError('PLATFORM_RESOURCE_NOT_FOUND') })
     await gotoHydrated(page, '/auth/link-account')
     await expect(page.getByText(linkText('expired'))).toBeVisible()
-    await expect(page.getByRole('button', { name: linkText('continue') })).toBeVisible()
+    await expect(page.getByRole('button', { name: linkText('backToLogin') })).toBeVisible()
     await expect(page.getByRole('button', { name: linkText('cancel') })).toHaveCount(0)
   })
 
@@ -339,7 +343,7 @@ test.describe('CA-27 — G8 /auth/link-account', () => {
           .sub_linked_elsewhere ?? '',
       ),
     ).toBeVisible()
-    await expect(page.getByRole('button', { name: linkText('continue') })).toBeVisible()
+    await expect(page.getByRole('button', { name: linkText('backToLogin') })).toBeVisible()
   })
 
   test('401 sur /link/pending → /auth/login?link=google', async ({ page }) => {

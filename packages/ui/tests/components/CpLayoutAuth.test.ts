@@ -34,6 +34,12 @@ describe('CpLayoutAuth', () => {
     expect(wrapper.find('[data-cp-confirm]').exists()).toBe(true)
   })
 
+  it('les boutons ont la taille lg (cible ≥ 44 px sur mobile)', () => {
+    const wrapper = render()
+    expect(wrapper.get('[data-cp-confirm]').attributes('data-size')).toBe('lg')
+    expect(wrapper.get('[data-cp-cancel]').attributes('data-size')).toBe('lg')
+  })
+
   it('les boutons émettent confirm et cancel', async () => {
     const wrapper = render()
     await wrapper.get('[data-cp-confirm]').trigger('click')
