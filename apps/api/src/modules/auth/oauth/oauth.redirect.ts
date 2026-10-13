@@ -35,10 +35,12 @@ export async function redirectError(
   c: Context<AppEnv>,
   fallbackPath: string,
   fn: () => Promise<Response>,
+  cleanup?: () => void,
 ): Promise<Response> {
   try {
     return await fn()
   } catch (err) {
+    cleanup?.()
     if (isAppError(err)) return c.redirect(appUrl(fallbackPath, { error: err.code }), 302)
     c.get('logger')?.error({ err }, 'oauth redirect route failed')
     return c.redirect(appUrl(fallbackPath, { error: 'AUTH_SOCIAL_PROVIDER_UNAVAILABLE' }), 302)
@@ -76,4 +78,10 @@ export function redirectTo(
       return c.redirect(appUrl(target, query), 302)
     }
   }
+}
+
+/** Paramètre invalide (ex. paramètre répété) : jamais de 422 JSON sur une navigation. */
+export function redirectInvalid(c: Context<AppEnv>, cleanup?: () => void): Response {
+  cleanup?.()
+  return c.redirect(appUrl('/auth/login', { error: 'AUTH_SOCIAL_FLOW_INVALID' }), 302)
 }

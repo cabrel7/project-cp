@@ -16,7 +16,7 @@ import { getClientIp, ipRateLimitKey } from '../../../lib/client-ip.js'
 import { requireAuth } from '../../../middlewares/auth.js'
 import { consumeLimit, type LimiterSpec } from '../../../middlewares/rate-limit.js'
 import { getAuthMethods } from '../auth.methods.js'
-import { redirectError, redirectTo, setCookieHeader } from './oauth.redirect.js'
+import { redirectError, redirectInvalid, redirectTo, setCookieHeader } from './oauth.redirect.js'
 import * as service from './oauth.service.js'
 
 /** Navigation : valeurs hors énumération tolérées (jamais de 422 JSON) ; le service les normalise. */
@@ -59,6 +59,8 @@ const ipKey = (c: Context<AppEnv>) => {
   const ip = getClientIp(c)
   return ip ? ipRateLimitKey(ip) : null
 }
+
+const clearFlowCookie = (c: Context<AppEnv>) => setCookieHeader(c, FLOW_COOKIE, '', FLOW_PATH, 0)
 
 async function limitIp(c: Context<AppEnv>, spec: LimiterSpec): Promise<void> {
   const key = ipKey(c)
@@ -112,6 +114,7 @@ oauthRoutes.openapi(
       return c.redirect(url, 302)
     })
   },
+  (result, c) => (result.success ? undefined : redirectInvalid(c)),
 )
 
 // ── GET /oauth/google/callback ──
@@ -127,21 +130,28 @@ oauthRoutes.openapi(
   }),
   async (c) => {
     const q = c.req.valid('query')
-    return redirectError(c, '/auth/login', async () => {
-      await limitIp(c, CALLBACK_IP_LIMIT)
-      const outcome = await service.handleGoogleCallback({
-        flowCookie: getCookie(c, FLOW_COOKIE),
-        sessionToken: getCookie(c, getEnv().SESSION_COOKIE_NAME),
-        code: q.code,
-        state: q.state,
-        error: q.error,
-        ip: getClientIp(c),
-        userAgent: c.req.header('user-agent') ?? null,
-      })
-      setCookieHeader(c, FLOW_COOKIE, '', FLOW_PATH, 0)
-      return redirectTo(c, outcome, LINK_COOKIE, LINK_PATH)
-    })
+    const clearFlow = () => clearFlowCookie(c)
+    return redirectError(
+      c,
+      '/auth/login',
+      async () => {
+        await limitIp(c, CALLBACK_IP_LIMIT)
+        const outcome = await service.handleGoogleCallback({
+          flowCookie: getCookie(c, FLOW_COOKIE),
+          sessionToken: getCookie(c, getEnv().SESSION_COOKIE_NAME),
+          code: q.code,
+          state: q.state,
+          error: q.error,
+          ip: getClientIp(c),
+          userAgent: c.req.header('user-agent') ?? null,
+        })
+        setCookieHeader(c, FLOW_COOKIE, '', FLOW_PATH, 0)
+        return redirectTo(c, outcome, LINK_COOKIE, LINK_PATH)
+      },
+      clearFlow,
+    )
   },
+  (result, c) => (result.success ? undefined : redirectInvalid(c, () => clearFlowCookie(c))),
 )
 
 // ── POST /oauth/google/link ──

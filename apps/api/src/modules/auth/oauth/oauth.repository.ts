@@ -58,19 +58,19 @@ const toLockedUser = (r: Record<string, unknown>): LockedUser => ({
   phoneVerified: r.phone_verified_at !== null,
 })
 
-const USER_COLUMNS = `id, public_id, email, email_verified_at, status, deleted_at, locale,
-  password_hash IS NOT NULL AS has_password, phone_verified_at`
-
 export async function lockUser(tx: Tx, userId: bigint): Promise<LockedUser | null> {
-  const rows = await tx.unsafe(
-    `SELECT ${USER_COLUMNS} FROM iam.users WHERE id = $1::bigint FOR UPDATE`,
-    [userId.toString()],
-  )
+  const rows = await tx`
+    SELECT id, public_id, email, email_verified_at, status, deleted_at, locale,
+           password_hash IS NOT NULL AS has_password, phone_verified_at
+      FROM iam.users WHERE id = ${userId.toString()}::bigint FOR UPDATE`
   return rows[0] ? toLockedUser(rows[0]) : null
 }
 
 export async function findUserByEmail(tx: Tx, email: string): Promise<LockedUser | null> {
-  const rows = await tx.unsafe(`SELECT ${USER_COLUMNS} FROM iam.users WHERE email = $1`, [email])
+  const rows = await tx`
+    SELECT id, public_id, email, email_verified_at, status, deleted_at, locale,
+           password_hash IS NOT NULL AS has_password, phone_verified_at
+      FROM iam.users WHERE email = ${email}`
   return rows[0] ? toLockedUser(rows[0]) : null
 }
 

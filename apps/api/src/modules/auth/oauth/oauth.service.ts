@@ -210,7 +210,12 @@ export async function handleGoogleCallback(p: CallbackParams): Promise<CallbackO
     next = safeNextPath(flow.next, intent === 'link' ? '/account/security' : '/')
     return await runCallback(p, flow, next)
   } catch (err) {
-    if (!isAppError(err)) throw err
+    if (!isAppError(err)) {
+      // Imprévu : journalisé (nom seulement, jamais de message qui pourrait recopier une valeur), redirection sûre
+      // vers la page de l'intention.
+      log().error({ error_name: (err as Error)?.name }, 'oauth google callback failed')
+      return { kind: 'error', code: 'AUTH_SOCIAL_PROVIDER_UNAVAILABLE', intent, next }
+    }
     const reason = typeof err.details?.reason === 'string' ? err.details.reason : undefined
     return { kind: 'error', code: err.code, ...(reason ? { reason } : {}), intent, next }
   }
