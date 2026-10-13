@@ -32,3 +32,5 @@ Règles :
 - Fin : `PROJECT_STATE.md` à jour ; nouvelle décision → journal 06 (signalée) ; erreurs évitables → `ISSUES.log` ;
   ouvre la PR vers `dev` (jamais `main`, jamais de fusion par toi) ; donne-moi : fichiers touchés, preuves (sorties),
   limites connues, prochaine étape.
+- Lot avec interface : **envoie-moi** (fichiers dans la conversation) la vidéo des parcours et les captures produites par
+  l'e2e-tester ; la PR contient une section « Comment tester » (URL du staging, compte de démo, étapes, résultat attendu).
