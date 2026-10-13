@@ -582,6 +582,39 @@ describe.skipIf(!hasInfra)(
         expect(rs.map((r) => r.status).sort()).toEqual([204, 404])
         expect(await h.identitiesOfUser(a.id)).toHaveLength(1)
       })
+
+      // Revue P2.3 (MAJOR) : le rappel « identité connue » verrouillait l'identité PUIS l'utilisateur (session → FK),
+      // la déliaison l'utilisateur PUIS l'identité → interblocage (40P01) et, sans interblocage, session ouverte par
+      // une identité déjà déliée. Ordre attendu partout : sub → utilisateur → identité (relue sous le verrou).
+      it('(f) connexion Google pendant une déliaison du même compte : aucun interblocage, aucune session après la déliaison', async () => {
+        const g = await h.makeGoogleUser()
+        const before = (await h.sessionsOf(g.userId)).length
+        const flow = await h.start()
+        let release!: () => void
+        const gate = new Promise<void>((r) => {
+          release = r
+        })
+        let signalLocked!: () => void
+        const locked = new Promise<void>((r) => {
+          signalLocked = r
+        })
+        // Déliaison simulée au plus près de `unlinkGoogle` : verrou de l'utilisateur, puis suppression de l'identité.
+        const unlinkTx = h.asAdmin(async (s) => {
+          await s`SELECT id FROM iam.users WHERE id = ${g.userId} FOR UPDATE`
+          signalLocked()
+          await gate
+          await s`DELETE FROM iam.user_identities WHERE provider = 'google' AND provider_user_id = ${g.sub}`
+        })
+        await locked
+        const login = h.signIn({ flow, sub: g.sub, email: g.email })
+        await sleep(800) // le rappel atteint son attente de verrou
+        release()
+        await unlinkTx
+        const { cb } = await login
+        // Identité déliée : l'e-mail est connu → liaison en attente (jamais une session, jamais une erreur 5xx).
+        h.expectRedirect(cb, '/auth/login', { link: 'google' })
+        expect((await h.sessionsOf(g.userId)).length).toBe(before)
+      })
     })
 
     // ── CA-23 ──

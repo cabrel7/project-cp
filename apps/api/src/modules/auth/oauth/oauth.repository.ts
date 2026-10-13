@@ -90,6 +90,21 @@ export async function findIdentityBySub(tx: Tx, sub: string): Promise<IdentityRo
   }
 }
 
+/**
+ * Identité connue, relue APRÈS le verrou de son utilisateur : ordre constant sub → utilisateur → identité, le même que
+ * la déliaison (`lockUser` puis `DELETE`). Sinon le rappel prend la ligne d'identité puis attend l'utilisateur (FK de la
+ * session) pendant que la déliaison fait l'inverse : interblocage. La relecture (nouvel instantané en READ COMMITTED)
+ * voit une déliaison validée pendant l'attente → `null` (parcours « identité inconnue »). Le `sub` ne peut pas changer
+ * d'utilisateur entre les deux lectures : toute insertion de ce `sub` prend le verrou consultatif détenu ici.
+ */
+export async function findIdentityBySubLocked(tx: Tx, sub: string): Promise<IdentityRow | null> {
+  const first = await findIdentityBySub(tx, sub)
+  if (!first) return null
+  await lockUser(tx, first.userId)
+  const again = await findIdentityBySub(tx, sub)
+  return again && again.userId === first.userId ? again : null
+}
+
 export async function hasGoogleIdentity(tx: Tx, userId: bigint): Promise<boolean> {
   const rows = await tx`
     SELECT 1 FROM iam.user_identities WHERE user_id = ${userId.toString()}::bigint AND provider = 'google'`

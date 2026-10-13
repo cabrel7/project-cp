@@ -336,7 +336,7 @@ async function googleTransaction(
     expiresAt: new Date(Date.now() + maxAge * 1000),
   }
   return repo.inTransaction(id.sub, async (tx): Promise<TxOutcome> => {
-    const known = await repo.findIdentityBySub(tx, id.sub)
+    const known = await repo.findIdentityBySubLocked(tx, id.sub)
     if (known) {
       if (known.userDeletedAt !== null || known.userStatus === 'deleted') {
         throw new AppError('AUTH_SIGNUP_CLOSED')
@@ -419,7 +419,8 @@ export async function confirmPendingLink(
 ): Promise<void> {
   const { pending, user } = await pendingFor(auth, linkCookie)
   assertVerified({ email: user.email, emailVerifiedAt: user.emailVerifiedAt, status: user.status })
-  if (new Date(auth.sessionCreatedAt).getTime() < pending.created_at) {
+  // Échec fermé : une date illisible (NaN) ne doit jamais laisser passer (NaN < x est faux).
+  if (!(new Date(auth.sessionCreatedAt).getTime() >= pending.created_at)) {
     throw new AppError('AUTH_REAUTH_REQUIRED', { reason: 'login_before_link' })
   }
   await consumeLimit(
