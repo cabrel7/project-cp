@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { safeNextPath } from '@cp/shared/safe-next'
 import { AuthError } from '../../../composables/useAuth'
 import { authErrorKey, authErrorParams } from '../../../utils/authErrors'
 import { formatClock, formatWait } from '../../../utils/phoneAuth'
@@ -11,6 +12,8 @@ const CODE_LENGTH = 6
 const VALIDITY_MINUTES = 5
 
 const { t, locale } = useI18n()
+const route = useRoute()
+const next = computed(() => safeNextPath(route.query.next))
 const {
   request,
   isLoading,
@@ -23,8 +26,12 @@ const {
   cancel,
 } = usePhoneAuth()
 
-const backTo = computed(() =>
-  request.value?.intent === 'register' ? '/auth/register?tab=phone' : '/auth/login?tab=phone',
+const nextSuffix = computed(() =>
+  next.value === '/' ? '' : `&next=${encodeURIComponent(next.value)}`,
+)
+const backTo = computed(
+  () =>
+    `${request.value?.intent === 'register' ? '/auth/register?tab=phone' : '/auth/login?tab=phone'}${nextSuffix.value}`,
 )
 const emailTo = computed(() =>
   request.value?.intent === 'register' ? '/auth/register' : '/auth/login',
@@ -94,7 +101,7 @@ async function onVerify() {
   error.value = null
   resentNotice.value = false
   try {
-    await verifyCode(code.value)
+    await verifyCode(code.value, next.value)
   } catch (e) {
     error.value = e instanceof AuthError ? e : new AuthError('UNKNOWN', 0)
     if (error.value.code === 'AUTH_OTP_INVALID') {

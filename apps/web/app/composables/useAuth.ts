@@ -1,3 +1,5 @@
+import { safeNextPath } from '@cp/shared/safe-next'
+
 // Authentification par e-mail (P2.1) : appelle l'API /v1/auth/* ; la session est un cookie HttpOnly posé par l'API.
 export interface AuthUser {
   id: string
@@ -7,6 +9,18 @@ export interface AuthUser {
   locale: string
   timezone: string
   created_at: string
+  phone?: string | null
+  phone_verified?: boolean
+  /** Additif P2.3 : un mot de passe est défini. */
+  has_password?: boolean
+  /** Additif P2.3 : identités sociales liées (Google seul). */
+  identities?: AuthIdentity[]
+}
+
+export interface AuthIdentity {
+  provider: 'google'
+  email: string | null
+  linked_at: string
 }
 
 interface AuthResponse {
@@ -60,7 +74,7 @@ export function useAuth() {
 
   async function call<T>(
     path: string,
-    options: { method?: 'GET' | 'POST'; body?: Record<string, unknown> } = {},
+    options: { method?: 'GET' | 'POST' | 'DELETE'; body?: Record<string, unknown> } = {},
   ): Promise<T> {
     isLoading.value = true
     try {
@@ -77,12 +91,12 @@ export function useAuth() {
     }
   }
 
-  async function login(email: string, password: string, rememberMe: boolean) {
+  async function login(email: string, password: string, rememberMe: boolean, next?: unknown) {
     const res = await call<AuthResponse>('/login', {
       body: { email, password, remember_me: rememberMe },
     })
     user.value = res.user
-    await navigateTo('/')
+    await navigateTo(safeNextPath(next))
   }
 
   async function register(email: string, password: string, fullName?: string) {
@@ -91,13 +105,18 @@ export function useAuth() {
     })
   }
 
-  async function logout() {
+  /** Déconnecte puis va à `to` (chemin interne, `/auth/login` par défaut). */
+  async function logout(to?: string) {
     try {
       await call<unknown>('/logout')
     } finally {
       user.value = null
-      await navigateTo('/auth/login')
+      await navigateTo(safeNextPath(to, '/auth/login'))
     }
+  }
+
+  async function resendVerification() {
+    await call<unknown>('/resend-verification')
   }
 
   async function forgotPassword(email: string) {
@@ -131,6 +150,7 @@ export function useAuth() {
     login,
     register,
     logout,
+    resendVerification,
     forgotPassword,
     resetPassword,
     verifyEmail,

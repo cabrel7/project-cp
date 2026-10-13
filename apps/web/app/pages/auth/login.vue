@@ -1,5 +1,8 @@
 <script setup lang="ts">
-// Connexion par e-mail ou par téléphone + code SMS (maquettes 01 et 05). Clé d'accès, Google et Apple : désactivés.
+// Connexion par e-mail ou par téléphone + code SMS (maquettes 01 et 05). Google : bouton piloté par /v1/auth/methods ;
+// clé d'accès et Apple masqués jusqu'à P8.8 (D67).
+import { safeNextPath } from '@cp/shared/safe-next'
+
 definePageMeta({ layout: false })
 
 const { t } = useI18n()
@@ -8,7 +11,16 @@ const { login, isLoading } = useAuth()
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(true)
+const route = useRoute()
 const errorKey = ref<string | null>(null)
+
+// Retour du rappel Google : `?error=<CODE>[&reason=cancelled]` (liste blanche) et `?link=google` (compte existant).
+const queryError = computed(() => queryErrorKey(route.query.error, route.query.reason))
+const linkPending = computed(() => route.query.link === 'google')
+// Après la connexion : page demandée, ou l'écran de liaison quand un compte existait déjà pour l'e-mail Google.
+const next = computed(() =>
+  safeNextPath(route.query.next, linkPending.value ? '/auth/link-account' : '/'),
+)
 
 const tabs = computed(() => [
   { label: t('cp.auth.login.tabEmail'), value: 'email' },
@@ -19,7 +31,7 @@ const tab = useAuthTab()
 async function onSubmit() {
   errorKey.value = null
   try {
-    await login(email.value.trim(), password.value, rememberMe.value)
+    await login(email.value.trim(), password.value, rememberMe.value, next.value)
   } catch (e) {
     errorKey.value = authErrorKey(e)
   }
@@ -39,6 +51,19 @@ useHead({ title: () => t('cp.auth.login.title') })
         </NuxtLink>
       </p>
     </header>
+
+    <CpAlert
+      v-if="linkPending"
+      variant="info"
+      :title="t('cp.auth.social.accountExists')"
+      data-testid="auth-link-info"
+    />
+    <CpAlert
+      v-if="queryError"
+      variant="danger"
+      :title="t(queryError)"
+      data-testid="auth-query-error"
+    />
 
     <AuthMethodTabs v-model="tab" :items="tabs" />
 
@@ -83,26 +108,9 @@ useHead({ title: () => t('cp.auth.login.title') })
         />
       </form>
     </template>
-    <LazyAuthPhoneForm v-else mode="login" />
+    <LazyAuthPhoneForm v-else mode="login" :next="next" />
 
-    <USeparator :label="t('cp.auth.login.or')" />
-
-    <div class="flex flex-col gap-3">
-      <UButton
-        color="neutral"
-        variant="outline"
-        size="lg"
-        block
-        disabled
-        icon="i-lucide-key-round"
-        :label="t('cp.auth.login.passkey')"
-        :title="t('cp.auth.comingSoon')"
-      />
-      <div class="grid grid-cols-2 gap-3">
-        <UButton color="neutral" variant="outline" size="lg" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
-        <UButton color="neutral" variant="outline" size="lg" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
-      </div>
-    </div>
+    <AuthSocialButtons :next="next" :remember-me="rememberMe" />
 
     <i18n-t keypath="cp.auth.login.legal" tag="p" class="text-center text-body-sm text-cp-ink-muted">
       <template #terms>

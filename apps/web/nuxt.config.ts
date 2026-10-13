@@ -29,6 +29,13 @@ export default defineNuxtConfig({
         'lucide:smartphone',
         'lucide:arrow-left',
         'lucide:key-round',
+        'lucide:link-2',
+        'lucide:unlink',
+        'lucide:shield-check',
+        'lucide:circle-check',
+        'lucide:circle-minus',
+        'lucide:loader-circle',
+        'lucide:info',
       ],
       scan: true,
     },
@@ -36,6 +43,9 @@ export default defineNuxtConfig({
   routeRules: {
     // Écran du code SMS : dépend de la demande mémorisée dans sessionStorage (navigateur seulement).
     '/auth/phone/**': { ssr: false },
+    // Pages connectées : dépendent du cookie de session HttpOnly et n'ont aucun état utile côté serveur.
+    '/auth/link-account': { ssr: false },
+    '/account/**': { ssr: false },
     '/v1/**': { proxy: 'http://localhost:4000/v1/**' },
   },
   typescript: {

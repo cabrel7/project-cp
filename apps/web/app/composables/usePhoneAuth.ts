@@ -1,7 +1,9 @@
 // Connexion / inscription par téléphone + code SMS (P2.2). Même mécanisme d'appel que useAuth
 // (le client généré n'existe pas encore) ; la session est un cookie HttpOnly posé par l'API.
 // La demande en cours vit en sessionStorage (jamais localStorage) ; le code saisi n'est ni stocké ni journalisé.
+
 import type { PhoneRequestCodeResponse, PhoneVerifyCodeResponse } from '@cp/shared'
+import { safeNextPath } from '@cp/shared/safe-next'
 import {
   clearPhoneRequest,
   loadPhoneRequest,
@@ -108,8 +110,8 @@ export function usePhoneAuth() {
     return requestCode(current)
   }
 
-  /** Vérifie le code ; succès = session ouverte, demande effacée, retour à l'accueil. */
-  async function verifyCode(code: string): Promise<PhoneVerifyCodeResponse> {
+  /** Vérifie le code ; succès = session ouverte, demande effacée, retour à l'accueil (ou à `next`). */
+  async function verifyCode(code: string, next = '/'): Promise<PhoneVerifyCodeResponse> {
     const current = request.value
     if (!current) throw toAuthError({ statusCode: 0 })
     const res = await call<PhoneVerifyCodeResponse>('/verify-code', {
@@ -122,7 +124,7 @@ export function usePhoneAuth() {
     })
     user.value = res.user as unknown as AuthUser
     cancel()
-    await navigateTo('/')
+    await navigateTo(safeNextPath(next))
     return res
   }
 

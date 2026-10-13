@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { PhoneCountry } from '@cp/shared'
+import { safeNextPath } from '@cp/shared/safe-next'
 import { AuthError } from '../composables/useAuth'
 import { authErrorKey, authErrorParams, isPhoneValidationError } from '../utils/authErrors'
 import { formatWait, missingDigits, phoneReasonKey } from '../utils/phoneAuth'
 
 // Formulaire « Recevoir un code » partagé entre connexion et inscription (P2.2).
 // libphonenumber-js (via @cp/shared/phone) est chargé en différé, avec l'onglet Téléphone seulement.
-const props = defineProps<{ mode: 'login' | 'register' }>()
+const props = defineProps<{ mode: 'login' | 'register'; next?: string }>()
 
 type PhoneLib = typeof import('@cp/shared/phone')
 
@@ -108,7 +109,11 @@ async function onSubmit() {
         ? { fullName: fullName.value.trim() }
         : {}),
     })
-    await navigateTo('/auth/phone/code')
+    // `next` (page demandée ou écran de liaison Google) suit jusqu'à l'écran du code ; filtré par safeNextPath.
+    const target = props.next ? safeNextPath(props.next) : '/'
+    await navigateTo(
+      target === '/' ? '/auth/phone/code' : `/auth/phone/code?next=${encodeURIComponent(target)}`,
+    )
   } catch (e) {
     submitError.value = e instanceof AuthError ? e : new AuthError('UNKNOWN', 0)
   }

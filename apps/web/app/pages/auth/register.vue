@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Inscription par e-mail ou par téléphone (maquette 02, D63 : onglets). Google/Apple : désactivés.
+// Inscription par e-mail ou par téléphone (maquette 02, D63 : onglets). Google : bouton piloté par /v1/auth/methods (P2.3).
 definePageMeta({ layout: false })
 
 const { t } = useI18n()
@@ -9,7 +9,9 @@ const fullName = ref('')
 const email = ref('')
 const password = ref('')
 const acceptTerms = ref(false)
+const route = useRoute()
 const errorKey = ref<string | null>(null)
+const queryError = computed(() => queryErrorKey(route.query.error, route.query.reason))
 const sent = ref(false)
 const tabs = computed(() => [
   { label: t('cp.auth.register.tabEmail'), value: 'email' },
@@ -44,6 +46,13 @@ useHead({ title: () => t('cp.auth.register.title') })
         </NuxtLink>
       </p>
     </header>
+
+    <CpAlert
+      v-if="queryError && !sent"
+      variant="danger"
+      :title="t(queryError)"
+      data-testid="auth-query-error"
+    />
 
     <AuthMethodTabs v-if="!sent" v-model="tab" :items="tabs" />
 
@@ -105,12 +114,16 @@ useHead({ title: () => t('cp.auth.register.title') })
     <LazyAuthPhoneForm v-else mode="register" />
 
     <template v-if="!sent">
-      <USeparator :label="t('cp.auth.register.orWith')" />
-
-      <div class="grid grid-cols-2 gap-3">
-        <UButton color="neutral" variant="outline" size="lg" block disabled label="Google" :title="t('cp.auth.comingSoon')" />
-        <UButton color="neutral" variant="outline" size="lg" block disabled label="Apple" :title="t('cp.auth.comingSoon')" />
-      </div>
+      <AuthSocialButtons />
+      <!-- Google crée le compte sans case à cocher : la mention légale de la maquette 01 couvre ce cas (H3). -->
+      <i18n-t keypath="cp.auth.login.legal" tag="p" class="text-center text-body-sm text-cp-ink-muted">
+        <template #terms>
+          <NuxtLink to="/legal/terms" class="text-cp-primary hover:underline">{{ t('cp.auth.login.terms') }}</NuxtLink>
+        </template>
+        <template #privacy>
+          <NuxtLink to="/legal/privacy" class="text-cp-primary hover:underline">{{ t('cp.auth.login.privacy') }}</NuxtLink>
+        </template>
+      </i18n-t>
     </template>
   </CpLayoutLogin>
 </template>
