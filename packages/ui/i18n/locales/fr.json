@@ -386,7 +386,68 @@
         "minutesSeconds": "{m} min {s} s"
       },
       "rateLimitedIn": "Trop de demandes. Réessayez dans {time}.",
-      "offline": "Vous êtes hors ligne. Vérifiez votre connexion puis réessayez."
+      "offline": "Vous êtes hors ligne. Vérifiez votre connexion puis réessayez.",
+      "social": {
+        "continueWithGoogle": "Continuer avec Google",
+        "accountExists": "Un compte existe déjà avec cette adresse. Connectez-vous pour lier Google.",
+        "cancelled": "Connexion avec Google annulée.",
+        "offline": "Connexion Internet requise pour continuer avec Google."
+      },
+      "link": {
+        "title": "Lier votre compte Google",
+        "body": "Vous pourrez ensuite vous connecter avec Google ({email}).",
+        "confirm": "Lier le compte",
+        "cancel": "Annuler",
+        "expired": "Cette demande a expiré. Recommencez avec Google si besoin.",
+        "continue": "Continuer",
+        "reconnect": "Se reconnecter",
+        "resendVerification": "Renvoyer l'e-mail de vérification",
+        "verificationSent": "E-mail de vérification envoyé. Ouvrez-le, puis revenez ici.",
+        "retry": "Réessayer"
+      }
+    },
+    "account": {
+      "security": {
+        "title": "Sécurité du compte",
+        "description": "Choisissez comment vous vous connectez à votre compte.",
+        "retry": "Réessayer",
+        "loadError": "Nous n'arrivons pas à afficher vos moyens de connexion. Réessayez dans un instant.",
+        "methods": {
+          "title": "Moyens de connexion",
+          "description": "Gardez au moins deux moyens de connexion pour ne jamais perdre l'accès à votre compte.",
+          "password": "Mot de passe",
+          "passwordSet": "Défini",
+          "passwordUnset": "Non défini",
+          "setPassword": "Définir un mot de passe",
+          "phone": "Téléphone",
+          "phoneNone": "Non ajouté",
+          "google": "Google",
+          "linked": "Lié · {email}",
+          "notLinked": "Non lié",
+          "link": "Lier Google",
+          "unlink": "Délier Google",
+          "unlinkTitle": "Délier votre compte Google ?",
+          "unlinkConfirm": "Vous ne pourrez plus vous connecter avec ce compte Google.",
+          "verifyEmailFirst": "Vérifiez votre adresse e-mail pour lier Google.",
+          "linkedSuccess": "Google est lié à votre compte.",
+          "unlinkedSuccess": "Google n'est plus lié à votre compte."
+        },
+        "lastMethod": "Ajoutez un autre moyen de connexion avant de délier Google.",
+        "reauth": "Pour votre sécurité, reconnectez-vous puis réessayez."
+      }
+    },
+    "errors": {
+      "AUTH_SOCIAL_FLOW_INVALID": "La connexion a expiré ou n'est pas valide. Recommencez.",
+      "AUTH_SOCIAL_EMAIL_UNVERIFIED": "Google ne peut pas garantir cette adresse e-mail. Inscrivez-vous avec votre e-mail.",
+      "AUTH_SOCIAL_PROVIDER_UNAVAILABLE": "Connexion avec Google momentanément indisponible. Utilisez votre e-mail ou votre téléphone.",
+      "AUTH_IDENTITY_ALREADY_LINKED": {
+        "default": "Ce compte est déjà lié.",
+        "sub_linked_elsewhere": "Ce compte Google est déjà lié à un autre compte.",
+        "provider_already_linked": "Un compte Google est déjà lié au vôtre."
+      },
+      "AUTH_ACCOUNT_NOT_VERIFIED": "Vérifiez d'abord votre adresse e-mail.",
+      "AUTH_LAST_SIGN_IN_METHOD": "Impossible de retirer votre dernier moyen de connexion.",
+      "AUTH_REAUTH_REQUIRED": "Pour votre sécurité, reconnectez-vous puis réessayez."
     }
   }
 }

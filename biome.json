@@ -52,7 +52,8 @@
       "!**/coverage",
       "!**/db",
       "!**/docs",
-      "!**/.claude"
+      "!**/.claude",
+      "!**/public/brands"
     ]
   }
 }

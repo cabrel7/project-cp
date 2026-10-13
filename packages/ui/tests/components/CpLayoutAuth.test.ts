@@ -28,6 +28,12 @@ describe('CpLayoutAuth', () => {
     expect(wrapper.get('header').text()).toContain('Logo')
   })
 
+  it('hideCancel masque « Refuser » et garde le bouton principal', () => {
+    const wrapper = render({ hideCancel: true })
+    expect(wrapper.find('[data-cp-cancel]').exists()).toBe(false)
+    expect(wrapper.find('[data-cp-confirm]').exists()).toBe(true)
+  })
+
   it('les boutons émettent confirm et cancel', async () => {
     const wrapper = render()
     await wrapper.get('[data-cp-confirm]').trigger('click')

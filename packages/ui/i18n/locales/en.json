@@ -386,7 +386,68 @@
         "minutesSeconds": "{m} min {s} s"
       },
       "rateLimitedIn": "Too many requests. Try again in {time}.",
-      "offline": "You're offline. Check your connection and try again."
+      "offline": "You're offline. Check your connection and try again.",
+      "social": {
+        "continueWithGoogle": "Continue with Google",
+        "accountExists": "An account already exists with this email. Sign in to link Google.",
+        "cancelled": "Google sign-in cancelled.",
+        "offline": "An internet connection is needed to continue with Google."
+      },
+      "link": {
+        "title": "Link your Google account",
+        "body": "You'll then be able to sign in with Google ({email}).",
+        "confirm": "Link account",
+        "cancel": "Cancel",
+        "expired": "This request expired. Start again with Google if needed.",
+        "continue": "Continue",
+        "reconnect": "Sign in again",
+        "resendVerification": "Resend verification email",
+        "verificationSent": "Verification email sent. Open it, then come back here.",
+        "retry": "Try again"
+      }
+    },
+    "account": {
+      "security": {
+        "title": "Account security",
+        "description": "Choose how you sign in to your account.",
+        "retry": "Try again",
+        "loadError": "We can't show your sign-in methods right now. Try again in a moment.",
+        "methods": {
+          "title": "Sign-in methods",
+          "description": "Keep at least two sign-in methods so you never lose access to your account.",
+          "password": "Password",
+          "passwordSet": "Set",
+          "passwordUnset": "Not set",
+          "setPassword": "Set a password",
+          "phone": "Phone",
+          "phoneNone": "Not added",
+          "google": "Google",
+          "linked": "Linked · {email}",
+          "notLinked": "Not linked",
+          "link": "Link Google",
+          "unlink": "Unlink Google",
+          "unlinkTitle": "Unlink your Google account?",
+          "unlinkConfirm": "You will no longer be able to sign in with this Google account.",
+          "verifyEmailFirst": "Verify your email address to link Google.",
+          "linkedSuccess": "Google is now linked to your account.",
+          "unlinkedSuccess": "Google is no longer linked to your account."
+        },
+        "lastMethod": "Add another sign-in method before unlinking Google.",
+        "reauth": "For your security, sign in again and retry."
+      }
+    },
+    "errors": {
+      "AUTH_SOCIAL_FLOW_INVALID": "Sign-in expired or is invalid. Try again.",
+      "AUTH_SOCIAL_EMAIL_UNVERIFIED": "Google can't vouch for this email address. Sign up with your email.",
+      "AUTH_SOCIAL_PROVIDER_UNAVAILABLE": "Sign-in with Google is temporarily unavailable. Use your email or phone.",
+      "AUTH_IDENTITY_ALREADY_LINKED": {
+        "default": "This account is already linked.",
+        "sub_linked_elsewhere": "This Google account is already linked to another account.",
+        "provider_already_linked": "A Google account is already linked to yours."
+      },
+      "AUTH_ACCOUNT_NOT_VERIFIED": "Verify your email address first.",
+      "AUTH_LAST_SIGN_IN_METHOD": "You can't remove your last sign-in method.",
+      "AUTH_REAUTH_REQUIRED": "For your security, sign in again and retry."
     }
   }
 }

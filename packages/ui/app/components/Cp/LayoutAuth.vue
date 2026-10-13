@@ -7,6 +7,8 @@ defineProps<{
   confirmLabel?: string
   cancelLabel?: string
   confirmLoading?: boolean
+  /** Un seul bouton (écran d'information ou d'erreur sans refus possible). */
+  hideCancel?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -36,7 +38,7 @@ const { t } = useI18n()
       </div>
       <footer class="flex flex-col gap-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
-          <UButton variant="outline" data-cp-cancel @click="emit('cancel')">
+          <UButton v-if="!hideCancel" variant="outline" data-cp-cancel @click="emit('cancel')">
             {{ cancelLabel ?? t('cp.layout.deny') }}
           </UButton>
           <UButton :loading="confirmLoading" data-cp-confirm @click="emit('confirm')">
