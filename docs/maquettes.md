@@ -30,6 +30,8 @@ Les agents travaillent avec les **captures et les sources du dépôt** (les lien
 | Consentement OAuth (G8) — mobile, sombre | [`1-authentification/09-ConsentementMobile.png`](maquettes/1-authentification/09-ConsentementMobile.png) | `source/ConsentementMobile.dc.html` | 390×844 |
 | Illustration animée de marque (composant réutilisé) | [`1-authentification/10-HeroSysteme.png`](maquettes/1-authentification/10-HeroSysteme.png) | `source/HeroSysteme.dc.html` | 424×440 |
 
+> **Écart validé — boutons de connexion sociale (P2.3, D67, 2026-10-13).** Les maquettes 01 (Connexion), 02 (Inscription) et 05 (Connexion par téléphone, mobile) montrent les boutons « Utiliser une clé d'accès », « Google » et « Apple » en texte seul, Google et Apple côte à côte. En P2.3 : (1) les boutons « clé d'accès » et « Apple » sont **masqués** jusqu'au lot P8.8 (D67) — leur affichage dépend de `GET /v1/auth/methods` ; (2) le bouton Google suit la **charte officielle de Google** (Sign in with Google Branding Guidelines), faute de quoi la validation de l'application OAuth est refusée : logo « G » officiel en couleurs d'origine, non modifié, à gauche du libellé « Continuer avec Google » (EN « Continue with Google »), pleine largeur, identique sur la connexion et l'inscription ; le logo est un fichier de marque (`apps/web/public/brands/google-g.svg`), pas une couleur du design system ; fond, bordure et texte du bouton restent sur les tokens. Le séparateur de l'inscription devient « ou ». La régression visuelle des écrans 01, 02 et 05 tient compte de cet écart ; mise à jour du canevas et ré-export des captures à faire par Dylan (en P8.8 : rétablir la clé d'accès, et Apple selon la charte d'Apple).
+
 ## 2 · Onboarding par profil
 
 | Écran | Capture | Source | Taille |
